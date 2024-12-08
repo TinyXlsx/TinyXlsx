@@ -61,9 +61,11 @@ public class Worksheet
     public void BeginRow(int rowIndex)
     {
         this.rowIndex = rowIndex + 1;
-        stream.BufferPooledWrite("<row r=\"");
-        stream.BufferPooledWrite(this.rowIndex.Value);
-        stream.BufferPooledWrite("\">");
+        var bytesWritten = 0;
+        StreamExtensions.BufferPooledWrite("<row r=\"", ref bytesWritten);
+        StreamExtensions.BufferPooledWrite(this.rowIndex.Value, ref bytesWritten);
+        StreamExtensions.BufferPooledWrite("\">", ref bytesWritten);
+        stream.WriteBufferedData(bytesWritten);
     }
 
     private void VerifyRowIsOpen()
@@ -86,12 +88,14 @@ public class Worksheet
     {
         VerifyRowIsOpen();
 
-        stream.BufferPooledWrite("<c r=\"");
-        stream.BufferPooledWrite((char)('A' + columnIndex)); // TODO: handle more than 26 columns.
-        stream.BufferPooledWrite(rowIndex.Value);
-        stream.BufferPooledWrite("\" t=\"n\"><v>");
-        stream.BufferPooledWrite(value);
-        stream.BufferPooledWrite("</v></c>");
+        var bytesWritten = 0;
+        StreamExtensions.BufferPooledWrite("<c r=\"", ref bytesWritten);
+        StreamExtensions.BufferPooledWrite((char)('A' + columnIndex), ref bytesWritten); // TODO: handle more than 26 columns.
+        StreamExtensions.BufferPooledWrite(rowIndex.Value, ref bytesWritten);
+        StreamExtensions.BufferPooledWrite("\" t=\"n\"><v>", ref bytesWritten);
+        StreamExtensions.BufferPooledWrite(value, ref bytesWritten);
+        StreamExtensions.BufferPooledWrite("</v></c>", ref bytesWritten);
+        stream.WriteBufferedData(bytesWritten);
     }
 
     public void WriteCellValue(
@@ -104,28 +108,34 @@ public class Worksheet
         var numberFormatIndex = workbook.GetOrCreateNumberFormat(format);
         numberFormatIndex -= 163; // TODO: perhaps not the cleanest way of doing this, necessary for now to match Excel's numbering.
 
-        stream.BufferPooledWrite("<c r=\"");
-        stream.BufferPooledWrite((char)('A' + columnIndex)); // TODO: handle more than 26 columns.
-        stream.BufferPooledWrite(rowIndex.Value);
-        stream.BufferPooledWrite("\" s=\"");
-        stream.BufferPooledWrite(numberFormatIndex);
-        stream.BufferPooledWrite("\" t=\"n\"><v>");
-        stream.BufferPooledWrite(value);
-        stream.BufferPooledWrite("</v></c>");
+        var bytesWritten = 0;
+        StreamExtensions.BufferPooledWrite("<c r=\"", ref bytesWritten);
+        StreamExtensions.BufferPooledWrite((char)('A' + columnIndex), ref bytesWritten); // TODO: handle more than 26 columns.
+        StreamExtensions.BufferPooledWrite(rowIndex.Value, ref bytesWritten);
+        StreamExtensions.BufferPooledWrite("\" s=\"", ref bytesWritten);
+        StreamExtensions.BufferPooledWrite(numberFormatIndex, ref bytesWritten);
+        StreamExtensions.BufferPooledWrite("\" t=\"n\"><v>", ref bytesWritten);
+        StreamExtensions.BufferPooledWrite(value, ref bytesWritten);
+        StreamExtensions.BufferPooledWrite("</v></c>", ref bytesWritten);
+        stream.WriteBufferedData(bytesWritten);
     }
 
     public void WriteCellValue(
        int columnIndex,
        string value)
     {
+        if (string.IsNullOrEmpty(value)) return;
+
         VerifyRowIsOpen();
 
-        stream.BufferPooledWrite("<c r=\"");
-        stream.BufferPooledWrite((char)('A' + columnIndex)); // TODO: handle more than 26 columns.
-        stream.BufferPooledWrite(rowIndex.Value);
-        stream.BufferPooledWrite("\" t=\"inlineStr\"><is><t>");
-        stream.BufferPooledWrite(value);
-        stream.BufferPooledWrite("</t></is></c>");
+        var bytesWritten = 0;
+        StreamExtensions.BufferPooledWrite("<c r=\"", ref bytesWritten);
+        StreamExtensions.BufferPooledWrite((char)('A' + columnIndex), ref bytesWritten); // TODO: handle more than 26 columns.
+        StreamExtensions.BufferPooledWrite(rowIndex.Value, ref bytesWritten);
+        StreamExtensions.BufferPooledWrite("\" t=\"inlineStr\"><is><t>", ref bytesWritten);
+        StreamExtensions.BufferPooledWrite(value, ref bytesWritten);
+        StreamExtensions.BufferPooledWrite("</t></is></c>", ref bytesWritten);
+        stream.WriteBufferedData(bytesWritten);
     }
 
     public void WriteCellValue(
@@ -155,13 +165,15 @@ public class Worksheet
         var numberFormatIndex = workbook.GetOrCreateNumberFormat(format);
         numberFormatIndex -= 163; // TODO: perhaps not the cleanest way of doing this, necessary for now to match Excel's numbering.
 
-        stream.BufferPooledWrite("<c r=\"");
-        stream.BufferPooledWrite((char)('A' + columnIndex)); // TODO: handle more than 26 columns.
-        stream.BufferPooledWrite(rowIndex.Value);
-        stream.BufferPooledWrite("\" s=\"");
-        stream.BufferPooledWrite(numberFormatIndex);
-        stream.BufferPooledWrite("\" t=\"n\"><v>");
-        stream.BufferPooledWrite(daysSinceBaseDate);
-        stream.BufferPooledWrite("</v></c>");
+        var bytesWritten = 0;
+        StreamExtensions.BufferPooledWrite("<c r=\"", ref bytesWritten);
+        StreamExtensions.BufferPooledWrite((char)('A' + columnIndex), ref bytesWritten); // TODO: handle more than 26 columns.
+        StreamExtensions.BufferPooledWrite(rowIndex.Value, ref bytesWritten);
+        StreamExtensions.BufferPooledWrite("\" s=\"", ref bytesWritten);
+        StreamExtensions.BufferPooledWrite(numberFormatIndex, ref bytesWritten);
+        StreamExtensions.BufferPooledWrite("\" t=\"n\"><v>", ref bytesWritten);
+        StreamExtensions.BufferPooledWrite(daysSinceBaseDate, ref bytesWritten);
+        StreamExtensions.BufferPooledWrite("</v></c>", ref bytesWritten);
+        stream.WriteBufferedData(bytesWritten);
     }
 }

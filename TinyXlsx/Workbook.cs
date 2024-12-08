@@ -8,12 +8,14 @@ public class Workbook : IDisposable
     private ZipArchive archive;
     private readonly IList<Worksheet> worksheets;
     private readonly IDictionary<string, int> numberFormats;
+    private readonly CompressionLevel compressionLevel;
     private bool disposedValue;
 
-    public Workbook()
+    public Workbook(CompressionLevel compressionLevel = CompressionLevel.Optimal)
     {
         worksheets = new List<Worksheet>();
         numberFormats = new Dictionary<string, int>();
+        this.compressionLevel = compressionLevel;
     }
 
     public void BeginFile(string filePath)
@@ -73,7 +75,7 @@ public class Workbook : IDisposable
 
     private void AddRels()
     {
-        var entry = archive.CreateEntry("_rels/.rels", CompressionLevel.Optimal);
+        var entry = archive.CreateEntry("_rels/.rels", compressionLevel);
         using var entryStream = entry.Open();
 
         entryStream.BufferPooledWrite("""
@@ -88,7 +90,7 @@ public class Workbook : IDisposable
 
     private void AddDocPropsAppXml()
     {
-        var entry = archive.CreateEntry("docProps/app.xml", CompressionLevel.Optimal);
+        var entry = archive.CreateEntry("docProps/app.xml", compressionLevel);
         using var entryStream = entry.Open();
 
         entryStream.BufferPooledWrite("""
@@ -106,7 +108,7 @@ public class Workbook : IDisposable
 
     private void AddDocPropsCoreXml()
     {
-        var entry = archive.CreateEntry("docProps/core.xml", CompressionLevel.Optimal);
+        var entry = archive.CreateEntry("docProps/core.xml", compressionLevel);
         using var entryStream = entry.Open();
 
         entryStream.BufferPooledWrite("""
@@ -125,7 +127,7 @@ public class Workbook : IDisposable
 
     private void AddContentTypesXml()
     {
-        var entry = archive.CreateEntry("[Content_Types].xml", CompressionLevel.Optimal);
+        var entry = archive.CreateEntry("[Content_Types].xml", compressionLevel);
         using var entryStream = entry.Open();
 
         entryStream.BufferPooledWrite("""
@@ -145,7 +147,7 @@ public class Workbook : IDisposable
 
     private void AddStylesXml()
     {
-        var entry = archive.CreateEntry("xl/styles.xml", CompressionLevel.Optimal);
+        var entry = archive.CreateEntry("xl/styles.xml", compressionLevel);
         using var entryStream = entry.Open();
 
         entryStream.BufferPooledWrite("""
@@ -204,7 +206,7 @@ public class Workbook : IDisposable
 
     private void AddWorkbookXmlRels()
     {
-        var entry = archive.CreateEntry("xl/_rels/workbook.xml.rels", CompressionLevel.Optimal);
+        var entry = archive.CreateEntry("xl/_rels/workbook.xml.rels", compressionLevel);
         using var entryStream = entry.Open();
 
         entryStream.BufferPooledWrite("""
@@ -219,7 +221,7 @@ public class Workbook : IDisposable
 
     private void AddSharedStringsXml()
     {
-        var entry = archive.CreateEntry("xl/sharedStrings.xml", CompressionLevel.Optimal);
+        var entry = archive.CreateEntry("xl/sharedStrings.xml", compressionLevel);
         using var entryStream = entry.Open();
 
         entryStream.BufferPooledWrite("""
@@ -236,7 +238,7 @@ public class Workbook : IDisposable
         string name,
         string relationshipId)
     {
-        var entry = archive.CreateEntry("xl/worksheets/sheet1.xml", CompressionLevel.Optimal);
+        var entry = archive.CreateEntry("xl/worksheets/sheet1.xml", compressionLevel);
         var entryStream = entry.Open();
 
         var worksheet = new Worksheet(
@@ -269,7 +271,7 @@ public class Workbook : IDisposable
 
     private void AddWorkbookXml()
     {
-        var entry = archive.CreateEntry("xl/workbook.xml", CompressionLevel.Optimal);
+        var entry = archive.CreateEntry("xl/workbook.xml", compressionLevel);
         using var entryStream = entry.Open();
         entryStream.BufferPooledWrite("""
             <?xml version="1.0" encoding="UTF-8" standalone="yes"?>

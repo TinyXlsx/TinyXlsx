@@ -4,7 +4,7 @@ using var workbook = new Workbook();
 var stream = workbook.BeginStream(4 * 1024 * 1024);
 var worksheet = workbook.BeginSheet();
 
-for (var i = 0; i < 100_000; i++)
+for (var i = 0; i < 10; i++)
 {
     worksheet.BeginRow(i);
     worksheet.WriteCellValue(0, 123.456);
@@ -20,10 +20,10 @@ for (var i = 0; i < 100_000; i++)
 workbook.EndSheet();
 workbook.EndStream();
 
-//using var fileStream = File.Create("123456_optimal.xlsx");
-//stream.CopyTo(fileStream);
-//await fileStream.FlushAsync();
-//fileStream.Close();
+using var fileStream = File.Create("test.xlsx");
+stream.CopyTo(fileStream);
+await fileStream.FlushAsync();
+fileStream.Close();
 
 Console.WriteLine(System.Diagnostics.Process.GetCurrentProcess().PrivateMemorySize64);
 

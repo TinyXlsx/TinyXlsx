@@ -6,28 +6,13 @@ namespace TinyXlsx;
 
 internal static class StreamExtensions
 {
-    //private static readonly Encoder Utf8Encoder = Encoding.UTF8.GetEncoder();
     private static readonly byte[] buffer = ArrayPool<byte>.Shared.Rent(2048);
-
     internal static void BufferPooledWrite(
-        this Stream stream,
-        string text)
+    this Stream stream,
+    string text)
     {
-        if (string.IsNullOrEmpty(text)) return;
-
-        //var buffer = ArrayPool<byte>.Shared.Rent(Encoding.UTF8.GetMaxByteCount(text.Length));
-        //var buffer = ArrayPool<byte>.Shared.Rent(Utf8Encoder.GetByteCount(text, false));
-        //try
-        //{
-            var bytesWritten = Encoding.UTF8.GetBytes(text, buffer);
-            //var bytesWritten = Utf8Encoder.GetBytes(text, buffer, true);
-            //await stream.WriteAsync(buffer.AsMemory(0, bytesWritten));
-            stream.Write(buffer, 0, bytesWritten);
-        //}
-        //finally
-        //{
-        //    ArrayPool<byte>.Shared.Return(buffer);
-        //}
+        var bytesWritten = Encoding.UTF8.GetBytes(text, buffer);
+        stream.Write(buffer, 0, bytesWritten);
     }
 
     internal static void BufferPooledWrite(
@@ -41,33 +26,52 @@ internal static class StreamExtensions
         this Stream stream,
         double value)
     {
-        //var buffer = ArrayPool<byte>.Shared.Rent(32);
         value.TryFormat(buffer, out var bytesWritten, provider: CultureInfo.InvariantCulture);
-        //try
-        //{
-            //await stream.WriteAsync(buffer.AsMemory(0, bytesWritten));
-            stream.Write(buffer, 0, bytesWritten);
-        //}
-        //finally
-        //{
-        //    ArrayPool<byte>.Shared.Return(buffer);
-        //}
+        stream.Write(buffer, 0, bytesWritten);
     }
 
     internal static void BufferPooledWrite(
         this Stream stream,
         int value)
     {
-        //var buffer = ArrayPool<byte>.Shared.Rent(11);
         value.TryFormat(buffer, out var bytesWritten, provider: CultureInfo.InvariantCulture);
-        //try
-        //{
-            //await stream.WriteAsync(buffer.AsMemory(0, bytesWritten));
-            stream.Write(buffer, 0, bytesWritten);
-        //}
-        //finally
-        //{
-        //    ArrayPool<byte>.Shared.Return(buffer);
-        //}
+        stream.Write(buffer, 0, bytesWritten);
+    }
+
+    internal static void BufferPooledWrite(
+        string text,
+        ref int bytesWritten)
+    {
+        var written = Encoding.UTF8.GetBytes(text, 0, text.Length, buffer, bytesWritten);
+        bytesWritten += written;
+    }
+
+    internal static void BufferPooledWrite(
+        char character,
+        ref int bytesWritten)
+    {
+        buffer[bytesWritten] = (byte)character;
+        bytesWritten++;
+    }
+
+    internal static void BufferPooledWrite(
+        double value,
+        ref int bytesWritten)
+    {
+        value.TryFormat(buffer.AsSpan(bytesWritten), out var written, provider: CultureInfo.InvariantCulture);
+        bytesWritten += written;
+    }
+
+    internal static void BufferPooledWrite(
+        int value,
+        ref int bytesWritten)
+    {
+        value.TryFormat(buffer.AsSpan(bytesWritten), out var written, provider: CultureInfo.InvariantCulture);
+        bytesWritten += written;
+    }
+
+    internal static void WriteBufferedData(this Stream stream, int bytesWritten)
+    {
+        stream.Write(buffer, 0, bytesWritten);
     }
 }
