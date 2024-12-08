@@ -26,7 +26,7 @@ public class Worksheet
         RelationshipId = relationshipId;
     }
 
-    internal async Task BeginSheetAsync()
+    internal void BeginSheet()
     {
         stream.BufferPooledWrite("""
             <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -48,17 +48,17 @@ public class Worksheet
             """);
     }
 
-    internal async Task EndSheetAsync()
+    internal void EndSheet()
     {
         stream.BufferPooledWrite("""
                 </sheetData>
                 <pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/></worksheet>
             """);
-        await stream.FlushAsync();
+        stream.Flush();
         stream.Close();
     }
 
-    public async Task BeginRowAsync(int rowIndex)
+    public void BeginRow(int rowIndex)
     {
         this.rowIndex = rowIndex + 1;
         stream.BufferPooledWrite("<row r=\"");
@@ -70,11 +70,11 @@ public class Worksheet
     {
         if (rowIndex == null)
         {
-            throw new InvalidOperationException($"A cell value can only be written after creating a row with {nameof(BeginRowAsync)}.");
+            throw new InvalidOperationException($"A cell value can only be written after creating a row with {nameof(BeginRow)}.");
         }
     }
 
-    public async Task EndRowAsync()
+    public void EndRow()
     {
         stream.BufferPooledWrite("</row>");
         rowIndex = null;

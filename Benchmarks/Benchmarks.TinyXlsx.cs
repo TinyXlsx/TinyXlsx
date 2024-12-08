@@ -8,12 +8,12 @@ public partial class Benchmarks
     public async Task TinyXlsx()
     {
         using var workbook = new Workbook();
-        var stream = await workbook.BeginStreamAsync();
-        var worksheet = await workbook.BeginSheetAsync();
+        var stream = workbook.BeginStream();
+        var worksheet = workbook.BeginSheet();
 
         for (var i = 0; i < 10_000; i++)
         {
-            await worksheet.BeginRowAsync(i);
+            worksheet.BeginRow(i);
             worksheet.WriteCellValue(0, 123.456);
             worksheet.WriteCellValue(1, DateTime.Now);
             worksheet.WriteCellValue(2, "Text");
@@ -22,9 +22,9 @@ public partial class Benchmarks
             worksheet.WriteCellValue(5, 123.456, "0.00E+00");
             worksheet.WriteCellValue(6, 123.456, "$#,##0.00");
             worksheet.WriteCellValue(7, 123.456, "#,##0.00 [$USD]");
-            await worksheet.EndRowAsync();
+            worksheet.EndRow();
         }
-        await workbook.EndSheetAsync();
-        await workbook.EndStreamAsync();
+        workbook.EndSheet();
+        workbook.EndStream();
     }
 }

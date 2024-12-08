@@ -16,44 +16,44 @@ public class Workbook : IDisposable
         numberFormats = new Dictionary<string, int>();
     }
 
-    public async Task BeginFileAsync(string filePath)
+    public void BeginFile(string filePath)
     {
         stream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None);
         archive = new ZipArchive(stream, ZipArchiveMode.Create, true);
     }
 
-    public async Task<Stream> BeginStreamAsync(int capacity = 1_048_576)
+    public Stream BeginStream(int capacity = 1_048_576)
     {
         stream = new MemoryStream(capacity);
         archive = new ZipArchive(stream, ZipArchiveMode.Create, true);
         return stream;
     }
 
-    public async Task EndStreamAsync()
+    public void EndStream()
     {
-        await AddRelsAsync();
-        await AddContentTypesXmlAsync();
-        await AddDocPropsAppXmlAsync();
-        await AddDocPropsCoreXmlAsync();
-        await AddWorkbookXmlAsync();
-        await AddStylesXmlAsync();
-        await AddSharedStringsXmlAsync();
-        await AddWorkbookXmlRelsAsync();
+        AddRels();
+        AddContentTypesXml();
+        AddDocPropsAppXml();
+        AddDocPropsCoreXml();
+        AddWorkbookXml();
+        AddStylesXml();
+        AddSharedStringsXml();
+        AddWorkbookXmlRels();
 
         archive.Dispose();
         stream.Position = 0;
     }
 
-    public async Task EndFileAsync()
+    public void EndFile()
     {
-        await AddRelsAsync();
-        await AddContentTypesXmlAsync();
-        await AddDocPropsAppXmlAsync();
-        await AddDocPropsCoreXmlAsync();
-        await AddWorkbookXmlAsync();
-        await AddStylesXmlAsync();
-        await AddSharedStringsXmlAsync();
-        await AddWorkbookXmlRelsAsync();
+        AddRels();
+        AddContentTypesXml();
+        AddDocPropsAppXml();
+        AddDocPropsCoreXml();
+        AddWorkbookXml();
+        AddStylesXml();
+        AddSharedStringsXml();
+        AddWorkbookXmlRels();
 
         archive.Dispose();
         stream.Dispose();
@@ -71,7 +71,7 @@ public class Workbook : IDisposable
         return index;
     }
 
-    private async Task AddRelsAsync()
+    private void AddRels()
     {
         var entry = archive.CreateEntry("_rels/.rels", CompressionLevel.Optimal);
         using var entryStream = entry.Open();
@@ -86,7 +86,7 @@ public class Workbook : IDisposable
         """);
     }
 
-    private async Task AddDocPropsAppXmlAsync()
+    private void AddDocPropsAppXml()
     {
         var entry = archive.CreateEntry("docProps/app.xml", CompressionLevel.Optimal);
         using var entryStream = entry.Open();
@@ -104,7 +104,7 @@ public class Workbook : IDisposable
         """);
     }
 
-    private async Task AddDocPropsCoreXmlAsync()
+    private void AddDocPropsCoreXml()
     {
         var entry = archive.CreateEntry("docProps/core.xml", CompressionLevel.Optimal);
         using var entryStream = entry.Open();
@@ -123,7 +123,7 @@ public class Workbook : IDisposable
         """);
     }
 
-    private async Task AddContentTypesXmlAsync()
+    private void AddContentTypesXml()
     {
         var entry = archive.CreateEntry("[Content_Types].xml", CompressionLevel.Optimal);
         using var entryStream = entry.Open();
@@ -143,7 +143,7 @@ public class Workbook : IDisposable
         """);
     }
 
-    private async Task AddStylesXmlAsync()
+    private void AddStylesXml()
     {
         var entry = archive.CreateEntry("xl/styles.xml", CompressionLevel.Optimal);
         using var entryStream = entry.Open();
@@ -202,7 +202,7 @@ public class Workbook : IDisposable
         """);
     }
 
-    private async Task AddWorkbookXmlRelsAsync()
+    private void AddWorkbookXmlRels()
     {
         var entry = archive.CreateEntry("xl/_rels/workbook.xml.rels", CompressionLevel.Optimal);
         using var entryStream = entry.Open();
@@ -217,7 +217,7 @@ public class Workbook : IDisposable
         """);
     }
 
-    private async Task AddSharedStringsXmlAsync()
+    private void AddSharedStringsXml()
     {
         var entry = archive.CreateEntry("xl/sharedStrings.xml", CompressionLevel.Optimal);
         using var entryStream = entry.Open();
@@ -231,7 +231,7 @@ public class Workbook : IDisposable
         """);
     }
 
-    public async Task<Worksheet> BeginSheetAsync(
+    public Worksheet BeginSheet(
         int id,
         string name,
         string relationshipId)
@@ -245,29 +245,29 @@ public class Workbook : IDisposable
             id,
             name,
             relationshipId);
-        await worksheet.BeginSheetAsync();
+        worksheet.BeginSheet();
         worksheets.Add(worksheet);
         return worksheet;
     }
 
-    public async Task<Worksheet> BeginSheetAsync()
+    public Worksheet BeginSheet()
     {
         var name = $"Sheet{worksheets.Count + 1}";
         var id = worksheets.Count + 1;
         var relationshipId = $"rId{worksheets.Count + 3}";
 
-        return await BeginSheetAsync(
+        return BeginSheet(
             id,
             name,
             relationshipId);
     }
 
-    public async Task EndSheetAsync()
+    public void EndSheet()
     {
-        await worksheets[worksheets.Count - 1].EndSheetAsync();
+        worksheets[worksheets.Count - 1].EndSheet();
     }
 
-    private async Task AddWorkbookXmlAsync()
+    private void AddWorkbookXml()
     {
         var entry = archive.CreateEntry("xl/workbook.xml", CompressionLevel.Optimal);
         using var entryStream = entry.Open();
