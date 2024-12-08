@@ -38,38 +38,6 @@ internal static class StreamExtensions
         stream.Write(buffer, 0, bytesWritten);
     }
 
-    internal static void BufferPooledWrite(
-        string text,
-        ref int bytesWritten)
-    {
-        var written = Encoding.UTF8.GetBytes(text, 0, text.Length, buffer, bytesWritten);
-        bytesWritten += written;
-    }
-
-    internal static void BufferPooledWrite(
-        char character,
-        ref int bytesWritten)
-    {
-        buffer[bytesWritten] = (byte)character;
-        bytesWritten++;
-    }
-
-    internal static void BufferPooledWrite(
-        double value,
-        ref int bytesWritten)
-    {
-        value.TryFormat(buffer.AsSpan(bytesWritten), out var written, provider: CultureInfo.InvariantCulture);
-        bytesWritten += written;
-    }
-
-    internal static void BufferPooledWrite(
-        int value,
-        ref int bytesWritten)
-    {
-        value.TryFormat(buffer.AsSpan(bytesWritten), out var written, provider: CultureInfo.InvariantCulture);
-        bytesWritten += written;
-    }
-
     internal static void WriteBufferedData(this Stream stream, int bytesWritten)
     {
         stream.Write(buffer, 0, bytesWritten);
