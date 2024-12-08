@@ -69,8 +69,9 @@ await workbook.EndSheetAsync();
 await workbook.EndFileAsync();
 ```
 # Benchmarks
-||TinyXlsx|NPOI|ClosedXML|OpenXML|
-|--|--|--|--|--|
-|Memory allocated|  |  |  |  |
-|CPU|  |  |  |  |
-|Duration|  |  |  |  |
+| Method    | Mean      | Error    | StdDev   | Gen0      | Gen1      | Gen2      | Allocated |
+|---------- |----------:|---------:|---------:|----------:|----------:|----------:|----------:|
+| ClosedXml | 222.31 ms | 2.202 ms | 2.060 ms | 6000.0000 | 2000.0000 | 1000.0000 |  97.65 MB |
+| Npoi      |  99.61 ms | 0.925 ms | 0.722 ms | 3500.0000 | 1000.0000 |         - |  58.64 MB |
+| OpenXml   | 137.23 ms | 2.699 ms | 3.603 ms | 3333.3333 | 3000.0000 | 1000.0000 |  52.97 MB |
+| TinyXlsx  | 100.97 ms | 0.476 ms | 0.422 ms |  200.0000 |  200.0000 |  200.0000 |   1.01 MB |
