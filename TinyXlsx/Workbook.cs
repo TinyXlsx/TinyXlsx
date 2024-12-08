@@ -313,6 +313,7 @@ public class Workbook : IDisposable
 
         if (disposing)
         {
+            archive.Dispose();
         }
 
         disposedValue = true;

@@ -9,7 +9,7 @@ public partial class Benchmarks
     {
         using var workbook = new Workbook();
         var stream = await workbook.BeginStreamAsync();
-        using var worksheet = await workbook.BeginSheetAsync();
+        var worksheet = await workbook.BeginSheetAsync();
 
         for (var i = 0; i < 10_000; i++)
         {

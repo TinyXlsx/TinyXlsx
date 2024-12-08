@@ -1,11 +1,10 @@
 ﻿namespace TinyXlsx;
 
-public class Worksheet : IDisposable
+public class Worksheet
 {
     private readonly Workbook workbook;
     private readonly Stream stream;
     private int? rowIndex;
-    private bool disposedValue;
 
     public int Id { get; }
 
@@ -164,22 +163,5 @@ public class Worksheet : IDisposable
         stream.BufferPooledWrite("\" t=\"n\"><v>");
         stream.BufferPooledWrite(daysSinceBaseDate);
         stream.BufferPooledWrite("</v></c>");
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (disposedValue) return;
-
-        if (disposing)
-        {
-        }
-
-        disposedValue = true;
-    }
-
-    public void Dispose()
-    {
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
     }
 }
