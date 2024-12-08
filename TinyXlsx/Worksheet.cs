@@ -81,7 +81,7 @@ public class Worksheet : IDisposable
         rowIndex = null;
     }
 
-    public async Task WriteCellValueAsync(
+    public void WriteCellValue(
         int columnIndex,
         double value)
     {
@@ -95,7 +95,7 @@ public class Worksheet : IDisposable
         stream.BufferPooledWrite("</v></c>");
     }
 
-    public async Task WriteCellValueAsync(
+    public void WriteCellValue(
         int columnIndex,
         double value,
         string format)
@@ -115,7 +115,7 @@ public class Worksheet : IDisposable
         stream.BufferPooledWrite("</v></c>");
     }
 
-    public async Task WriteCellValueAsync(
+    public void WriteCellValue(
        int columnIndex,
        string value)
     {
@@ -129,17 +129,17 @@ public class Worksheet : IDisposable
         stream.BufferPooledWrite("</t></is></c>");
     }
 
-    public async Task WriteCellValueAsync(
+    public void WriteCellValue(
        int columnIndex,
        DateTime value)
     {
-        await WriteCellValueAsync(
+        WriteCellValue(
             columnIndex,
             value,
             "yyyy-MM-dd");
     }
 
-    public async Task WriteCellValueAsync(
+    public void WriteCellValue(
        int columnIndex,
        DateTime value,
        string format)
