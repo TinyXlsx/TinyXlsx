@@ -37,15 +37,13 @@ public class Buffer : IDisposable
 
     public void Append(char character)
     {
-        if (bytesWritten >= buffer.Length) Commit();
-
-        buffer[bytesWritten] = (byte)character;
-        bytesWritten++;
+        var singleChar = (Span<char>)[character];
+        Append(singleChar);
     }
 
     public void Append(double value)
     {
-        if (bytesWritten + 64 > buffer.Length) Commit();
+        if (bytesWritten + Constants.MaximumDoubleLength > buffer.Length) Commit();
 
         value.TryFormat(buffer.AsSpan(bytesWritten), out var written, provider: CultureInfo.InvariantCulture);
         bytesWritten += written;
@@ -53,7 +51,7 @@ public class Buffer : IDisposable
 
     public void Append(int value)
     {
-        if (bytesWritten + 64 > buffer.Length) Commit();
+        if (bytesWritten + Constants.MaximumIntegerLength > buffer.Length) Commit();
 
         value.TryFormat(buffer.AsSpan(bytesWritten), out var written, provider: CultureInfo.InvariantCulture);
         bytesWritten += written;
