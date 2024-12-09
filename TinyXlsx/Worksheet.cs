@@ -89,6 +89,16 @@ public class Worksheet
         {
             throw new InvalidOperationException($"A row with an index equal to or higher than {rowIndex} was already written to.");
         }
+
+        if (rowIndex > Constants.MaximumRows)
+        {
+            throw new InvalidOperationException($"The XLSX format only supports {Constants.MaximumRows} rows.");
+        }
+
+        if (rowIndex < 0)
+        {
+            throw new InvalidOperationException($"The XLSX format does not support a negative row index.");
+        }
     }
 
     private void VerifyCanEndRow()
@@ -109,6 +119,16 @@ public class Worksheet
         if (columnIndex <= lastWrittenColumnIndex)
         {
             throw new InvalidOperationException($"A cell with an index equal to or higher than {columnIndex} was already written to.");
+        }
+
+        if (columnIndex > Constants.MaximumColumns)
+        {
+            throw new InvalidOperationException($"The XLSX format only supports {Constants.MaximumColumns} columns.");
+        }
+
+        if (columnIndex < 0)
+        {
+            throw new InvalidOperationException($"The XLSX format does not support a negative column index.");
         }
     }
 
@@ -140,7 +160,7 @@ public class Worksheet
         VerifyCanWriteCellValue(columnIndex);
 
         Buffer.Append(stream, "<c r=\"");
-        Buffer.Append(stream, (char)('A' + columnIndex)); // TODO: handle more than 26 columns.
+        Buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
         Buffer.Append(stream, internalRowIndex!.Value);
         Buffer.Append(stream, "\" t=\"n\"><v>");
         Buffer.Append(stream, value);
@@ -158,7 +178,7 @@ public class Worksheet
         numberFormatIndex -= 163; // TODO: perhaps not the cleanest way of doing this, necessary for now to match Excel's numbering.
 
         Buffer.Append(stream, "<c r=\"");
-        Buffer.Append(stream, (char)('A' + columnIndex)); // TODO: handle more than 26 columns.
+        Buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
         Buffer.Append(stream, internalRowIndex!.Value);
         Buffer.Append(stream, "\" s=\"");
         Buffer.Append(stream, numberFormatIndex);
@@ -181,7 +201,7 @@ public class Worksheet
         VerifyCanWriteCellValue(columnIndex);
 
         Buffer.Append(stream, "<c r=\"");
-        Buffer.Append(stream, (char)('A' + columnIndex)); // TODO: handle more than 26 columns.
+        Buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
         Buffer.Append(stream, internalRowIndex!.Value);
         Buffer.Append(stream, "\" t=\"inlineStr\"><is><t>");
         Buffer.Append(stream, value);
@@ -221,14 +241,14 @@ public class Worksheet
 
         if (daysSinceBaseDate < 0)
         {
-            throw new NotSupportedException("The xlsx format does not support dates before 1990-01-01. Please write the value as a string instead.");
+            throw new NotSupportedException("The XLSX format does not support dates before 1990-01-01. Please write the value as a string instead.");
         }
 
         var numberFormatIndex = workbook.GetOrCreateNumberFormat(format);
         numberFormatIndex -= 163; // TODO: perhaps not the cleanest way of doing this, necessary for now to match Excel's numbering.
 
         Buffer.Append(stream, "<c r=\"");
-        Buffer.Append(stream, (char)('A' + columnIndex)); // TODO: handle more than 26 columns.
+        Buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
         Buffer.Append(stream, internalRowIndex!.Value);
         Buffer.Append(stream, "\" s=\"");
         Buffer.Append(stream, numberFormatIndex);
