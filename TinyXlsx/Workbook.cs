@@ -123,12 +123,8 @@ public class Workbook : IDisposable
             xmlns="http://schemas.openxmlformats.org/package/2006/metadata/core-properties">
             <dcterms:created xsi:type="dcterms:W3CDTF">
         """);
-        Buffer.Append(entryStream, DateTime.UtcNow.ToString("u"));
-        Buffer.Append(entryStream, """"
-                </dcterms:created>
-                <dc:creator></dc:creator>
-            </coreProperties>
-            """");
+        Buffer.Append(entryStream, DateTime.UtcNow.ToString("yyyy-MM-ddThh:mm:ssZ"));
+        Buffer.Append(entryStream, "</dcterms:created><dc:creator></dc:creator></coreProperties>");
         Buffer.Commit(entryStream);
     }
 
