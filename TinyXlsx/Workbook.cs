@@ -4,34 +4,38 @@ namespace TinyXlsx;
 
 public class Workbook : IDisposable
 {
-    private Stream stream;
-    private ZipArchive archive;
+    private readonly Stream stream;
+    private readonly ZipArchive archive;
     private readonly IList<Worksheet> worksheets;
     private readonly IDictionary<string, int> numberFormats;
     private readonly CompressionLevel compressionLevel;
     private bool disposedValue;
 
-    public Workbook(CompressionLevel compressionLevel = CompressionLevel.Optimal)
+    public Workbook(
+        string filePath,
+        CompressionLevel compressionLevel = CompressionLevel.Optimal)
     {
         worksheets = new List<Worksheet>();
         numberFormats = new Dictionary<string, int>();
         this.compressionLevel = compressionLevel;
-    }
 
-    public void BeginFile(string filePath)
-    {
         stream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None);
         archive = new ZipArchive(stream, ZipArchiveMode.Create, true);
     }
 
-    public Stream BeginStream(int capacity = 1024 * 1024)
+    public Workbook(
+        int capacity = 1024 * 1024,
+        CompressionLevel compressionLevel = CompressionLevel.Optimal)
     {
+        worksheets = new List<Worksheet>();
+        numberFormats = new Dictionary<string, int>();
+        this.compressionLevel = compressionLevel;
+
         stream = new MemoryStream(capacity);
         archive = new ZipArchive(stream, ZipArchiveMode.Create, true);
-        return stream;
     }
 
-    public void EndStream()
+    public Stream Close()
     {
         AddRels();
         AddContentTypesXml();
@@ -44,21 +48,8 @@ public class Workbook : IDisposable
 
         archive.Dispose();
         stream.Position = 0;
-    }
 
-    public void EndFile()
-    {
-        AddRels();
-        AddContentTypesXml();
-        AddDocPropsAppXml();
-        AddDocPropsCoreXml();
-        AddWorkbookXml();
-        AddStylesXml();
-        AddSharedStringsXml();
-        AddWorkbookXmlRels();
-
-        archive.Dispose();
-        stream.Dispose();
+        return stream;
     }
 
     public int GetOrCreateNumberFormat(string format)

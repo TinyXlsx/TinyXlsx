@@ -1,7 +1,6 @@
 ﻿using TinyXlsx;
 
 using var workbook = new Workbook();
-var stream = workbook.BeginStream();
 var worksheet = workbook.BeginSheet();
 
 for (var i = 0; i < 10_000; i++)
@@ -17,14 +16,16 @@ for (var i = 0; i < 10_000; i++)
     worksheet.WriteCellValue(7, 123.456, "#,##0.00 [$USD]");
     worksheet.EndRow();
 }
+worksheet.BeginRow(9999);
+worksheet.EndRow();
 workbook.EndSheet();
-workbook.EndStream();
+var stream = workbook.Close();
 
 
-//using var fileStream = File.Create("smallest.xlsx");
-//stream.CopyTo(fileStream);
-//await fileStream.FlushAsync();
-//fileStream.Close();
+using var fileStream = File.Create("smallest.xlsx");
+stream.CopyTo(fileStream);
+await fileStream.FlushAsync();
+fileStream.Close();
 
 //Console.WriteLine(System.Diagnostics.Process.GetCurrentProcess().PrivateMemorySize64);
 

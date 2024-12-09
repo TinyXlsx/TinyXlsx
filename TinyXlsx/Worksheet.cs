@@ -4,13 +4,15 @@ public class Worksheet
 {
     private readonly Stream stream;
     private readonly Workbook workbook;
-    private int? rowIndex;
+    private int? lastWrittenRowIndex;
+    private int? lastWrittenColumnIndex;
+    private int? internalRowIndex;
 
-    public int Id { get; }
+    internal int Id { get; }
 
-    public string Name { get; }
+    internal string Name { get; }
 
-    public string RelationshipId { get; }
+    internal string RelationshipId { get; }
 
     public Worksheet(
         Workbook workbook,
@@ -61,36 +63,85 @@ public class Worksheet
 
     public void BeginRow(int rowIndex)
     {
-        this.rowIndex = rowIndex + 1;
+        VerifyCanBeginRow(rowIndex);
+
+        internalRowIndex = rowIndex + 1;
+        lastWrittenRowIndex = rowIndex;
 
         Buffer.Append(stream, "<row r=\"");
-        Buffer.Append(stream, this.rowIndex.Value);
+        Buffer.Append(stream, internalRowIndex.Value);
         Buffer.Append(stream, "\">");
     }
 
-    private void VerifyRowIsOpen()
+    public void BeginRow()
     {
-        if (rowIndex == null)
+        BeginRow((lastWrittenRowIndex ?? 0) + 1);
+    }
+
+    private void VerifyCanBeginRow(int rowIndex)
+    {
+        if (internalRowIndex != null)
+        {
+            throw new InvalidOperationException($"A new row cannot be started until the previous row was closed with {nameof(EndRow)}.");
+        }
+
+        if (rowIndex <= lastWrittenRowIndex)
+        {
+            throw new InvalidOperationException($"A row with an index equal to or higher than {rowIndex} was already written to.");
+        }
+    }
+
+    private void VerifyCanEndRow()
+    {
+        if (internalRowIndex == null)
+        {
+            throw new InvalidOperationException($"A row cannot be closed before it was opened with {nameof(BeginRow)}.");
+        }
+    }
+
+    private void VerifyCanWriteCellValue(int columnIndex)
+    {
+        if (internalRowIndex == null)
         {
             throw new InvalidOperationException($"A cell value can only be written after creating a row with {nameof(BeginRow)}.");
+        }
+
+        if (columnIndex <= lastWrittenColumnIndex)
+        {
+            throw new InvalidOperationException($"A cell with an index equal to or higher than {columnIndex} was already written to.");
         }
     }
 
     public void EndRow()
     {
+        VerifyCanEndRow();
+
         Buffer.Append(stream, "</row>");
-        rowIndex = null;
+        internalRowIndex = null;
+        lastWrittenColumnIndex = null;
+    }
+
+    public void WriteCellValue(double value)
+    {
+        WriteCellValue((lastWrittenColumnIndex ?? 0) + 1, value);
+    }
+
+    public void WriteCellValue(
+        double value,
+        string format)
+    {
+        WriteCellValue((lastWrittenColumnIndex ?? 0) + 1, value, format);
     }
 
     public void WriteCellValue(
         int columnIndex,
         double value)
     {
-        VerifyRowIsOpen();
+        VerifyCanWriteCellValue(columnIndex);
 
         Buffer.Append(stream, "<c r=\"");
         Buffer.Append(stream, (char)('A' + columnIndex)); // TODO: handle more than 26 columns.
-        Buffer.Append(stream, rowIndex.Value);
+        Buffer.Append(stream, internalRowIndex!.Value);
         Buffer.Append(stream, "\" t=\"n\"><v>");
         Buffer.Append(stream, value);
         Buffer.Append(stream, "</v></c>");
@@ -101,19 +152,24 @@ public class Worksheet
         double value,
         string format)
     {
-        VerifyRowIsOpen();
+        VerifyCanWriteCellValue(columnIndex);
 
         var numberFormatIndex = workbook.GetOrCreateNumberFormat(format);
         numberFormatIndex -= 163; // TODO: perhaps not the cleanest way of doing this, necessary for now to match Excel's numbering.
 
         Buffer.Append(stream, "<c r=\"");
         Buffer.Append(stream, (char)('A' + columnIndex)); // TODO: handle more than 26 columns.
-        Buffer.Append(stream, rowIndex.Value);
+        Buffer.Append(stream, internalRowIndex!.Value);
         Buffer.Append(stream, "\" s=\"");
         Buffer.Append(stream, numberFormatIndex);
         Buffer.Append(stream, "\" t=\"n\"><v>");
         Buffer.Append(stream, value);
         Buffer.Append(stream, "</v></c>");
+    }
+
+    public void WriteCellValue(string value)
+    {
+        WriteCellValue((lastWrittenColumnIndex ?? 0) + 1, value);
     }
 
     public void WriteCellValue(
@@ -122,14 +178,26 @@ public class Worksheet
     {
         if (string.IsNullOrEmpty(value)) return;
 
-        VerifyRowIsOpen();
+        VerifyCanWriteCellValue(columnIndex);
 
         Buffer.Append(stream, "<c r=\"");
         Buffer.Append(stream, (char)('A' + columnIndex)); // TODO: handle more than 26 columns.
-        Buffer.Append(stream, rowIndex.Value);
+        Buffer.Append(stream, internalRowIndex!.Value);
         Buffer.Append(stream, "\" t=\"inlineStr\"><is><t>");
         Buffer.Append(stream, value);
         Buffer.Append(stream, "</t></is></c>");
+    }
+
+    public void WriteCellValue(DateTime value)
+    {
+        WriteCellValue((lastWrittenColumnIndex ?? 0) + 1, value);
+    }
+
+    public void WriteCellValue(
+        DateTime value,
+        string format)
+    {
+        WriteCellValue((lastWrittenColumnIndex ?? 0) + 1, value, format);
     }
 
     public void WriteCellValue(
@@ -147,7 +215,7 @@ public class Worksheet
        DateTime value,
        string format)
     {
-        VerifyRowIsOpen();
+        VerifyCanWriteCellValue(columnIndex);
 
         var daysSinceBaseDate = (value - Constants.MinimumDate).TotalDays;
 
@@ -161,7 +229,7 @@ public class Worksheet
 
         Buffer.Append(stream, "<c r=\"");
         Buffer.Append(stream, (char)('A' + columnIndex)); // TODO: handle more than 26 columns.
-        Buffer.Append(stream, rowIndex.Value);
+        Buffer.Append(stream, internalRowIndex!.Value);
         Buffer.Append(stream, "\" s=\"");
         Buffer.Append(stream, numberFormatIndex);
         Buffer.Append(stream, "\" t=\"n\"><v>");
