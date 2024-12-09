@@ -4,22 +4,26 @@ using System.Text;
 
 namespace TinyXlsx;
 
-public class Buffer : IDisposable
+public static class Buffer
 {
-    private readonly byte[] buffer;
-    private readonly Encoder encoder;
-    public int bytesWritten;
-    private bool disposedValue;
-    private readonly Stream stream;
+    private static readonly byte[] buffer;
+    private static readonly Encoder encoder;
+    public static int bytesWritten;
 
-    public Buffer(Stream stream)
+    static Buffer()
     {
         buffer = ArrayPool<byte>.Shared.Rent(1024 * 2);
         encoder = Encoding.UTF8.GetEncoder();
-        this.stream = stream;
     }
 
-    public void Append(ReadOnlySpan<char> text)
+    public static void Return()
+    {
+        ArrayPool<byte>.Shared.Return(buffer);
+    }
+
+    public static void Append(
+        Stream stream,
+        ReadOnlySpan<char> text)
     {
         while (text.Length > 0)
         {
@@ -27,7 +31,7 @@ public class Buffer : IDisposable
 
             bytesWritten += bytesUsed;
 
-            if (bytesWritten + 4 > buffer.Length) Commit();
+            if (bytesWritten + 4 > buffer.Length) Commit(stream);
 
             if (isCompleted) return;
 
@@ -35,50 +39,37 @@ public class Buffer : IDisposable
         }
     }
 
-    public void Append(char character)
+    public static void Append(
+        Stream stream,
+        char character)
     {
         var singleChar = (Span<char>)[character];
-        Append(singleChar);
+        Append(stream, singleChar);
     }
 
-    public void Append(double value)
+    public static void Append(
+        Stream stream,
+        double value)
     {
-        if (bytesWritten + Constants.MaximumDoubleLength > buffer.Length) Commit();
+        if (bytesWritten + Constants.MaximumDoubleLength > buffer.Length) Commit(stream);
 
         value.TryFormat(buffer.AsSpan(bytesWritten), out var written, provider: CultureInfo.InvariantCulture);
         bytesWritten += written;
     }
 
-    public void Append(int value)
+    public static void Append(
+        Stream stream,
+        int value)
     {
-        if (bytesWritten + Constants.MaximumIntegerLength > buffer.Length) Commit();
+        if (bytesWritten + Constants.MaximumIntegerLength > buffer.Length) Commit(stream);
 
         value.TryFormat(buffer.AsSpan(bytesWritten), out var written, provider: CultureInfo.InvariantCulture);
         bytesWritten += written;
     }
 
-    public void Commit()
+    public static void Commit(Stream stream)
     {
         stream.Write(buffer, 0, bytesWritten);
         bytesWritten = 0;
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!disposedValue)
-        {
-            if (disposing)
-            {
-                ArrayPool<byte>.Shared.Return(buffer);
-            }
-
-            disposedValue = true;
-        }
-    }
-
-    public void Dispose()
-    {
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
     }
 }

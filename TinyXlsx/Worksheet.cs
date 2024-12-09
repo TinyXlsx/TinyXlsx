@@ -2,7 +2,6 @@
 
 public class Worksheet
 {
-    private readonly Buffer buffer;
     private readonly Stream stream;
     private readonly Workbook workbook;
     private int? rowIndex;
@@ -20,7 +19,6 @@ public class Worksheet
         string name,
         string relationshipId)
     {
-        buffer = new Buffer(stream);
         this.stream = stream;
         this.workbook = workbook;
         Id = id;
@@ -30,7 +28,7 @@ public class Worksheet
 
     internal void BeginSheet()
     {
-        buffer.Append("""
+        Buffer.Append(stream, """
             <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
             <worksheet
                 xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"
@@ -52,12 +50,11 @@ public class Worksheet
 
     internal void EndSheet()
     {
-        buffer.Append("""
+        Buffer.Append(stream, """
                 </sheetData>
                 <pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/></worksheet>
             """);
-        buffer.Commit();
-        buffer.Dispose();
+        Buffer.Commit(stream);
         stream.Flush();
         stream.Close();
     }
@@ -66,9 +63,9 @@ public class Worksheet
     {
         this.rowIndex = rowIndex + 1;
 
-        buffer.Append("<row r=\"");
-        buffer.Append(this.rowIndex.Value);
-        buffer.Append("\">");
+        Buffer.Append(stream, "<row r=\"");
+        Buffer.Append(stream, this.rowIndex.Value);
+        Buffer.Append(stream, "\">");
     }
 
     private void VerifyRowIsOpen()
@@ -81,7 +78,7 @@ public class Worksheet
 
     public void EndRow()
     {
-        buffer.Append("</row>");
+        Buffer.Append(stream, "</row>");
         rowIndex = null;
     }
 
@@ -91,12 +88,12 @@ public class Worksheet
     {
         VerifyRowIsOpen();
 
-        buffer.Append("<c r=\"");
-        buffer.Append((char)('A' + columnIndex)); // TODO: handle more than 26 columns.
-        buffer.Append(rowIndex.Value);
-        buffer.Append("\" t=\"n\"><v>");
-        buffer.Append(value);
-        buffer.Append("</v></c>");
+        Buffer.Append(stream, "<c r=\"");
+        Buffer.Append(stream, (char)('A' + columnIndex)); // TODO: handle more than 26 columns.
+        Buffer.Append(stream, rowIndex.Value);
+        Buffer.Append(stream, "\" t=\"n\"><v>");
+        Buffer.Append(stream, value);
+        Buffer.Append(stream, "</v></c>");
     }
 
     public void WriteCellValue(
@@ -109,14 +106,14 @@ public class Worksheet
         var numberFormatIndex = workbook.GetOrCreateNumberFormat(format);
         numberFormatIndex -= 163; // TODO: perhaps not the cleanest way of doing this, necessary for now to match Excel's numbering.
 
-        buffer.Append("<c r=\"");
-        buffer.Append((char)('A' + columnIndex)); // TODO: handle more than 26 columns.
-        buffer.Append(rowIndex.Value);
-        buffer.Append("\" s=\"");
-        buffer.Append(numberFormatIndex);
-        buffer.Append("\" t=\"n\"><v>");
-        buffer.Append(value);
-        buffer.Append("</v></c>");
+        Buffer.Append(stream, "<c r=\"");
+        Buffer.Append(stream, (char)('A' + columnIndex)); // TODO: handle more than 26 columns.
+        Buffer.Append(stream, rowIndex.Value);
+        Buffer.Append(stream, "\" s=\"");
+        Buffer.Append(stream, numberFormatIndex);
+        Buffer.Append(stream, "\" t=\"n\"><v>");
+        Buffer.Append(stream, value);
+        Buffer.Append(stream, "</v></c>");
     }
 
     public void WriteCellValue(
@@ -127,12 +124,12 @@ public class Worksheet
 
         VerifyRowIsOpen();
 
-        buffer.Append("<c r=\"");
-        buffer.Append((char)('A' + columnIndex)); // TODO: handle more than 26 columns.
-        buffer.Append(rowIndex.Value);
-        buffer.Append("\" t=\"inlineStr\"><is><t>");
-        buffer.Append(value);
-        buffer.Append("</t></is></c>");
+        Buffer.Append(stream, "<c r=\"");
+        Buffer.Append(stream, (char)('A' + columnIndex)); // TODO: handle more than 26 columns.
+        Buffer.Append(stream, rowIndex.Value);
+        Buffer.Append(stream, "\" t=\"inlineStr\"><is><t>");
+        Buffer.Append(stream, value);
+        Buffer.Append(stream, "</t></is></c>");
     }
 
     public void WriteCellValue(
@@ -162,13 +159,13 @@ public class Worksheet
         var numberFormatIndex = workbook.GetOrCreateNumberFormat(format);
         numberFormatIndex -= 163; // TODO: perhaps not the cleanest way of doing this, necessary for now to match Excel's numbering.
 
-        buffer.Append("<c r=\"");
-        buffer.Append((char)('A' + columnIndex)); // TODO: handle more than 26 columns.
-        buffer.Append(rowIndex.Value);
-        buffer.Append("\" s=\"");
-        buffer.Append(numberFormatIndex);
-        buffer.Append("\" t=\"n\"><v>");
-        buffer.Append(daysSinceBaseDate);
-        buffer.Append("</v></c>");
+        Buffer.Append(stream, "<c r=\"");
+        Buffer.Append(stream, (char)('A' + columnIndex)); // TODO: handle more than 26 columns.
+        Buffer.Append(stream, rowIndex.Value);
+        Buffer.Append(stream, "\" s=\"");
+        Buffer.Append(stream, numberFormatIndex);
+        Buffer.Append(stream, "\" t=\"n\"><v>");
+        Buffer.Append(stream, daysSinceBaseDate);
+        Buffer.Append(stream, "</v></c>");
     }
 }

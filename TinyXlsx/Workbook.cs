@@ -77,9 +77,8 @@ public class Workbook : IDisposable
     {
         var entry = archive.CreateEntry("_rels/.rels", compressionLevel);
         using var entryStream = entry.Open();
-        using var buffer = new Buffer(entryStream);
 
-        buffer.Append("""
+        Buffer.Append(entryStream, """
         <?xml version="1.0" encoding="utf-8"?>
         <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
             <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml" />
@@ -87,16 +86,15 @@ public class Workbook : IDisposable
             <Relationship Id="rId4" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml" />
         </Relationships>
         """);
-        buffer.Commit();
+        Buffer.Commit(entryStream);
     }
 
     private void AddDocPropsAppXml()
     {
         var entry = archive.CreateEntry("docProps/app.xml", compressionLevel);
         using var entryStream = entry.Open();
-        using var buffer = new Buffer(entryStream);
 
-        buffer.Append("""
+        Buffer.Append(entryStream, """
         <?xml version="1.0" encoding="utf-8"?>
         <Properties xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes" xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties">
             <ScaleCrop>false</ScaleCrop>
@@ -107,16 +105,15 @@ public class Workbook : IDisposable
             <DocSecurity>0</DocSecurity>
         </Properties>
         """);
-        buffer.Commit();
+        Buffer.Commit(entryStream);
     }
 
     private void AddDocPropsCoreXml()
     {
         var entry = archive.CreateEntry("docProps/core.xml", compressionLevel);
         using var entryStream = entry.Open();
-        using var buffer = new Buffer(entryStream);
 
-        buffer.Append("""
+        Buffer.Append(entryStream, """
         <?xml version="1.0" encoding="utf-8"?>
         <coreProperties
             xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties"
@@ -126,22 +123,21 @@ public class Workbook : IDisposable
             xmlns="http://schemas.openxmlformats.org/package/2006/metadata/core-properties">
             <dcterms:created xsi:type="dcterms:W3CDTF">
         """);
-        buffer.Append(DateTime.UtcNow.ToString("u"));
-        buffer.Append(""""
+        Buffer.Append(entryStream, DateTime.UtcNow.ToString("u"));
+        Buffer.Append(entryStream, """"
                 </dcterms:created>
                 <dc:creator></dc:creator>
             </coreProperties>
             """");
-        buffer.Commit();
+        Buffer.Commit(entryStream);
     }
 
     private void AddContentTypesXml()
     {
         var entry = archive.CreateEntry("[Content_Types].xml", compressionLevel);
         using var entryStream = entry.Open();
-        using var buffer = new Buffer(entryStream);
 
-        buffer.Append("""
+        Buffer.Append(entryStream, """
         <?xml version="1.0" encoding="utf-8"?>
         <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
             <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml" />
@@ -154,16 +150,15 @@ public class Workbook : IDisposable
             <Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml" />
         </Types>
         """);
-        buffer.Commit();
+        Buffer.Commit(entryStream);
     }
 
     private void AddStylesXml()
     {
         var entry = archive.CreateEntry("xl/styles.xml", compressionLevel);
         using var entryStream = entry.Open();
-        using var buffer = new Buffer(entryStream);
 
-        buffer.Append("""
+        Buffer.Append(entryStream, """
         <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
         <styleSheet
             xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"
@@ -175,18 +170,18 @@ public class Workbook : IDisposable
             <numFmts count="
         """);
 
-        buffer.Append(numberFormats.Count);
-        buffer.Append("\">");
+        Buffer.Append(entryStream, numberFormats.Count);
+        Buffer.Append(entryStream, "\">");
         foreach (var item in numberFormats)
         {
-            buffer.Append("<numFmt numFmtId=\"");
-            buffer.Append(item.Value);
-            buffer.Append("\" formatCode=\"");
-            buffer.Append(item.Key);
-            buffer.Append("\"/>");
+            Buffer.Append(entryStream, "<numFmt numFmtId=\"");
+            Buffer.Append(entryStream, item.Value);
+            Buffer.Append(entryStream, "\" formatCode=\"");
+            Buffer.Append(entryStream, item.Key);
+            Buffer.Append(entryStream, "\"/>");
         }
 
-        buffer.Append("""
+        Buffer.Append(entryStream, """
             </numFmts>
             <fonts count="1">
                 <font><sz val="11"/><color indexed="8"/><name val="Calibri"/><family val="2"/><scheme val="minor"/></font>
@@ -202,29 +197,28 @@ public class Workbook : IDisposable
             <cellXfs count="
         """);
 
-        buffer.Append(numberFormats.Count + 1);
-        buffer.Append("\"><xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/>");
+        Buffer.Append(entryStream, numberFormats.Count + 1);
+        Buffer.Append(entryStream, "\"><xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/>");
         foreach (var item in numberFormats)
         {
-            buffer.Append("<xf numFmtId=\"");
-            buffer.Append(item.Value);
-            buffer.Append("\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyNumberFormat=\"1\"/>");
+            Buffer.Append(entryStream, "<xf numFmtId=\"");
+            Buffer.Append(entryStream, item.Value);
+            Buffer.Append(entryStream, "\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyNumberFormat=\"1\"/>");
         }
 
-        buffer.Append("""
+        Buffer.Append(entryStream, """
             </cellXfs>
         </styleSheet>
         """);
-        buffer.Commit();
+        Buffer.Commit(entryStream);
     }
 
     private void AddWorkbookXmlRels()
     {
         var entry = archive.CreateEntry("xl/_rels/workbook.xml.rels", compressionLevel);
         using var entryStream = entry.Open();
-        using var buffer = new Buffer(entryStream);
 
-        buffer.Append("""
+        Buffer.Append(entryStream, """
         <?xml version="1.0" encoding="utf-8"?>
         <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
             <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings" Target="sharedStrings.xml" />
@@ -232,23 +226,22 @@ public class Workbook : IDisposable
             <Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml" />
         </Relationships>
         """);
-        buffer.Commit();
+        Buffer.Commit(entryStream);
     }
 
     private void AddSharedStringsXml()
     {
         var entry = archive.CreateEntry("xl/sharedStrings.xml", compressionLevel);
         using var entryStream = entry.Open();
-        using var buffer = new Buffer(entryStream);
 
-        buffer.Append("""
+        Buffer.Append(entryStream, """
         <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
         <sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="2" uniqueCount="2">
             <si><t xml:space="preserve"></t></si>
             <si><t xml:space="preserve">Number</t></si>
         </sst>
         """);
-        buffer.Commit();
+        Buffer.Commit(entryStream);
     }
 
     public Worksheet BeginSheet(
@@ -291,9 +284,8 @@ public class Workbook : IDisposable
     {
         var entry = archive.CreateEntry("xl/workbook.xml", compressionLevel);
         using var entryStream = entry.Open();
-        using var buffer = new Buffer(entryStream);
 
-        buffer.Append("""
+        Buffer.Append(entryStream, """
             <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
             <workbook
                 xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"
@@ -314,20 +306,20 @@ public class Workbook : IDisposable
 
         foreach (var worksheet in worksheets)
         {
-            buffer.Append("<sheet name=\"");
-            buffer.Append(worksheet.Name);
-            buffer.Append("\" sheetId=\"");
-            buffer.Append(worksheet.Id);
-            buffer.Append("\" r:id=\"");
-            buffer.Append(worksheet.RelationshipId);
-            buffer.Append("\"></sheet>");
+            Buffer.Append(entryStream, "<sheet name=\"");
+            Buffer.Append(entryStream, worksheet.Name);
+            Buffer.Append(entryStream, "\" sheetId=\"");
+            Buffer.Append(entryStream, worksheet.Id);
+            Buffer.Append(entryStream, "\" r:id=\"");
+            Buffer.Append(entryStream, worksheet.RelationshipId);
+            Buffer.Append(entryStream, "\"></sheet>");
         }
 
-        buffer.Append("""
+        Buffer.Append(entryStream, """
                 </sheets>
             </workbook>
             """);
-        buffer.Commit();
+        Buffer.Commit(entryStream);
     }
 
     protected virtual void Dispose(bool disposing)
