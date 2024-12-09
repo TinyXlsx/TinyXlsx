@@ -3,6 +3,8 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml;
 
+namespace Benchmarks;
+
 public partial class Benchmarks
 {
     [Benchmark]

@@ -16,8 +16,6 @@ for (var i = 0; i < 10_000; i++)
     worksheet.WriteCellValue(7, 123.456, "#,##0.00 [$USD]");
     worksheet.EndRow();
 }
-worksheet.BeginRow(9999);
-worksheet.EndRow();
 workbook.EndSheet();
 var stream = workbook.Close();
 

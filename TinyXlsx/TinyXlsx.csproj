@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Description>A lightweight and efficient library designed for writing Excel files in the XLSX format.</Description>
   </PropertyGroup>
 
 </Project>

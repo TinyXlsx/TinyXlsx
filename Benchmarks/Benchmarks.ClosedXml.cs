@@ -1,6 +1,8 @@
 ﻿using BenchmarkDotNet.Attributes;
 using ClosedXML.Excel;
 
+namespace Benchmarks;
+
 public partial class Benchmarks
 {
     [Benchmark]

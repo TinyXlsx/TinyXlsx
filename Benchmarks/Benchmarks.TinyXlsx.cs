@@ -1,6 +1,8 @@
 ﻿using BenchmarkDotNet.Attributes;
 using TinyXlsx;
 
+namespace Benchmarks;
+
 public partial class Benchmarks
 {
     [Benchmark]

@@ -1,6 +1,8 @@
 ﻿using BenchmarkDotNet.Attributes;
 using NPOI.XSSF.Streaming;
 
+namespace Benchmarks;
+
 public partial class Benchmarks
 {
     [Benchmark]

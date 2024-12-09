@@ -23,24 +23,23 @@ Reading not supported yet.
 using TinyXlsx;
 
 using var workbook = new Workbook();
-var memoryStream = await workbook.BeginStreamAsync();
-using var worksheet = await workbook.BeginSheetAsync();
+var worksheet = workbook.BeginSheet();
 
-for (var i = 0; i < 10; i++)
+for (var i = 0; i < 10_000; i++)
 {
-    await worksheet.BeginRowAsync(i);
-    await worksheet.WriteCellValueAsync(0, 123.456);
-    await worksheet.WriteCellValueAsync(1, DateTime.Now);
-    await worksheet.WriteCellValueAsync(2, "Text");
-    await worksheet.WriteCellValueAsync(3, 123.456, "0.00");
-    await worksheet.WriteCellValueAsync(4, 123.456, "0.00%");
-    await worksheet.WriteCellValueAsync(5, 123.456, "0.00E+00");
-    await worksheet.WriteCellValueAsync(6, 123.456, "$#,##0.00");
-    await worksheet.WriteCellValueAsync(7, 123.456, "#,##0.00 [$USD]");
-    await worksheet.EndRowAsync();
+    worksheet.BeginRow();
+    worksheet.WriteCellValue(123.456);
+    worksheet.WriteCellValue(DateTime.Now);
+    worksheet.WriteCellValue("Text");
+    worksheet.WriteCellValue(123.456, "0.00");
+    worksheet.WriteCellValue(123.456, "0.00%");
+    worksheet.WriteCellValue(123.456, "0.00E+00");
+    worksheet.WriteCellValue(123.456, "$#,##0.00");
+    worksheet.WriteCellValue(123.456, "#,##0.00 [$USD]");
+    worksheet.EndRow();
 }
-await workbook.EndSheetAsync();
-await workbook.EndStreamAsync();
+workbook.EndSheet();
+var stream = workbook.Close();
 ```
 
 ## Writing to a `FileStream`
@@ -48,25 +47,24 @@ await workbook.EndStreamAsync();
 ```csharp
 using TinyXlsx;
 
-using var workbook = new Workbook();
-await workbook.BeginFileAsync("fileName.xlsx");
-using var worksheet = await workbook.BeginSheetAsync();
+using var workbook = new Workbook("fileName.xlsx");
+var worksheet = workbook.BeginSheet();
 
-for (var i = 0; i < 10; i++)
+for (var i = 0; i < 10_000; i++)
 {
-    await worksheet.BeginRowAsync(i);
-    await worksheet.WriteCellValueAsync(0, 123.456);
-    await worksheet.WriteCellValueAsync(1, DateTime.Now);
-    await worksheet.WriteCellValueAsync(2, "Text");
-    await worksheet.WriteCellValueAsync(3, 123.456, "0.00");
-    await worksheet.WriteCellValueAsync(4, 123.456, "0.00%");
-    await worksheet.WriteCellValueAsync(5, 123.456, "0.00E+00");
-    await worksheet.WriteCellValueAsync(6, 123.456, "$#,##0.00");
-    await worksheet.WriteCellValueAsync(7, 123.456, "#,##0.00 [$USD]");
-    await worksheet.EndRowAsync();
+    worksheet.BeginRow(i);
+    worksheet.WriteCellValue(0, 123.456);
+    worksheet.WriteCellValue(1, DateTime.Now);
+    worksheet.WriteCellValue(2, "Text");
+    worksheet.WriteCellValue(3, 123.456, "0.00");
+    worksheet.WriteCellValue(4, 123.456, "0.00%");
+    worksheet.WriteCellValue(5, 123.456, "0.00E+00");
+    worksheet.WriteCellValue(6, 123.456, "$#,##0.00");
+    worksheet.WriteCellValue(7, 123.456, "#,##0.00 [$USD]");
+    worksheet.EndRow();
 }
-await workbook.EndSheetAsync();
-await workbook.EndFileAsync();
+workbook.EndSheet();
+workbook.Close();
 ```
 # Benchmarks
 | Method    | Records | Mean      | Error    | StdDev   | Gen0      | Gen1      | Gen2      | Allocated |

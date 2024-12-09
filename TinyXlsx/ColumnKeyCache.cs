@@ -2,7 +2,7 @@
 
 internal static class ColumnKeyCache
 {
-    private static readonly IDictionary<int, string> cache;
+    private static readonly Dictionary<int, string> cache;
 
     static ColumnKeyCache()
     {
