@@ -30,6 +30,7 @@ public class Worksheet
 
     internal void BeginSheet()
     {
+        // Intentionally leaving <dimension /> empty as stream does not support seeking.
         Buffer.Append(stream, """
             <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
             <worksheet
@@ -41,7 +42,6 @@ public class Worksheet
                 xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision"
                 xmlns:xr2="http://schemas.microsoft.com/office/spreadsheetml/2015/revision2"
                 xmlns:xr3="http://schemas.microsoft.com/office/spreadsheetml/2016/revision3">
-                <dimension ref="A1:B1"/>
                 <sheetViews>
                     <sheetView tabSelected="1" showRuler="1" showOutlineSymbols="1" defaultGridColor="1" colorId="64" zoomScale="100" workbookViewId="0"></sheetView>
                 </sheetViews>
@@ -175,13 +175,12 @@ public class Worksheet
         VerifyCanWriteCellValue(columnIndex);
 
         var numberFormatIndex = workbook.GetOrCreateNumberFormat(format);
-        numberFormatIndex -= 163; // TODO: perhaps not the cleanest way of doing this, necessary for now to match Excel's numbering.
 
         Buffer.Append(stream, "<c r=\"");
         Buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
         Buffer.Append(stream, internalRowIndex!.Value);
         Buffer.Append(stream, "\" s=\"");
-        Buffer.Append(stream, numberFormatIndex);
+        Buffer.Append(stream, numberFormatIndex.ZeroBasedIndex);
         Buffer.Append(stream, "\" t=\"n\"><v>");
         Buffer.Append(stream, value);
         Buffer.Append(stream, "</v></c>");
@@ -245,13 +244,12 @@ public class Worksheet
         }
 
         var numberFormatIndex = workbook.GetOrCreateNumberFormat(format);
-        numberFormatIndex -= 163; // TODO: perhaps not the cleanest way of doing this, necessary for now to match Excel's numbering.
 
         Buffer.Append(stream, "<c r=\"");
         Buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
         Buffer.Append(stream, internalRowIndex!.Value);
         Buffer.Append(stream, "\" s=\"");
-        Buffer.Append(stream, numberFormatIndex);
+        Buffer.Append(stream, numberFormatIndex.ZeroBasedIndex);
         Buffer.Append(stream, "\" t=\"n\"><v>");
         Buffer.Append(stream, daysSinceBaseDate);
         Buffer.Append(stream, "</v></c>");
