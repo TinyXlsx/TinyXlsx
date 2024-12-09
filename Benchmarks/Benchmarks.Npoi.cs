@@ -24,7 +24,7 @@ public partial class Benchmarks
         var currencyStyle2 = workbook.CreateCellStyle();
         currencyStyle2.DataFormat = dataFormat.GetFormat("$#,##0.00");
 
-        for (int i = 0; i < 10_000; i++)
+        for (int i = 0; i < Records; i++)
         {
             var row = sheet.CreateRow(i);
 

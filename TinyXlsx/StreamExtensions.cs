@@ -7,9 +7,10 @@ namespace TinyXlsx;
 internal static class StreamExtensions
 {
     private static readonly byte[] buffer = ArrayPool<byte>.Shared.Rent(2048);
+
     internal static void BufferPooledWrite(
-    this Stream stream,
-    string text)
+        this Stream stream,
+        string text)
     {
         var bytesWritten = Encoding.UTF8.GetBytes(text, buffer);
         stream.Write(buffer, 0, bytesWritten);

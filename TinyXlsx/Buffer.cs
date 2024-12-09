@@ -4,43 +4,83 @@ using System.Text;
 
 namespace TinyXlsx;
 
-internal static class Buffer
+public class Buffer : IDisposable
 {
-    private static readonly byte[] buffer = ArrayPool<byte>.Shared.Rent(2048);
-    private static int bytesWritten;
+    private readonly byte[] buffer;
+    private readonly Encoder encoder;
+    public int bytesWritten;
+    private bool disposedValue;
+    private readonly Stream stream;
 
-    internal static void Append(string text)
+    public Buffer(Stream stream)
     {
-        var written = Encoding.UTF8.GetBytes(text, 0, text.Length, buffer, bytesWritten);
-        bytesWritten += written;
+        buffer = ArrayPool<byte>.Shared.Rent(1024 * 2);
+        encoder = Encoding.UTF8.GetEncoder();
+        this.stream = stream;
     }
 
-    internal static void Append(char character)
+    public void Append(ReadOnlySpan<char> text)
     {
+        while (text.Length > 0)
+        {
+            encoder.Convert(text, buffer.AsSpan(bytesWritten), false, out var charactersUsed, out var bytesUsed, out var isCompleted);
+
+            bytesWritten += bytesUsed;
+
+            if (bytesWritten + 4 > buffer.Length) Commit();
+
+            if (isCompleted) return;
+
+            text = text[charactersUsed..];
+        }
+    }
+
+    public void Append(char character)
+    {
+        if (bytesWritten >= buffer.Length) Commit();
+
         buffer[bytesWritten] = (byte)character;
         bytesWritten++;
     }
 
-    internal static void Append(double value)
+    public void Append(double value)
     {
+        if (bytesWritten + 64 > buffer.Length) Commit();
+
         value.TryFormat(buffer.AsSpan(bytesWritten), out var written, provider: CultureInfo.InvariantCulture);
         bytesWritten += written;
     }
 
-    internal static void Append(int value)
+    public void Append(int value)
     {
+        if (bytesWritten + 64 > buffer.Length) Commit();
+
         value.TryFormat(buffer.AsSpan(bytesWritten), out var written, provider: CultureInfo.InvariantCulture);
         bytesWritten += written;
     }
 
-    internal static void Commit(Stream stream)
+    public void Commit()
     {
         stream.Write(buffer, 0, bytesWritten);
         bytesWritten = 0;
     }
 
-    internal static byte[] Get()
+    protected virtual void Dispose(bool disposing)
     {
-        return buffer;
+        if (!disposedValue)
+        {
+            if (disposing)
+            {
+                ArrayPool<byte>.Shared.Return(buffer);
+            }
+
+            disposedValue = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }

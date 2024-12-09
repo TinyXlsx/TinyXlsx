@@ -20,68 +20,68 @@ public partial class Benchmarks
 
         var stylesPart = workbookPart.AddNewPart<WorkbookStylesPart>();
         stylesPart.Stylesheet = new Stylesheet(
-           new Fonts(new Font()),
-           new Fills(new Fill()),
-           new Borders(new Border()),
-           new CellFormats(
-               new CellFormat(),
-               new CellFormat
-               {
-                   NumberFormatId = 164,
-                   ApplyNumberFormat = true,
-               },
-               new CellFormat
-               {
-                   NumberFormatId = 165,
-                   ApplyNumberFormat = true,
-               },
-               new CellFormat
-               {
-                   NumberFormatId = 166,
-                   ApplyNumberFormat = true,
-               },
-               new CellFormat
-               {
-                   NumberFormatId = 167,
-                   ApplyNumberFormat = true,
-               },
-               new CellFormat
-               {
-                   NumberFormatId = 168,
-                   ApplyNumberFormat = true,
-               }
-           ),
-           new NumberingFormats(
-               new NumberingFormat
-               {
-                   NumberFormatId = 164,
-                   FormatCode = "0.00",
-               },
-               new NumberingFormat
-               {
-                   NumberFormatId = 165,
-                   FormatCode = "0.00%",
-               },
-               new NumberingFormat
-               {
-                   NumberFormatId = 166,
-                   FormatCode = "0.00E+00",
-               },
-               new NumberingFormat
-               {
-                   NumberFormatId = 167,
-                   FormatCode = "$#,##0.00",
-               },
-               new NumberingFormat
-               {
-                   NumberFormatId = 168,
-                   FormatCode = "#,##0.00 [$USD]",
-               }
-           )
-       );
+            new Fonts(new Font()),
+            new Fills(new Fill()),
+            new Borders(new Border()),
+            new CellFormats(
+                new CellFormat(),
+                new CellFormat
+                {
+                    NumberFormatId = 164,
+                    ApplyNumberFormat = true,
+                },
+                new CellFormat
+                {
+                    NumberFormatId = 165,
+                    ApplyNumberFormat = true,
+                },
+                new CellFormat
+                {
+                    NumberFormatId = 166,
+                    ApplyNumberFormat = true,
+                },
+                new CellFormat
+                {
+                    NumberFormatId = 167,
+                    ApplyNumberFormat = true,
+                },
+                new CellFormat
+                {
+                    NumberFormatId = 168,
+                    ApplyNumberFormat = true,
+                }
+            ),
+            new NumberingFormats(
+                new NumberingFormat
+                {
+                    NumberFormatId = 164,
+                    FormatCode = "0.00",
+                },
+                new NumberingFormat
+                {
+                    NumberFormatId = 165,
+                    FormatCode = "0.00%",
+                },
+                new NumberingFormat
+                {
+                    NumberFormatId = 166,
+                    FormatCode = "0.00E+00",
+                },
+                new NumberingFormat
+                {
+                    NumberFormatId = 167,
+                    FormatCode = "$#,##0.00",
+                },
+                new NumberingFormat
+                {
+                    NumberFormatId = 168,
+                    FormatCode = "#,##0.00 [$USD]",
+                }
+            )
+        );
         stylesPart.Stylesheet.Save();
 
-        for (var i = 0; i < 10_000; i++)
+        for (var i = 0; i < Records; i++)
         {
             var dataRow = new Row();
 

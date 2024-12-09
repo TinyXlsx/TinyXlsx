@@ -1,17 +1,16 @@
 ﻿using BenchmarkDotNet.Attributes;
 using TinyXlsx;
 
-[MemoryDiagnoser]
 public partial class Benchmarks
 {
     [Benchmark]
-    public async Task TinyXlsx()
+    public void TinyXlsx()
     {
         using var workbook = new Workbook();
         var stream = workbook.BeginStream();
         var worksheet = workbook.BeginSheet();
 
-        for (var i = 0; i < 10_000; i++)
+        for (var i = 0; i < Records; i++)
         {
             worksheet.BeginRow(i);
             worksheet.WriteCellValue(0, 123.456);

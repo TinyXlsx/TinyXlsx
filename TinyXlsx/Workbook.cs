@@ -24,7 +24,7 @@ public class Workbook : IDisposable
         archive = new ZipArchive(stream, ZipArchiveMode.Create, true);
     }
 
-    public Stream BeginStream(int capacity = 1_048_576)
+    public Stream BeginStream(int capacity = 1024 * 1024)
     {
         stream = new MemoryStream(capacity);
         archive = new ZipArchive(stream, ZipArchiveMode.Create, true);
