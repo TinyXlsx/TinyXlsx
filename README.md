@@ -51,38 +51,54 @@ var worksheet = workbook.BeginSheet();
 for (var i = 0; i < 10_000; i++)
 {
     worksheet.BeginRow(i);
-    worksheet.WriteCellValue(0, 123.456);
-    worksheet.WriteCellValue(1, DateTime.Now);
-    worksheet.WriteCellValue(2, "Text");
-    worksheet.WriteCellValue(3, 123.456, "0.00");
-    worksheet.WriteCellValue(4, 123.456, "0.00%");
-    worksheet.WriteCellValue(5, 123.456, "0.00E+00");
-    worksheet.WriteCellValue(6, 123.456, "$#,##0.00");
-    worksheet.WriteCellValue(7, 123.456, "#,##0.00 [$USD]");
+    worksheet.WriteCellValueAt(0, 123.456);
+    worksheet.WriteCellValueAt(1, DateTime.Now);
+    worksheet.WriteCellValueAt(2, "Text");
+    worksheet.WriteCellValueAt(3, 123.456, "0.00");
+    worksheet.WriteCellValueAt(4, 123.456, "0.00%");
+    worksheet.WriteCellValueAt(5, 123.456, "0.00E+00");
+    worksheet.WriteCellValueAt(6, 123.456, "$#,##0.00");
+    worksheet.WriteCellValueAt(7, 123.456, "#,##0.00 [$USD]");
 }
 workbook.Close();
 ```
+
+# Optimization
+For in-memory scenarios the default capacity is set to 64 KB. However, if the document size is known to be much larger in advance, it is recommended to set an initial capacity which more closely aligns with this size. An initial capacity can be given to the `Workbook` constructor. The default `MemoryStream` will automatically resize as data is written, but setting a capacity upfront reduces the overhead caused by repeated internal buffer expansions.
+
+```csharp
+using TinyXlsx;
+
+var initialCapacity = 1024 * 1024; // 1 MB.
+using var workbook = new Workbook(initialCapacity);
+var worksheet = workbook.BeginSheet();
+
+// Add data here...
+
+var stream = workbook.Close();
+```
+
 # Benchmarks
 100 records:
-| Method    | Mean            | Error         | StdDev        | Gen0        | Gen1        | Gen2       | Allocated      |
-|---------- |----------------:|--------------:|--------------:|------------:|------------:|-----------:|---------------:|
-| ClosedXML |      3,025.4 us |      16.90 us |      15.81 us |     78.1250 |           - |          - |     1360.38 KB |
-| NPOI      |      3,932.1 us |      77.64 us |     111.35 us |    125.0000 |     31.2500 |          - |     2117.36 KB |
-| OpenXML   |        880.6 us |       3.59 us |       3.00 us |     31.2500 |     15.6250 |          - |      621.33 KB |
-| TinyXlsx  |        720.3 us |       4.08 us |       3.82 us |    333.0078 |    333.0078 |   333.0078 |     1033.76 KB |
+| Method    | Mean            | Error         | StdDev       | Gen0        | Gen1        | Gen2       | Allocated      |
+|---------- |----------------:|--------------:|-------------:|------------:|------------:|-----------:|---------------:|
+| ClosedXML |      3,001.8 us |      17.30 us |     15.34 us |     78.1250 |           - |          - |     1360.37 KB |
+| NPOI      |      3,825.3 us |      65.89 us |     55.02 us |    125.0000 |     31.2500 |          - |     2117.53 KB |
+| OpenXML   |        871.9 us |       5.02 us |      4.69 us |     35.1563 |     19.5313 |          - |      621.33 KB |
+| TinyXlsx  |        645.8 us |       4.72 us |      4.41 us |      3.9063 |           - |          - |       73.60 KB |
 
 10,000 records:
-| Method    | Mean            | Error         | StdDev        | Gen0        | Gen1        | Gen2       | Allocated      |
-|---------- |----------------:|--------------:|--------------:|------------:|------------:|-----------:|---------------:|
-| ClosedXML |    222,782.9 us |   1,175.39 us |   1,041.96 us |   6000.0000 |   2000.0000 |  1000.0000 |    99994.04 KB |
-| NPOI      |     99,148.6 us |     869.82 us |     726.34 us |   3500.0000 |   1000.0000 |          - |    60048.81 KB |
-| OpenXML   |    140,493.0 us |   2,774.45 us |   3,407.28 us |   3333.3333 |   3000.0000 |  1000.0000 |    54245.13 KB |
-| TinyXlsx  |     55,932.6 us |     654.49 us |     612.21 us |    300.0000 |    300.0000 |   300.0000 |     1034.36 KB |
+| Method    | Mean      | Error    | StdDev   | Gen0      | Gen1      | Gen2      | Allocated   |
+|---------- |----------:|---------:|---------:|----------:|----------:|----------:|------------:|
+| ClosedXML | 220.82 ms | 1.297 ms | 1.213 ms | 6000.0000 | 2000.0000 | 1000.0000 | 99992.92 KB |
+| NPOI      | 100.73 ms | 1.397 ms | 1.166 ms | 3500.0000 | 1000.0000 |         - | 60048.23 KB |
+| OpenXML   | 141.68 ms | 2.465 ms | 2.058 ms | 3333.3333 | 3000.0000 | 1000.0000 | 54245.12 KB |
+| TinyXlsx  |  57.05 ms | 0.438 ms | 0.410 ms |  222.2222 |  222.2222 |  222.2222 |   970.52 KB |
 
 1,000,000 records:
-| Method    | Mean            | Error         | StdDev        | Gen0        | Gen1        | Gen2       | Allocated      |
-|---------- |----------------:|--------------:|--------------:|------------:|------------:|-----------:|---------------:|
-| ClosedXML | 26,812,815.0 us | 101,568.95 us |  90,038.23 us | 541000.0000 |  80000.0000 | 10000.0000 | 10329501.95 KB |
-| NPOI      |  9,782,638.5 us |  73,017.24 us |  64,727.88 us | 357000.0000 |  90000.0000 |  1000.0000 |  5886191.24 KB |
-| OpenXML   | 14,563,814.5 us | 184,663.48 us | 172,734.33 us | 263000.0000 | 262000.0000 |  8000.0000 |  4974719.98 KB |
-| TinyXlsx  |  5,555,489.6 us |  48,403.93 us |  45,277.06 us |   2000.0000 |   2000.0000 |  2000.0000 |     64551.7 KB |
+| Method    | Mean     | Error    | StdDev   | Gen0        | Gen1        | Gen2       | Allocated   |
+|---------- |---------:|---------:|---------:|------------:|------------:|-----------:|------------:|
+| ClosedXML | 26.922 s | 0.0738 s | 0.0691 s | 541000.0000 |  80000.0000 | 10000.0000 | 10087.41 MB |
+| NPOI      |  9.925 s | 0.0736 s | 0.0652 s | 357000.0000 |  90000.0000 |  1000.0000 |  5748.21 MB |
+| OpenXML   | 15.220 s | 0.2343 s | 0.2077 s | 263000.0000 | 262000.0000 |  8000.0000 |  4858.12 MB |
+| TinyXlsx  |  5.667 s | 0.0195 s | 0.0183 s |   2000.0000 |   2000.0000 |  2000.0000 |    63.98 MB |

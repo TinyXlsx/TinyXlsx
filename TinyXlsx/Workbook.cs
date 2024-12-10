@@ -37,7 +37,7 @@ public class Workbook : IDisposable
     /// <param name="capacity">The initial size of the internal array in bytes. Consider setting this to a higher value than the resulting file size.</param>
     /// <param name="compressionLevel">The level of compression to apply to the workbook.</param>
     public Workbook(
-        int capacity = 1024 * 1024,
+        int capacity = 1024 * 64,
         CompressionLevel compressionLevel = CompressionLevel.Optimal)
     {
         worksheets = [];
