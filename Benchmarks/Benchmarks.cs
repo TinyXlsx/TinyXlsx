@@ -5,7 +5,6 @@ namespace Benchmarks;
 [MemoryDiagnoser]
 public partial class Benchmarks
 {
-    //[Params(10, 1000, 100_000)]
-    [Params(10_000)]
+    [Params(100, 10_000, 1_000_000)]
     public int Records { get; set; }
 }
