@@ -2,6 +2,9 @@
 
 namespace TinyXlsx;
 
+/// <summary>
+/// Represents an in-memory workbook for creating an XLSX file.
+/// </summary>
 public class Workbook : IDisposable
 {
     private readonly Stream stream;
@@ -11,6 +14,11 @@ public class Workbook : IDisposable
     private readonly CompressionLevel compressionLevel;
     private bool disposedValue;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Workbook"/> class writing to a file.
+    /// </summary>
+    /// <param name="filePath">The relative or absolute path of the file.</param>
+    /// <param name="compressionLevel">The level of compression to apply to the workbook.</param>
     public Workbook(
         string filePath,
         CompressionLevel compressionLevel = CompressionLevel.Optimal)
@@ -23,6 +31,11 @@ public class Workbook : IDisposable
         archive = new ZipArchive(stream, ZipArchiveMode.Create, true);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Workbook"/> class writing to a <see cref="MemoryStream"/>.
+    /// </summary>
+    /// <param name="capacity">The initial size of the internal array in bytes. Consider setting this to a higher value than the resulting file size.</param>
+    /// <param name="compressionLevel">The level of compression to apply to the workbook.</param>
     public Workbook(
         int capacity = 1024 * 1024,
         CompressionLevel compressionLevel = CompressionLevel.Optimal)

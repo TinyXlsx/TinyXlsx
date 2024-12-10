@@ -1,5 +1,8 @@
 ﻿namespace TinyXlsx;
 
+/// <summary>
+/// Represents a worksheet within a <see cref="Workbook"/> for writing data to an XLSX file. 
+/// </summary>
 public class Worksheet
 {
     private readonly Stream stream;
@@ -161,11 +164,23 @@ public class Worksheet
         lastWrittenColumnIndex = null;
     }
 
+    /// <summary>
+    /// Writes a <see cref="double"/> value to the cell.
+    /// </summary>
+    /// <param name="value"></param>
     public void WriteCellValue(double value)
     {
         WriteCellValue((lastWrittenColumnIndex ?? 0) + 1, value);
     }
 
+    /// <summary>
+    /// Writes a <see cref="double"/> value to the cell.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="format"></param>
+    /// <remarks>
+    /// The specified format must be valid. Invalid formats may result in a repair prompt from the file viewer.
+    /// </remarks>
     public void WriteCellValue(
         double value,
         string format)
@@ -173,6 +188,11 @@ public class Worksheet
         WriteCellValue((lastWrittenColumnIndex ?? 0) + 1, value, format);
     }
 
+    /// <summary>
+    /// Writes a <see cref="double"/> value to the cell.
+    /// </summary>
+    /// <param name="columnIndex"></param>
+    /// <param name="value"></param>
     public void WriteCellValue(
         int columnIndex,
         double value)
@@ -188,12 +208,12 @@ public class Worksheet
     }
 
     /// <summary>
-    /// 
+    /// Writes a <see cref="double"/> value to the cell.
     /// </summary>
     /// <param name="columnIndex"></param>
     /// <param name="value"></param>
     /// <param name="format"></param>
-    /// /// <remarks>
+    /// <remarks>
     /// The specified format must be valid. Invalid formats may result in a repair prompt from the file viewer.
     /// </remarks>
     public void WriteCellValue(
@@ -215,11 +235,20 @@ public class Worksheet
         Buffer.Append(stream, "</v></c>");
     }
 
+    /// <summary>
+    /// Writes a <see cref="string"/> value to the cell.
+    /// </summary>
+    /// <param name="value"></param>
     public void WriteCellValue(string value)
     {
         WriteCellValue((lastWrittenColumnIndex ?? 0) + 1, value);
     }
 
+    /// <summary>
+    /// Writes a <see cref="string"/> value to the cell.
+    /// </summary>
+    /// <param name="columnIndex"></param>
+    /// <param name="value"></param>
     public void WriteCellValue(
        int columnIndex,
        string value)
@@ -236,11 +265,23 @@ public class Worksheet
         Buffer.Append(stream, "</t></is></c>");
     }
 
+    /// <summary>
+    /// Writes a <see cref="DateTime"/> value to the cell.
+    /// </summary>
+    /// <param name="value"></param>
     public void WriteCellValue(DateTime value)
     {
         WriteCellValue((lastWrittenColumnIndex ?? 0) + 1, value);
     }
 
+    /// <summary>
+    /// Writes a <see cref="DateTime"/> value to the cell.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="format"></param>
+    /// <remarks>
+    /// The specified format must be valid. Invalid formats may result in a repair prompt from the file viewer.
+    /// </remarks>
     public void WriteCellValue(
         DateTime value,
         string format)
@@ -248,6 +289,11 @@ public class Worksheet
         WriteCellValue((lastWrittenColumnIndex ?? 0) + 1, value, format);
     }
 
+    /// <summary>
+    /// Writes a <see cref="DateTime"/> value to the cell.
+    /// </summary>
+    /// <param name="columnIndex"></param>
+    /// <param name="value"></param>
     public void WriteCellValue(
        int columnIndex,
        DateTime value)
@@ -258,6 +304,16 @@ public class Worksheet
             "yyyy-MM-dd");
     }
 
+    /// <summary>
+    /// Writes a <see cref="DateTime"/> value to the cell.
+    /// </summary>
+    /// <param name="columnIndex"></param>
+    /// <param name="value"></param>
+    /// <param name="format"></param>
+    /// <exception cref="NotSupportedException">Thrown if the specified date is before 1990-01-01, which is unsupported by the XLSX format.</exception>
+    /// <remarks>
+    /// The specified format must be valid. Invalid formats may result in a repair prompt from the file viewer.
+    /// </remarks>
     public void WriteCellValue(
        int columnIndex,
        DateTime value,
