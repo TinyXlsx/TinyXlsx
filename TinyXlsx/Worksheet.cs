@@ -133,7 +133,7 @@ public class Worksheet
     /// <param name="value"></param>
     public void WriteCellValue(string value)
     {
-        WriteCellValue((lastWrittenColumnIndex ?? -1) + 1, value);
+        WriteCellValueAt((lastWrittenColumnIndex ?? -1) + 1, value);
     }
 
     /// <summary>
@@ -146,6 +146,10 @@ public class Worksheet
        string value)
     {
         if (string.IsNullOrEmpty(value)) return;
+        if (value.Length > Constants.MaximumCharactersPerCell)
+        {
+            throw new NotSupportedException($"The XLSX format does not support more than 32,767 characters in a cell.");
+        }
 
         VerifyCanWriteCellValue(columnIndex);
         lastWrittenColumnIndex = columnIndex;
