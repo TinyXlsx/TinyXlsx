@@ -8,7 +8,7 @@ public static class Buffer
 {
     private static readonly byte[] buffer;
     private static readonly Encoder encoder;
-    public static int bytesWritten;
+    private static int bytesWritten;
 
     static Buffer()
     {

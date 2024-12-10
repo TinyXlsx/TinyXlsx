@@ -140,10 +140,10 @@ public partial class Benchmarks
                 StyleIndex = 5,
             });
 
-            sheetData.Append(dataRow);
+            sheetData!.Append(dataRow);
         }
 
-        var sheets = document.WorkbookPart.Workbook.AppendChild(new Sheets());
+        var sheets = document.WorkbookPart!.Workbook.AppendChild(new Sheets());
         var sheet = new Sheet
         {
             Id = document.WorkbookPart.GetIdOfPart(worksheetPart),

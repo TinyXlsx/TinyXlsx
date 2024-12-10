@@ -27,7 +27,7 @@ internal static class ColumnKeyCache
             needOtherNewName = (needOtherNewName / 26) - 1;
         }
         
-        var keyAsString = new string(needNewName.Slice(i + 1, 3 - (i + 1)));
+        var keyAsString = new string(needNewName[(i + 1)..3]);
         cache[columnIndex] = keyAsString;
 
         return keyAsString;

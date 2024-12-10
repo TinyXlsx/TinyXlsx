@@ -223,13 +223,13 @@ public class Worksheet
     {
         VerifyCanWriteCellValue(columnIndex);
 
-        var numberFormatIndex = workbook.GetOrCreateNumberFormat(format);
+        var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
 
         Buffer.Append(stream, "<c r=\"");
         Buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
         Buffer.Append(stream, internalRowIndex!.Value);
         Buffer.Append(stream, "\" s=\"");
-        Buffer.Append(stream, numberFormatIndex.ZeroBasedIndex);
+        Buffer.Append(stream, zeroBasedIndex);
         Buffer.Append(stream, "\" t=\"n\"><v>");
         Buffer.Append(stream, value);
         Buffer.Append(stream, "</v></c>");
@@ -328,13 +328,13 @@ public class Worksheet
             throw new NotSupportedException("The XLSX format does not support dates before 1990-01-01. Please write the value as a string instead.");
         }
 
-        var numberFormatIndex = workbook.GetOrCreateNumberFormat(format);
+        var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
 
         Buffer.Append(stream, "<c r=\"");
         Buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
         Buffer.Append(stream, internalRowIndex!.Value);
         Buffer.Append(stream, "\" s=\"");
-        Buffer.Append(stream, numberFormatIndex.ZeroBasedIndex);
+        Buffer.Append(stream, zeroBasedIndex);
         Buffer.Append(stream, "\" t=\"n\"><v>");
         Buffer.Append(stream, daysSinceBaseDate);
         Buffer.Append(stream, "</v></c>");
