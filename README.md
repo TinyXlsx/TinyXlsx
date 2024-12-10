@@ -84,7 +84,7 @@ var stream = workbook.Close();
 ```
 
 # Benchmarks
-100 records:
+100 records, 8 columns:
 | Method    | Mean            | Error         | StdDev       | Gen0        | Gen1        | Gen2       | Allocated      |
 |---------- |----------------:|--------------:|-------------:|------------:|------------:|-----------:|---------------:|
 | ClosedXML |      3,001.8 us |      17.30 us |     15.34 us |     78.1250 |           - |          - |     1360.37 KB |
@@ -92,7 +92,7 @@ var stream = workbook.Close();
 | OpenXML   |        871.9 us |       5.02 us |      4.69 us |     35.1563 |     19.5313 |          - |      621.33 KB |
 | TinyXlsx  |        645.8 us |       4.72 us |      4.41 us |      3.9063 |           - |          - |       73.60 KB |
 
-10,000 records:
+10,000 records, 8 columns:
 | Method    | Mean      | Error    | StdDev   | Gen0      | Gen1      | Gen2      | Allocated   |
 |---------- |----------:|---------:|---------:|----------:|----------:|----------:|------------:|
 | ClosedXML | 220.82 ms | 1.297 ms | 1.213 ms | 6000.0000 | 2000.0000 | 1000.0000 | 99992.92 KB |
@@ -100,7 +100,7 @@ var stream = workbook.Close();
 | OpenXML   | 141.68 ms | 2.465 ms | 2.058 ms | 3333.3333 | 3000.0000 | 1000.0000 | 54245.12 KB |
 | TinyXlsx  |  57.05 ms | 0.438 ms | 0.410 ms |  222.2222 |  222.2222 |  222.2222 |   970.52 KB |
 
-1,000,000 records:
+1,000,000 records, 8 columns:
 | Method    | Mean     | Error    | StdDev   | Gen0        | Gen1        | Gen2       | Allocated   |
 |---------- |---------:|---------:|---------:|------------:|------------:|-----------:|------------:|
 | ClosedXML | 26.922 s | 0.0738 s | 0.0691 s | 541000.0000 |  80000.0000 | 10000.0000 | 10087.41 MB |
