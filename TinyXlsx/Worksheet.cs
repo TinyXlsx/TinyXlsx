@@ -51,7 +51,7 @@ public class Worksheet
     /// </summary>
     public void BeginRow()
     {
-        BeginRow((lastWrittenRowIndex ?? 0) + 1);
+        BeginRow((lastWrittenRowIndex ?? -1) + 1);
     }
 
     /// <summary>
@@ -60,7 +60,7 @@ public class Worksheet
     /// <param name="value"></param>
     public void WriteCellValue(double value)
     {
-        WriteCellValueAt((lastWrittenColumnIndex ?? 0) + 1, value);
+        WriteCellValueAt((lastWrittenColumnIndex ?? -1) + 1, value);
     }
 
     /// <summary>
@@ -75,7 +75,7 @@ public class Worksheet
         double value,
         string format)
     {
-        WriteCellValueAt((lastWrittenColumnIndex ?? 0) + 1, value, format);
+        WriteCellValueAt((lastWrittenColumnIndex ?? -1) + 1, value, format);
     }
 
     /// <summary>
@@ -88,6 +88,7 @@ public class Worksheet
         double value)
     {
         VerifyCanWriteCellValue(columnIndex);
+        lastWrittenColumnIndex = columnIndex;
 
         Buffer.Append(stream, "<c r=\"");
         Buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
@@ -112,6 +113,7 @@ public class Worksheet
         string format)
     {
         VerifyCanWriteCellValue(columnIndex);
+        lastWrittenColumnIndex = columnIndex;
 
         var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
 
@@ -131,7 +133,7 @@ public class Worksheet
     /// <param name="value"></param>
     public void WriteCellValue(string value)
     {
-        WriteCellValue((lastWrittenColumnIndex ?? 0) + 1, value);
+        WriteCellValue((lastWrittenColumnIndex ?? -1) + 1, value);
     }
 
     /// <summary>
@@ -146,6 +148,7 @@ public class Worksheet
         if (string.IsNullOrEmpty(value)) return;
 
         VerifyCanWriteCellValue(columnIndex);
+        lastWrittenColumnIndex = columnIndex;
 
         Buffer.Append(stream, "<c r=\"");
         Buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
@@ -161,7 +164,7 @@ public class Worksheet
     /// <param name="value"></param>
     public void WriteCellValue(DateTime value)
     {
-        WriteCellValueAt((lastWrittenColumnIndex ?? 0) + 1, value);
+        WriteCellValueAt((lastWrittenColumnIndex ?? -1) + 1, value);
     }
 
     /// <summary>
@@ -176,7 +179,7 @@ public class Worksheet
         DateTime value,
         string format)
     {
-        WriteCellValueAt((lastWrittenColumnIndex ?? 0) + 1, value, format);
+        WriteCellValueAt((lastWrittenColumnIndex ?? -1) + 1, value, format);
     }
 
     /// <summary>
@@ -210,6 +213,7 @@ public class Worksheet
        string format)
     {
         VerifyCanWriteCellValue(columnIndex);
+        lastWrittenColumnIndex = columnIndex;
 
         var daysSinceBaseDate = (value - Constants.MinimumDate).TotalDays;
 
