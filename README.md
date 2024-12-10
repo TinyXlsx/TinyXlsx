@@ -12,13 +12,24 @@ TinyXlsx focuses on simplicity, providing only the necessary functionality to pe
 - .NET 8.0
 
 # Features
-Reading not supported yet.
-
+Supported:
 1. Writing to a `MemoryStream` for in-memory processing.
 1. Writing to a `FileStream` to save the generated Excel file directly to disk.
-1. Flexible cell and row positioning.
+1. Precise cell and row positioning.
     1. By default, `BeginRow` automatically progresses to the next row, and `WriteCellValue` automatically progresses to the next column.
     1. An index can be specified using `BeginRowAt` and `WriteCellValueAt` if a row or column must be skipped.
+
+Not supported yet:
+1. Reading an existing document.
+1. Editing an existing document.
+1. Formulas.
+1. Images.
+1. Charts.
+1. Cell merging.
+1. Rich text.
+1. Conditional formatting.
+1. Comments.
+1. Hyperlinks.
 
 ## Writing to a `MemoryStream`
 
@@ -66,6 +77,23 @@ for (var i = 0; i < 10_000; i++)
     worksheet.WriteCellValue(123.456, "#,##0.00 [$USD]");
 }
 workbook.Close();
+```
+
+## Precise cell and row positioning
+By default, `BeginRow` automatically progresses to the next row, and `WriteCellValue` automatically progresses to the next column. An index can be specified using `BeginRowAt` and `WriteCellValueAt` if a row or column must be skipped. Going backwards is not supported due to the streaming nature of the library.
+
+```csharp
+using TinyXlsx;
+
+using var workbook = new Workbook();
+var worksheet = workbook.BeginSheet();
+
+worksheet.BeginRowAt(10);
+worksheet.WriteCellValueAt(5, 123.456);
+worksheet.BeginRow(); // Begins row 11.
+worksheet.WriteCellValue(DateTime.Now); // Writes in first cell on row 11.
+
+var stream = workbook.Close();
 ```
 
 # Optimization
