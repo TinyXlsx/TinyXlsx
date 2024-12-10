@@ -138,7 +138,14 @@ public class Workbook : IDisposable
         AddWorkbookXmlRels();
 
         archive.Dispose();
-        stream.Position = 0;
+        if (stream is FileStream)
+        {
+            stream.Dispose();
+        }
+        else
+        {
+            stream.Position = 0;
+        }
 
         return stream;
     }
@@ -169,6 +176,7 @@ public class Workbook : IDisposable
         if (disposing)
         {
             archive.Dispose();
+            stream.Dispose();
         }
 
         disposedValue = true;

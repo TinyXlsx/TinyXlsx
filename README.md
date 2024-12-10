@@ -32,6 +32,7 @@ Not supported yet:
 1. Hyperlinks.
 
 ## Writing to a `MemoryStream`
+By default the `Workbook` writes to a `MemoryStream`.
 
 ```csharp
 using TinyXlsx;
@@ -56,6 +57,7 @@ var stream = workbook.Close();
 ```
 
 ## Writing to a `FileStream`
+By supplying a `string` parameter to the `Workbook` constructor, the `Workbook` writes to a file.
 
 ```csharp
 using TinyXlsx;
