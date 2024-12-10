@@ -422,5 +422,10 @@ public class Workbook : IDisposable
         {
             throw new InvalidOperationException("The XLSX format does not support an empty worksheet name.");
         }
+
+        if (worksheets.Any(worksheet => worksheet.Name == name))
+        {
+            throw new InvalidOperationException($"A worksheet with name {name} was already added to the workbook.");
+        }
     }
 }
