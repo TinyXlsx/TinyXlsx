@@ -51,14 +51,14 @@ var worksheet = workbook.BeginSheet();
 for (var i = 0; i < 10_000; i++)
 {
     worksheet.BeginRow(i);
-    worksheet.WriteCellValueAt(0, 123.456);
-    worksheet.WriteCellValueAt(1, DateTime.Now);
-    worksheet.WriteCellValueAt(2, "Text");
-    worksheet.WriteCellValueAt(3, 123.456, "0.00");
-    worksheet.WriteCellValueAt(4, 123.456, "0.00%");
-    worksheet.WriteCellValueAt(5, 123.456, "0.00E+00");
-    worksheet.WriteCellValueAt(6, 123.456, "$#,##0.00");
-    worksheet.WriteCellValueAt(7, 123.456, "#,##0.00 [$USD]");
+    worksheet.WriteCellValue(123.456);
+    worksheet.WriteCellValue(DateTime.Now);
+    worksheet.WriteCellValue("Text");
+    worksheet.WriteCellValue(123.456, "0.00");
+    worksheet.WriteCellValue(123.456, "0.00%");
+    worksheet.WriteCellValue(123.456, "0.00E+00");
+    worksheet.WriteCellValue(123.456, "$#,##0.00");
+    worksheet.WriteCellValue(123.456, "#,##0.00 [$USD]");
 }
 workbook.Close();
 ```

@@ -145,12 +145,19 @@ public class Workbook : IDisposable
 
     public (int ZeroBasedIndex, int CustomFormatIndex) GetOrCreateNumberFormat(string format)
     {
+        var count = numberFormats.Count;
+
+        if (count >= Constants.MaximumStyles)
+        {
+            throw new NotSupportedException("The XLSX format supports a maximum of 65,490 styles.");
+        }
+
         if (numberFormats.TryGetValue(format, out var indexes))
         {
             return indexes;
         }
 
-        indexes = (numberFormats.Count + 1, numberFormats.Count + 164);
+        indexes = (count + 1, count + 164);
         numberFormats.Add(format, indexes);
         return indexes;
     }
