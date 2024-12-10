@@ -36,9 +36,7 @@ for (var i = 0; i < 10_000; i++)
     worksheet.WriteCellValue(123.456, "0.00E+00");
     worksheet.WriteCellValue(123.456, "$#,##0.00");
     worksheet.WriteCellValue(123.456, "#,##0.00 [$USD]");
-    worksheet.EndRow();
 }
-workbook.EndSheet();
 var stream = workbook.Close();
 ```
 
@@ -61,9 +59,7 @@ for (var i = 0; i < 10_000; i++)
     worksheet.WriteCellValue(5, 123.456, "0.00E+00");
     worksheet.WriteCellValue(6, 123.456, "$#,##0.00");
     worksheet.WriteCellValue(7, 123.456, "#,##0.00 [$USD]");
-    worksheet.EndRow();
 }
-workbook.EndSheet();
 workbook.Close();
 ```
 # Benchmarks

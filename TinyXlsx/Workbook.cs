@@ -260,6 +260,26 @@ public class Workbook : IDisposable
         Buffer.Commit(entryStream);
     }
 
+    private void VerifyCanBeginSheet(
+        int id,
+        string name)
+    {
+        if (id < 0)
+        {
+            throw new InvalidOperationException("The XLSX format does not support negative identifiers.");
+        }
+
+        if (worksheets.Any(worksheet => worksheet.Id == id))
+        {
+            throw new InvalidOperationException($"A worksheet with identifier {id} was already added to the workbook.");
+        }
+
+        if (string.IsNullOrEmpty(name))
+        {
+            throw new InvalidOperationException("The XLSX format does not support an empty worksheet name.");
+        }     
+    }
+
     /// <summary>
     /// Begins a new worksheet within the workbook, automatically ending any previously active worksheet.
     /// </summary>
@@ -267,11 +287,13 @@ public class Workbook : IDisposable
     /// <param name="name"></param>
     /// <param name="relationshipId"></param>
     /// <returns></returns>
-    public Worksheet BeginSheet(
+    private Worksheet BeginSheet(
         int id,
         string name,
         string relationshipId)
     {
+        VerifyCanBeginSheet(id, name);
+
         // Make sure to end the previous sheet before beginning a new one.
         EndSheet();
 
@@ -287,6 +309,24 @@ public class Workbook : IDisposable
         worksheet.BeginSheet();
         worksheets.Add(worksheet);
         return worksheet;
+    }
+
+    /// <summary>
+    /// Begins a new worksheet within the workbook, automatically ending any previously active worksheet.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public Worksheet BeginSheet(
+        int id,
+        string name)
+    {
+        var relationshipId = $"rId{worksheets.Count + 3}";
+
+        return BeginSheet(
+            id,
+            name,
+            relationshipId);
     }
 
     /// <summary>

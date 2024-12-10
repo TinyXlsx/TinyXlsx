@@ -6,7 +6,7 @@ internal static class ColumnKeyCache
 
     static ColumnKeyCache()
     {
-        cache = new Dictionary<int, string>();
+        cache = [];
     }
 
     public static string GetKey(int columnIndex)
