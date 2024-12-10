@@ -6,7 +6,7 @@ public class Workbook : IDisposable
 {
     private readonly Stream stream;
     private readonly ZipArchive archive;
-    private readonly IList<Worksheet> worksheets;
+    private readonly List<Worksheet> worksheets;
     private readonly Dictionary<string, (int ZeroBasedIndex, int CustomFormatIndex)> numberFormats;
     private readonly CompressionLevel compressionLevel;
     private bool disposedValue;
@@ -15,8 +15,8 @@ public class Workbook : IDisposable
         string filePath,
         CompressionLevel compressionLevel = CompressionLevel.Optimal)
     {
-        worksheets = new List<Worksheet>();
-        numberFormats = new Dictionary<string, (int ZeroBasedIndex, int CustomFormatIndex)>();
+        worksheets = [];
+        numberFormats = [];
         this.compressionLevel = compressionLevel;
 
         stream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None);
@@ -27,8 +27,8 @@ public class Workbook : IDisposable
         int capacity = 1024 * 1024,
         CompressionLevel compressionLevel = CompressionLevel.Optimal)
     {
-        worksheets = new List<Worksheet>();
-        numberFormats = new Dictionary<string, (int ZeroBasedIndex, int CustomFormatIndex)>();
+        worksheets = [];
+        numberFormats = [];
         this.compressionLevel = compressionLevel;
 
         stream = new MemoryStream(capacity);
@@ -37,6 +37,7 @@ public class Workbook : IDisposable
 
     public Stream Close()
     {
+        EndSheet();
         AddRels();
         AddContentTypesXml();
         AddDocPropsAppXml();
@@ -251,6 +252,9 @@ public class Workbook : IDisposable
         string name,
         string relationshipId)
     {
+        // Make sure to end the previous sheet before beginning a new one.
+        EndSheet();
+
         var entry = archive.CreateEntry($"xl/worksheets/sheet{id}.xml", compressionLevel);
         var entryStream = entry.Open();
 
@@ -277,9 +281,11 @@ public class Workbook : IDisposable
             relationshipId);
     }
 
-    public void EndSheet()
+    private void EndSheet()
     {
-        worksheets[worksheets.Count - 1].EndSheet();
+        if (worksheets.Count == 0) return;
+
+        worksheets[^1].EndSheet();
     }
 
     private void AddWorkbookXml()

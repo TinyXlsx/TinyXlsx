@@ -24,7 +24,6 @@ public partial class Benchmarks
             worksheet.WriteCellValue(123.456, "#,##0.00 [$USD]");
             worksheet.EndRow();
         }
-        workbook.EndSheet();
         var stream = workbook.Close();
     }
 }

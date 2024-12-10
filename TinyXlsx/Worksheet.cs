@@ -30,6 +30,9 @@ public class Worksheet
 
     internal void BeginSheet()
     {
+        // If data has been written to the stream, then BeginSheet has already been called.
+        if (stream.Position > 0) return;
+
         // Intentionally leaving <dimension /> empty as stream does not support seeking.
         Buffer.Append(stream, """
             <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -52,6 +55,9 @@ public class Worksheet
 
     internal void EndSheet()
     {
+        // If the stream is closed, then EndSheet has already been called.
+        if (!stream.CanWrite) return;
+
         Buffer.Append(stream, """
                 </sheetData>
                 <pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/></worksheet>
@@ -167,6 +173,15 @@ public class Worksheet
         Buffer.Append(stream, "</v></c>");
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="columnIndex"></param>
+    /// <param name="value"></param>
+    /// <param name="format"></param>
+    /// /// <remarks>
+    /// The specified format must be valid. Invalid formats may result in a repair prompt from the file viewer.
+    /// </remarks>
     public void WriteCellValue(
         int columnIndex,
         double value,

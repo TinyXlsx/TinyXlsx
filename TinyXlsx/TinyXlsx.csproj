@@ -4,7 +4,20 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    
     <Description>A lightweight and efficient library designed for writing Excel files in the XLSX format.</Description>
+    <PackageId>TinyXlsx</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>TinyXlsx</Authors>
+    <PackageTags>excel,xlsx,library</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/TinyXlsx/TinyXlsx</RepositoryUrl>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReleaseNotes>Initial release</PackageReleaseNotes>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="YOUR_PATH_TO_ICON\icon.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
 </Project>

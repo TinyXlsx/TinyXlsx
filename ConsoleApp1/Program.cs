@@ -16,7 +16,6 @@ for (var i = 0; i < 10; i++)
     worksheet.WriteCellValue(7, 123.456, "#,##0.00 [$USD]");
     worksheet.EndRow();
 }
-workbook.EndSheet();
 
 var worksheet2 = workbook.BeginSheet();
 
@@ -33,7 +32,6 @@ for (var i = 0; i < 10; i++)
     worksheet2.WriteCellValue(7, 123.456, "#,##0.00 [$USD]");
     worksheet2.EndRow();
 }
-workbook.EndSheet();
 var stream = workbook.Close();
 
 
