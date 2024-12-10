@@ -3,8 +3,8 @@ TinyXlsx is a lightweight and efficient library designed for writing Excel files
 
 The library is built for .NET 8.0, ensuring compatibility with the latest versions of the framework. It supports two primary modes of writing data:
 
-1.  Writing to a `MemoryStream` for in-memory processing.
-2.  Writing to a `FileStream` to save the generated Excel file directly to disk.
+1. Writing to a `MemoryStream` for in-memory processing.
+1. Writing to a `FileStream` to save the generated Excel file directly to disk.
 
 TinyXlsx focuses on simplicity, providing only the necessary functionality to perform basic Excel file operations with minimal resource usage. Future versions may include more advanced features like reading and manipulating existing Excel files.
 
@@ -14,8 +14,11 @@ TinyXlsx focuses on simplicity, providing only the necessary functionality to pe
 # Features
 Reading not supported yet.
 
-1.  Writing to a `MemoryStream` for in-memory processing.
-2.  Writing to a `FileStream` to save the generated Excel file directly to disk.
+1. Writing to a `MemoryStream` for in-memory processing.
+1. Writing to a `FileStream` to save the generated Excel file directly to disk.
+1. Flexible cell and row positioning.
+    1. By default, `BeginRow` automatically progresses to the next row, and `WriteCellValue` automatically progresses to the next column.
+    1. An index can be specified using `BeginRowAt` and `WriteCellValueAt` if a row or column must be skipped.
 
 ## Writing to a `MemoryStream`
 
@@ -30,6 +33,7 @@ for (var i = 0; i < 10_000; i++)
     worksheet.BeginRow();
     worksheet.WriteCellValue(123.456);
     worksheet.WriteCellValue(DateTime.Now);
+    worksheet.WriteCellValue(DateTime.Now, "yyyy/MM/dd");
     worksheet.WriteCellValue("Text");
     worksheet.WriteCellValue(123.456, "0.00");
     worksheet.WriteCellValue(123.456, "0.00%");
@@ -50,9 +54,10 @@ var worksheet = workbook.BeginSheet();
 
 for (var i = 0; i < 10_000; i++)
 {
-    worksheet.BeginRow(i);
+    worksheet.BeginRow();
     worksheet.WriteCellValue(123.456);
     worksheet.WriteCellValue(DateTime.Now);
+    worksheet.WriteCellValue(DateTime.Now, "yyyy/MM/dd");
     worksheet.WriteCellValue("Text");
     worksheet.WriteCellValue(123.456, "0.00");
     worksheet.WriteCellValue(123.456, "0.00%");

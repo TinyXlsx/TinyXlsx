@@ -149,7 +149,7 @@ public class Workbook : IDisposable
 
         if (count >= Constants.MaximumStyles)
         {
-            throw new NotSupportedException("The XLSX format supports a maximum of 65,490 styles.");
+            throw new NotSupportedException("The XLSX format does not support more than 65,490 styles.");
         }
 
         if (numberFormats.TryGetValue(format, out var indexes))

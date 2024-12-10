@@ -30,10 +30,10 @@ public class Worksheet
     }
 
     /// <summary>
-    /// Begins a new row within the worksheet, automatically ending any previous row.
+    /// Begins a new row within the worksheet at the specified index, automatically ending any previous row.
     /// </summary>
     /// <param name="rowIndex">The zero-based index to start the row at.</param>
-    public void BeginRow(int rowIndex)
+    public void BeginRowAt(int rowIndex)
     {
         EndRow();
         VerifyCanBeginRow(rowIndex);
@@ -51,11 +51,11 @@ public class Worksheet
     /// </summary>
     public void BeginRow()
     {
-        BeginRow((lastWrittenRowIndex ?? -1) + 1);
+        BeginRowAt((lastWrittenRowIndex ?? -1) + 1);
     }
 
     /// <summary>
-    /// Writes a <see cref="double"/> value to the cell.
+    /// Writes a <see cref="double"/> value to the next cell.
     /// </summary>
     /// <param name="value"></param>
     public void WriteCellValue(double value)
@@ -64,7 +64,7 @@ public class Worksheet
     }
 
     /// <summary>
-    /// Writes a <see cref="double"/> value to the cell.
+    /// Writes a <see cref="double"/> value to the next cell.
     /// </summary>
     /// <param name="value"></param>
     /// <param name="format"></param>
@@ -79,7 +79,7 @@ public class Worksheet
     }
 
     /// <summary>
-    /// Writes a <see cref="double"/> value to the cell.
+    /// Writes a <see cref="double"/> value to the specified cell.
     /// </summary>
     /// <param name="columnIndex"></param>
     /// <param name="value"></param>
@@ -99,7 +99,7 @@ public class Worksheet
     }
 
     /// <summary>
-    /// Writes a <see cref="double"/> value to the cell.
+    /// Writes a <see cref="double"/> value to the specified cell.
     /// </summary>
     /// <param name="columnIndex"></param>
     /// <param name="value"></param>
@@ -128,7 +128,7 @@ public class Worksheet
     }
 
     /// <summary>
-    /// Writes a <see cref="string"/> value to the cell.
+    /// Writes a <see cref="string"/> value to the next cell.
     /// </summary>
     /// <param name="value"></param>
     public void WriteCellValue(string value)
@@ -137,7 +137,7 @@ public class Worksheet
     }
 
     /// <summary>
-    /// Writes a <see cref="string"/> value to the cell.
+    /// Writes a <see cref="string"/> value to the specified cell.
     /// </summary>
     /// <param name="columnIndex"></param>
     /// <param name="value"></param>
@@ -148,7 +148,7 @@ public class Worksheet
         if (string.IsNullOrEmpty(value)) return;
         if (value.Length > Constants.MaximumCharactersPerCell)
         {
-            throw new NotSupportedException($"The XLSX format does not support more than 32,767 characters in a cell.");
+            throw new NotSupportedException($"The XLSX format does not support more than {Constants.MaximumCharactersPerCell} characters in a cell.");
         }
 
         VerifyCanWriteCellValue(columnIndex);
@@ -163,7 +163,7 @@ public class Worksheet
     }
 
     /// <summary>
-    /// Writes a <see cref="DateTime"/> value to the cell.
+    /// Writes a <see cref="DateTime"/> value to the next cell with a default format of yyyy-MM-dd.
     /// </summary>
     /// <param name="value"></param>
     public void WriteCellValue(DateTime value)
@@ -172,7 +172,7 @@ public class Worksheet
     }
 
     /// <summary>
-    /// Writes a <see cref="DateTime"/> value to the cell.
+    /// Writes a <see cref="DateTime"/> value to the next cell.
     /// </summary>
     /// <param name="value"></param>
     /// <param name="format"></param>
@@ -187,7 +187,7 @@ public class Worksheet
     }
 
     /// <summary>
-    /// Writes a <see cref="DateTime"/> value to the cell.
+    /// Writes a <see cref="DateTime"/> value to the specified cell with a default format of yyyy-MM-dd.
     /// </summary>
     /// <param name="columnIndex"></param>
     /// <param name="value"></param>
@@ -202,7 +202,7 @@ public class Worksheet
     }
 
     /// <summary>
-    /// Writes a <see cref="DateTime"/> value to the cell.
+    /// Writes a <see cref="DateTime"/> value to the specified cell.
     /// </summary>
     /// <param name="columnIndex"></param>
     /// <param name="value"></param>
@@ -223,7 +223,7 @@ public class Worksheet
 
         if (daysSinceBaseDate < 0)
         {
-            throw new NotSupportedException("The XLSX format does not support dates before 1990-01-01. Please write the value as a string instead.");
+            throw new NotSupportedException("The XLSX format does not support dates before 1990-01-01. Consider writing the value as a number or string instead.");
         }
 
         var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
