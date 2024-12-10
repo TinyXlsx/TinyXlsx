@@ -60,7 +60,7 @@ public class Worksheet
     /// <param name="value"></param>
     public void WriteCellValue(double value)
     {
-        WriteCellValue((lastWrittenColumnIndex ?? 0) + 1, value);
+        WriteCellValueAt((lastWrittenColumnIndex ?? 0) + 1, value);
     }
 
     /// <summary>
@@ -75,7 +75,7 @@ public class Worksheet
         double value,
         string format)
     {
-        WriteCellValue((lastWrittenColumnIndex ?? 0) + 1, value, format);
+        WriteCellValueAt((lastWrittenColumnIndex ?? 0) + 1, value, format);
     }
 
     /// <summary>
@@ -83,7 +83,7 @@ public class Worksheet
     /// </summary>
     /// <param name="columnIndex"></param>
     /// <param name="value"></param>
-    public void WriteCellValue(
+    public void WriteCellValueAt(
         int columnIndex,
         double value)
     {
@@ -106,7 +106,7 @@ public class Worksheet
     /// <remarks>
     /// The specified format must be valid. Invalid formats may result in a repair prompt from the file viewer.
     /// </remarks>
-    public void WriteCellValue(
+    public void WriteCellValueAt(
         int columnIndex,
         double value,
         string format)
@@ -139,7 +139,7 @@ public class Worksheet
     /// </summary>
     /// <param name="columnIndex"></param>
     /// <param name="value"></param>
-    public void WriteCellValue(
+    public void WriteCellValueAt(
        int columnIndex,
        string value)
     {
@@ -161,7 +161,7 @@ public class Worksheet
     /// <param name="value"></param>
     public void WriteCellValue(DateTime value)
     {
-        WriteCellValue((lastWrittenColumnIndex ?? 0) + 1, value);
+        WriteCellValueAt((lastWrittenColumnIndex ?? 0) + 1, value);
     }
 
     /// <summary>
@@ -176,7 +176,7 @@ public class Worksheet
         DateTime value,
         string format)
     {
-        WriteCellValue((lastWrittenColumnIndex ?? 0) + 1, value, format);
+        WriteCellValueAt((lastWrittenColumnIndex ?? 0) + 1, value, format);
     }
 
     /// <summary>
@@ -184,11 +184,11 @@ public class Worksheet
     /// </summary>
     /// <param name="columnIndex"></param>
     /// <param name="value"></param>
-    public void WriteCellValue(
+    public void WriteCellValueAt(
        int columnIndex,
        DateTime value)
     {
-        WriteCellValue(
+        WriteCellValueAt(
             columnIndex,
             value,
             "yyyy-MM-dd");
@@ -204,7 +204,7 @@ public class Worksheet
     /// <remarks>
     /// The specified format must be valid. Invalid formats may result in a repair prompt from the file viewer.
     /// </remarks>
-    public void WriteCellValue(
+    public void WriteCellValueAt(
        int columnIndex,
        DateTime value,
        string format)
