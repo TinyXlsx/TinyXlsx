@@ -1,5 +1,4 @@
-﻿using System.Buffers;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text;
 
 namespace TinyXlsx;
@@ -12,13 +11,8 @@ public static class Buffer
 
     static Buffer()
     {
-        buffer = ArrayPool<byte>.Shared.Rent(1024 * 2);
+        buffer = new byte[1024 * 2];
         encoder = Encoding.UTF8.GetEncoder();
-    }
-
-    public static void Return()
-    {
-        ArrayPool<byte>.Shared.Return(buffer);
     }
 
     public static void Append(

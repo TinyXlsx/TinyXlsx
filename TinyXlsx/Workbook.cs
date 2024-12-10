@@ -48,6 +48,83 @@ public class Workbook : IDisposable
         archive = new ZipArchive(stream, ZipArchiveMode.Create, true);
     }
 
+    /// <summary>
+    /// Begins a new worksheet within the workbook, automatically ending any previously active worksheet.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="name"></param>
+    /// <param name="relationshipId"></param>
+    /// <returns></returns>
+    private Worksheet BeginSheet(
+        int id,
+        string name,
+        string relationshipId)
+    {
+        VerifyCanBeginSheet(id, name);
+
+        // Make sure to end the previous sheet before beginning a new one.
+        EndSheet();
+
+        var entry = archive.CreateEntry($"xl/worksheets/sheet{id}.xml", compressionLevel);
+        var entryStream = entry.Open();
+
+        var worksheet = new Worksheet(
+            this,
+            entryStream,
+            id,
+            name,
+            relationshipId);
+        worksheet.BeginSheet();
+        worksheets.Add(worksheet);
+        return worksheet;
+    }
+
+    /// <summary>
+    /// Begins a new worksheet within the workbook, automatically ending any previously active worksheet.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public Worksheet BeginSheet(
+        int id,
+        string name)
+    {
+        var relationshipId = $"rId{worksheets.Count + 3}";
+
+        return BeginSheet(
+            id,
+            name,
+            relationshipId);
+    }
+
+    /// <summary>
+    /// Begins a new worksheet within the workbook, automatically ending any previously active worksheet.
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public Worksheet BeginSheet(string name)
+    {
+        var id = worksheets.Count + 1;
+
+        return BeginSheet(
+            id,
+            name);
+    }
+
+    /// <summary>
+    /// Begins a new worksheet within the workbook, automatically ending any previously active worksheet.
+    /// </summary>
+    /// <returns></returns>
+    public Worksheet BeginSheet()
+    {
+        var id = worksheets.Count + 1;
+        var name = $"Sheet{id}";
+
+        return BeginSheet(
+            id,
+            name);
+    }
+
     public Stream Close()
     {
         EndSheet();
@@ -78,19 +155,49 @@ public class Workbook : IDisposable
         return indexes;
     }
 
-    private void AddRels()
+    protected virtual void Dispose(bool disposing)
     {
-        var entry = archive.CreateEntry("_rels/.rels", compressionLevel);
+        if (disposedValue) return;
+
+        if (disposing)
+        {
+            archive.Dispose();
+        }
+
+        disposedValue = true;
+    }
+
+    public void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+
+    private void AddContentTypesXml()
+    {
+        var entry = archive.CreateEntry("[Content_Types].xml", compressionLevel);
         using var entryStream = entry.Open();
 
         Buffer.Append(entryStream, """
         <?xml version="1.0" encoding="utf-8"?>
-        <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
-            <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml" />
-            <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml" />
-            <Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml" />
-        </Relationships>
+        <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+            <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml" />
+            <Default Extension="xml" ContentType="application/xml" />
+            <Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml" />
+            <Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml" />
+            <Override PartName="/xl/sharedStrings.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml" />
+            <Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml" />
+            <Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml" />
         """);
+
+        foreach (var worksheet in worksheets)
+        {
+            Buffer.Append(entryStream, "<Override PartName=\"/xl/worksheets/sheet");
+            Buffer.Append(entryStream, worksheet.Id);
+            Buffer.Append(entryStream, ".xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml\" />");
+        }
+
+        Buffer.Append(entryStream, "</Types>");
         Buffer.Commit(entryStream);
     }
 
@@ -133,31 +240,33 @@ public class Workbook : IDisposable
         Buffer.Commit(entryStream);
     }
 
-    private void AddContentTypesXml()
+    private void AddRels()
     {
-        var entry = archive.CreateEntry("[Content_Types].xml", compressionLevel);
+        var entry = archive.CreateEntry("_rels/.rels", compressionLevel);
         using var entryStream = entry.Open();
 
         Buffer.Append(entryStream, """
         <?xml version="1.0" encoding="utf-8"?>
-        <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
-            <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml" />
-            <Default Extension="xml" ContentType="application/xml" />
-            <Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml" />
-            <Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml" />
-            <Override PartName="/xl/sharedStrings.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml" />
-            <Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml" />
-            <Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml" />
+        <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+            <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml" />
+            <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml" />
+            <Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml" />
+        </Relationships>
         """);
+        Buffer.Commit(entryStream);
+    }
 
-        foreach (var worksheet in worksheets)
-        {
-            Buffer.Append(entryStream, "<Override PartName=\"/xl/worksheets/sheet");
-            Buffer.Append(entryStream, worksheet.Id);
-            Buffer.Append(entryStream, ".xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml\" />");
-        }
+    private void AddSharedStringsXml()
+    {
+        var entry = archive.CreateEntry("xl/sharedStrings.xml", compressionLevel);
+        using var entryStream = entry.Open();
 
-        Buffer.Append(entryStream, "</Types>");
+        Buffer.Append(entryStream, """
+        <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+        <sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="1" uniqueCount="1">
+            <si><t xml:space="preserve"></t></si>
+        </sst>
+        """);
         Buffer.Commit(entryStream);
     }
 
@@ -221,137 +330,6 @@ public class Workbook : IDisposable
         Buffer.Commit(entryStream);
     }
 
-    private void AddWorkbookXmlRels()
-    {
-        var entry = archive.CreateEntry("xl/_rels/workbook.xml.rels", compressionLevel);
-        using var entryStream = entry.Open();
-
-        Buffer.Append(entryStream, """
-        <?xml version="1.0" encoding="utf-8"?>
-        <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
-            <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings" Target="sharedStrings.xml" />
-            <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml" />
-        """);
-
-        foreach (var worksheet in worksheets)
-        {
-            Buffer.Append(entryStream, "<Relationship Id=\"");
-            Buffer.Append(entryStream, worksheet.RelationshipId);
-            Buffer.Append(entryStream, "\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet\" Target=\"worksheets/sheet");
-            Buffer.Append(entryStream, worksheet.Id);
-            Buffer.Append(entryStream, ".xml\" />");
-        }
-
-        Buffer.Append(entryStream, "</Relationships>");
-        Buffer.Commit(entryStream);
-    }
-
-    private void AddSharedStringsXml()
-    {
-        var entry = archive.CreateEntry("xl/sharedStrings.xml", compressionLevel);
-        using var entryStream = entry.Open();
-
-        Buffer.Append(entryStream, """
-        <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-        <sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="1" uniqueCount="1">
-            <si><t xml:space="preserve"></t></si>
-        </sst>
-        """);
-        Buffer.Commit(entryStream);
-    }
-
-    private void VerifyCanBeginSheet(
-        int id,
-        string name)
-    {
-        if (id < 0)
-        {
-            throw new InvalidOperationException("The XLSX format does not support negative identifiers.");
-        }
-
-        if (worksheets.Any(worksheet => worksheet.Id == id))
-        {
-            throw new InvalidOperationException($"A worksheet with identifier {id} was already added to the workbook.");
-        }
-
-        if (string.IsNullOrEmpty(name))
-        {
-            throw new InvalidOperationException("The XLSX format does not support an empty worksheet name.");
-        }     
-    }
-
-    /// <summary>
-    /// Begins a new worksheet within the workbook, automatically ending any previously active worksheet.
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="name"></param>
-    /// <param name="relationshipId"></param>
-    /// <returns></returns>
-    private Worksheet BeginSheet(
-        int id,
-        string name,
-        string relationshipId)
-    {
-        VerifyCanBeginSheet(id, name);
-
-        // Make sure to end the previous sheet before beginning a new one.
-        EndSheet();
-
-        var entry = archive.CreateEntry($"xl/worksheets/sheet{id}.xml", compressionLevel);
-        var entryStream = entry.Open();
-
-        var worksheet = new Worksheet(
-            this,
-            entryStream,
-            id,
-            name,
-            relationshipId);
-        worksheet.BeginSheet();
-        worksheets.Add(worksheet);
-        return worksheet;
-    }
-
-    /// <summary>
-    /// Begins a new worksheet within the workbook, automatically ending any previously active worksheet.
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="name"></param>
-    /// <returns></returns>
-    public Worksheet BeginSheet(
-        int id,
-        string name)
-    {
-        var relationshipId = $"rId{worksheets.Count + 3}";
-
-        return BeginSheet(
-            id,
-            name,
-            relationshipId);
-    }
-
-    /// <summary>
-    /// Begins a new worksheet within the workbook, automatically ending any previously active worksheet.
-    /// </summary>
-    /// <returns></returns>
-    public Worksheet BeginSheet()
-    {
-        var id = worksheets.Count + 1;
-        var name = $"Sheet{id}";
-        var relationshipId = $"rId{worksheets.Count + 3}";
-
-        return BeginSheet(
-            id,
-            name,
-            relationshipId);
-    }
-
-    private void EndSheet()
-    {
-        if (worksheets.Count == 0) return;
-
-        worksheets[^1].EndSheet();
-    }
-
     private void AddWorkbookXml()
     {
         var entry = archive.CreateEntry("xl/workbook.xml", compressionLevel);
@@ -394,21 +372,55 @@ public class Workbook : IDisposable
         Buffer.Commit(entryStream);
     }
 
-    protected virtual void Dispose(bool disposing)
+    private void AddWorkbookXmlRels()
     {
-        if (disposedValue) return;
+        var entry = archive.CreateEntry("xl/_rels/workbook.xml.rels", compressionLevel);
+        using var entryStream = entry.Open();
 
-        if (disposing)
+        Buffer.Append(entryStream, """
+        <?xml version="1.0" encoding="utf-8"?>
+        <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+            <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings" Target="sharedStrings.xml" />
+            <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml" />
+        """);
+
+        foreach (var worksheet in worksheets)
         {
-            archive.Dispose();
+            Buffer.Append(entryStream, "<Relationship Id=\"");
+            Buffer.Append(entryStream, worksheet.RelationshipId);
+            Buffer.Append(entryStream, "\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet\" Target=\"worksheets/sheet");
+            Buffer.Append(entryStream, worksheet.Id);
+            Buffer.Append(entryStream, ".xml\" />");
         }
 
-        disposedValue = true;
+        Buffer.Append(entryStream, "</Relationships>");
+        Buffer.Commit(entryStream);
     }
 
-    public void Dispose()
+    private void EndSheet()
     {
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
+        if (worksheets.Count == 0) return;
+
+        worksheets[^1].EndSheet();
+    }
+
+    private void VerifyCanBeginSheet(
+        int id,
+        string name)
+    {
+        if (id < 0)
+        {
+            throw new InvalidOperationException("The XLSX format does not support negative identifiers.");
+        }
+
+        if (worksheets.Any(worksheet => worksheet.Id == id))
+        {
+            throw new InvalidOperationException($"A worksheet with identifier {id} was already added to the workbook.");
+        }
+
+        if (string.IsNullOrEmpty(name))
+        {
+            throw new InvalidOperationException("The XLSX format does not support an empty worksheet name.");
+        }
     }
 }
