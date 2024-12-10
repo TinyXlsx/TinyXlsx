@@ -22,7 +22,6 @@ public partial class Benchmarks
             worksheet.WriteCellValue(123.456, "0.00E+00");
             worksheet.WriteCellValue(123.456, "$#,##0.00");
             worksheet.WriteCellValue(123.456, "#,##0.00 [$USD]");
-            worksheet.EndRow();
         }
         var stream = workbook.Close();
     }

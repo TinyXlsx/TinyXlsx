@@ -58,6 +58,7 @@ public class Worksheet
         // If the stream is closed, then EndSheet has already been called.
         if (!stream.CanWrite) return;
 
+        EndRow();
         Buffer.Append(stream, """
                 </sheetData>
                 <pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/></worksheet>
@@ -67,8 +68,13 @@ public class Worksheet
         stream.Close();
     }
 
+    /// <summary>
+    /// Begins a new row within the worksheet, automatically ending any previous row.
+    /// </summary>
+    /// <param name="rowIndex">The zero-based index to start the row at.</param>
     public void BeginRow(int rowIndex)
     {
+        EndRow();
         VerifyCanBeginRow(rowIndex);
 
         internalRowIndex = rowIndex + 1;
@@ -79,6 +85,9 @@ public class Worksheet
         Buffer.Append(stream, "\">");
     }
 
+    /// <summary>
+    /// Begins a new row within the worksheet, automatically ending any previous row.
+    /// </summary>
     public void BeginRow()
     {
         BeginRow((lastWrittenRowIndex ?? 0) + 1);
@@ -109,6 +118,8 @@ public class Worksheet
 
     private void VerifyCanEndRow()
     {
+        // The XLSX format allows empty rows, i.e. <row></row>. No need to check.
+
         if (internalRowIndex == null)
         {
             throw new InvalidOperationException($"A row cannot be closed before it was opened with {nameof(BeginRow)}.");
@@ -138,8 +149,11 @@ public class Worksheet
         }
     }
 
-    public void EndRow()
+    private void EndRow()
     {
+        // It's possible that BeginRow hasn't been called yet.
+        if (lastWrittenRowIndex == null) return;
+
         VerifyCanEndRow();
 
         Buffer.Append(stream, "</row>");

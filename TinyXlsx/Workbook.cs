@@ -240,13 +240,20 @@ public class Workbook : IDisposable
 
         Buffer.Append(entryStream, """
         <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-        <sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="2" uniqueCount="2">
+        <sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="1" uniqueCount="1">
             <si><t xml:space="preserve"></t></si>
         </sst>
         """);
         Buffer.Commit(entryStream);
     }
 
+    /// <summary>
+    /// Begins a new worksheet within the workbook, automatically ending any previously active worksheet.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="name"></param>
+    /// <param name="relationshipId"></param>
+    /// <returns></returns>
     public Worksheet BeginSheet(
         int id,
         string name,
@@ -269,6 +276,10 @@ public class Workbook : IDisposable
         return worksheet;
     }
 
+    /// <summary>
+    /// Begins a new worksheet within the workbook, automatically ending any previously active worksheet.
+    /// </summary>
+    /// <returns></returns>
     public Worksheet BeginSheet()
     {
         var id = worksheets.Count + 1;

@@ -14,7 +14,6 @@ for (var i = 0; i < 10; i++)
     worksheet.WriteCellValue(5, 123.456, "0.00E+00");
     worksheet.WriteCellValue(6, 123.456, "$#,##0.00");
     worksheet.WriteCellValue(7, 123.456, "#,##0.00 [$USD]");
-    worksheet.EndRow();
 }
 
 var worksheet2 = workbook.BeginSheet();
@@ -30,7 +29,6 @@ for (var i = 0; i < 10; i++)
     worksheet2.WriteCellValue(5, 123.456, "0.00E+00");
     worksheet2.WriteCellValue(6, 123.456, "$#,##0.00");
     worksheet2.WriteCellValue(7, 123.456, "#,##0.00 [$USD]");
-    worksheet2.EndRow();
 }
 var stream = workbook.Close();
 
