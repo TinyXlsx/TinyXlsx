@@ -17,8 +17,14 @@ public class Workbook : IDisposable
     /// <summary>
     /// Initializes a new instance of the <see cref="Workbook"/> class writing to a file.
     /// </summary>
-    /// <param name="filePath">The relative or absolute path of the file. The XLSX format does not support file paths longer than 218 characters.</param>
-    /// <param name="compressionLevel">The level of compression to apply to the workbook.</param>
+    /// <param name="filePath">
+    /// The relative or absolute path of the file. The XLSX format does not support file paths longer than 218 characters.
+    /// </param>
+    /// <param name="compressionLevel">
+    /// The level of compression to apply to the workbook.
+    /// Setting this lower will consume less resources but result in larger files.
+    /// Setting this higher will consume more resources but result in smaller files.
+    /// </param>
     public Workbook(
         string filePath,
         CompressionLevel compressionLevel = CompressionLevel.Optimal)
@@ -36,8 +42,14 @@ public class Workbook : IDisposable
     /// <summary>
     /// Initializes a new instance of the <see cref="Workbook"/> class writing to a <see cref="MemoryStream"/>.
     /// </summary>
-    /// <param name="capacity">The initial size of the internal array in bytes. Consider setting this to a higher value than the resulting file size.</param>
-    /// <param name="compressionLevel">The level of compression to apply to the workbook.</param>
+    /// <param name="capacity">
+    /// The initial size of the internal array in bytes. Consider setting this to a higher value than the resulting file size.
+    /// </param>
+    /// <param name="compressionLevel">
+    /// The level of compression to apply to the workbook.
+    /// Setting this lower will consume less resources but result in larger files.
+    /// Setting this higher will consume more resources but result in smaller files.
+    /// </param>
     public Workbook(
         int capacity = 1024 * 64,
         CompressionLevel compressionLevel = CompressionLevel.Optimal)
@@ -53,8 +65,12 @@ public class Workbook : IDisposable
     /// <summary>
     /// Begins a new worksheet with the specified name within the workbook, automatically ending any previously active worksheet.
     /// </summary>
-    /// <param name="name">The name of the worksheet.</param>
-    /// <returns>A <see cref="Worksheet"/> instance representing the new worksheet.</returns>
+    /// <param name="name">
+    /// The name of the worksheet.
+    /// </param>
+    /// <returns>
+    /// A <see cref="Worksheet"/> instance representing the new worksheet.
+    /// </returns>
     public Worksheet BeginSheet(string name)
     {
         var id = worksheets.Count + 1;
@@ -69,7 +85,9 @@ public class Workbook : IDisposable
     /// <summary>
     /// Begins a new worksheet within the workbook with an automatically generated name, automatically ending any previously active worksheet.
     /// </summary>
-    /// <returns>A <see cref="Worksheet"/> instance representing the new worksheet.</returns>
+    /// <returns>
+    /// A <see cref="Worksheet"/> instance representing the new worksheet.
+    /// </returns>
     public Worksheet BeginSheet()
     {
         var id = worksheets.Count + 1;
@@ -87,7 +105,9 @@ public class Workbook : IDisposable
     /// If the <see cref="Workbook"/> is writing to a <see cref="FileStream"/>, the stream is disposed.
     /// If the <see cref="Workbook"/> is writing to a <see cref="MemoryStream"/>, the position is set to 0.
     /// </summary>
-    /// <returns>The underlying <see cref="Stream"/> containing the workbook data.</returns>
+    /// <returns>
+    /// The underlying <see cref="Stream"/> containing the workbook data.
+    /// </returns>
     public Stream Close()
     {
         EndSheet();
@@ -116,9 +136,15 @@ public class Workbook : IDisposable
     /// <summary>
     /// Gets or creates a unique number format style for the specified format string.
     /// </summary>
-    /// <param name="format">The format string to get or create.</param>
-    /// <returns>A tuple containing the zero-based index and custom format index for the style.</returns>
-    /// <exception cref="NotSupportedException">Thrown if the number of styles exceeds the maximum supported by the XLSX format.</exception>
+    /// <param name="format">
+    /// The format string to get or create.
+    /// </param>
+    /// <returns>
+    /// A tuple containing the zero-based index and custom format index for the style.
+    /// </returns>
+    /// <exception cref="NotSupportedException">
+    /// Thrown if the number of styles exceeds the maximum supported by the XLSX format.
+    /// </exception>
     public (int ZeroBasedIndex, int CustomFormatIndex) GetOrCreateNumberFormat(string format)
     {
         var count = numberFormats.Count;
@@ -150,7 +176,8 @@ public class Workbook : IDisposable
     /// <summary>
     /// Disposes the resources.
     /// </summary>
-    /// <param name="disposing"></param>
+    /// <param name="disposing">
+    /// </param>
     protected virtual void Dispose(bool disposing)
     {
         if (disposedValue) return;

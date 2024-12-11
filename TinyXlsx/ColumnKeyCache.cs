@@ -15,8 +15,12 @@ public static class ColumnKeyCache
     /// <summary>
     /// Gets the column key, e.g. "A", "AB", for the specified column index.
     /// </summary>
-    /// <param name="columnIndex">The zero-based index of the column.</param>
-    /// <returns>The column key.</returns>
+    /// <param name="columnIndex">
+    /// The zero-based index of the column.
+    /// </param>
+    /// <returns>
+    /// The column key.
+    /// </returns>
     public static string GetKey(int columnIndex)
     {
         if (cache.TryGetValue(columnIndex, out var key))

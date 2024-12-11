@@ -21,8 +21,12 @@ public static class Buffer
     /// <summary>
     /// Appends a string of characters to the internal buffer and writes to the stream if the buffer size will be exceeded.
     /// </summary>
-    /// <param name="stream">The target <see cref="Stream"/> to write to when the buffer is full.</param>
-    /// <param name="text">The string of characters to append.</param>
+    /// <param name="stream">
+    /// The target <see cref="Stream"/> to write to when the buffer is full.
+    /// </param>
+    /// <param name="text">
+    /// The string of characters to append.
+    /// </param>
     public static void Append(
         Stream stream,
         ReadOnlySpan<char> text)
@@ -44,8 +48,12 @@ public static class Buffer
     /// <summary>
     /// Appends a single character to the internal buffer.
     /// </summary>
-    /// <param name="stream">The target <see cref="Stream"/> to write to when the buffer is full.</param>
-    /// <param name="character">The character to append.</param>
+    /// <param name="stream">
+    /// The target <see cref="Stream"/> to write to when the buffer is full.
+    /// </param>
+    /// <param name="character">
+    /// The character to append.
+    /// </param>
     public static void Append(
         Stream stream,
         char character)
@@ -57,8 +65,12 @@ public static class Buffer
     /// <summary>
     /// Appends a <see cref="double"/> value to the internal buffer and writes to the stream if the buffer size will be exceeded.
     /// </summary>
-    /// <param name="stream">The target <see cref="Stream"/> to write to when the buffer is full.</param>
-    /// <param name="value">The <see cref="double"/> value to append.</param>
+    /// <param name="stream">
+    /// The target <see cref="Stream"/> to write to when the buffer is full.
+    /// </param>
+    /// <param name="value">
+    /// The <see cref="double"/> value to append.
+    /// </param>
     public static void Append(
         Stream stream,
         double value)
@@ -72,8 +84,12 @@ public static class Buffer
     /// <summary>
     /// Appends a <see cref="int"/> value to the internal buffer and writes to the stream if the buffer size will be exceeded.
     /// </summary>
-    /// <param name="stream">The target <see cref="Stream"/> to write to when the buffer is full.</param>
-    /// <param name="value">The <see cref="int"/> value to append.</param>
+    /// <param name="stream">
+    /// The target <see cref="Stream"/> to write to when the buffer is full.
+    /// </param>
+    /// <param name="value">
+    /// The <see cref="int"/> value to append.
+    /// </param>
     public static void Append(
         Stream stream,
         int value)
@@ -87,7 +103,9 @@ public static class Buffer
     /// <summary>
     /// Writes the contents of the internal buffer to the stream.
     /// </summary>
-    /// <param name="stream">The target <see cref="Stream"/> to write the contents of the buffer to.</param>
+    /// <param name="stream">
+    /// The target <see cref="Stream"/> to write the contents of the buffer to.
+    /// </param>
     public static void Commit(Stream stream)
     {
         stream.Write(buffer, 0, bytesWritten);
