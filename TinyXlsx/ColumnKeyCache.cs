@@ -17,17 +17,17 @@ public static class ColumnKeyCache
         }
 
         // Maximum number of columns is 16,384 and thus XFD (3 characters).
-        var needNewName = (Span<char>)stackalloc char[3];
+        var keyBuffer = (Span<char>)stackalloc char[3];
         var i = 2;
-        var needOtherNewName = columnIndex;
+        var remainingColumnIndex = columnIndex;
 
-        while (needOtherNewName >= 0)
+        while (remainingColumnIndex >= 0)
         {
-            needNewName[i--] = (char)('A' + (needOtherNewName % 26));
-            needOtherNewName = (needOtherNewName / 26) - 1;
+            keyBuffer[i--] = (char)('A' + (remainingColumnIndex % 26));
+            remainingColumnIndex = (remainingColumnIndex / 26) - 1;
         }
         
-        var keyAsString = new string(needNewName[(i + 1)..3]);
+        var keyAsString = new string(keyBuffer[(i + 1)..3]);
         cache[columnIndex] = keyAsString;
 
         return keyAsString;
