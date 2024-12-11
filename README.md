@@ -43,6 +43,8 @@ var worksheet = workbook.BeginSheet();
 for (var i = 0; i < 10_000; i++)
 {
     worksheet.BeginRow();
+    worksheet.WriteCellValue(true);
+    worksheet.WriteCellValue(0.1m);
     worksheet.WriteCellValue(123.456);
     worksheet.WriteCellValue(DateTime.Now);
     worksheet.WriteCellValue(DateTime.Now, "yyyy/MM/dd");
@@ -68,6 +70,8 @@ var worksheet = workbook.BeginSheet();
 for (var i = 0; i < 10_000; i++)
 {
     worksheet.BeginRow();
+    worksheet.WriteCellValue(true);
+    worksheet.WriteCellValue(0.1m);
     worksheet.WriteCellValue(123.456);
     worksheet.WriteCellValue(DateTime.Now);
     worksheet.WriteCellValue(DateTime.Now, "yyyy/MM/dd");

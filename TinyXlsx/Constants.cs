@@ -29,6 +29,16 @@ public static class Constants
     public static readonly DateTime MinimumDate;
 
     /// <summary>
+    /// The maximum number of characters required to write a <see cref="bool"/> value as a string.
+    /// </summary>
+    public static readonly int MaximumBooleanLength;
+
+    /// <summary>
+    /// The maximum number of characters required to write a <see cref="decimal"/> value as a string.
+    /// </summary>
+    public static readonly int MaximumDecimalLength;
+
+    /// <summary>
     /// The maximum number of characters required to write a <see cref="double"/> value as a string.
     /// </summary>
     public static readonly int MaximumDoubleLength;
@@ -62,8 +72,10 @@ public static class Constants
         MaximumCharactersPerCell = 32_767;
         MaximumColumns = 16_384;
         MinimumDate = new DateTime(1900, 1, 1);
-        MaximumDoubleLength = double.MinValue.ToString(CultureInfo.InvariantCulture).Length;
-        MaximumIntegerLength = int.MinValue.ToString(CultureInfo.InvariantCulture).Length;
+        MaximumBooleanLength = 5;
+        MaximumDecimalLength = 30;
+        MaximumDoubleLength = 24;
+        MaximumIntegerLength = 11;
         MaximumRows = 1_048_576;
         MaximumStyles = 65_000;
         XlsxEpoch = new DateTime(1899, 12, 30);

@@ -65,6 +65,25 @@ public static class Buffer
     }
 
     /// <summary>
+    /// Appends a <see cref="decimal"/> value to the internal buffer and writes to the stream if the buffer size will be exceeded.
+    /// </summary>
+    /// <param name="stream">
+    /// The target <see cref="Stream"/> to write to when the buffer is full.
+    /// </param>
+    /// <param name="value">
+    /// The <see cref="decimal"/> value to append.
+    /// </param>
+    public static void Append(
+        Stream stream,
+        decimal value)
+    {
+        if (bytesWritten + Constants.MaximumDecimalLength > buffer.Length) Commit(stream);
+
+        value.TryFormat(buffer.AsSpan(bytesWritten), out var written, provider: CultureInfo.InvariantCulture);
+        bytesWritten += written;
+    }
+
+    /// <summary>
     /// Appends a <see cref="double"/> value to the internal buffer and writes to the stream if the buffer size will be exceeded.
     /// </summary>
     /// <param name="stream">

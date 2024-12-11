@@ -57,6 +57,128 @@ public class Worksheet
     }
 
     /// <summary>
+    /// Writes a <see cref="bool"/> value to the next cell.
+    /// </summary>
+    /// <param name="value">
+    /// The <see cref="bool"/> value to write to the cell.
+    /// </param>
+    public void WriteCellValue(bool value)
+    {
+        WriteCellValueAt((lastWrittenColumnIndex ?? -1) + 1, value);
+    }
+
+    /// <summary>
+    /// Writes a <see cref="bool"/> value to the specified cell.
+    /// </summary>
+    /// <param name="columnIndex">
+    /// The zero-based column index of the cell to write to.
+    /// </param>
+    /// <param name="value">
+    /// The <see cref="bool"/> value to write to the cell.
+    /// </param>
+    public void WriteCellValueAt(
+        int columnIndex,
+        bool value)
+    {
+        VerifyCanWriteCellValue(columnIndex);
+        lastWrittenColumnIndex = columnIndex;
+
+        Buffer.Append(stream, "<c r=\"");
+        Buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
+        Buffer.Append(stream, internalRowIndex!.Value);
+        Buffer.Append(stream, "\" t=\"b\"><v>");
+        Buffer.Append(stream, value ? "1" : "0");
+        Buffer.Append(stream, "</v></c>");
+    }
+
+    /// <summary>
+    /// Writes a <see cref="decimal"/> value to the next cell.
+    /// </summary>
+    /// <param name="value">
+    /// The <see cref="decimal"/> value to write to the cell.
+    /// </param>
+    public void WriteCellValue(decimal value)
+    {
+        WriteCellValueAt((lastWrittenColumnIndex ?? -1) + 1, value);
+    }
+
+    /// <summary>
+    /// Writes a <see cref="decimal"/> value to the next cell.
+    /// </summary>
+    /// <param name="value">
+    /// The <see cref="decimal"/> value to write to the cell.
+    /// </param>
+    /// <param name="format"></param>
+    /// <remarks>
+    /// The specified format must be valid. Invalid formats may result in a repair prompt from the XLSX viewer.
+    /// </remarks>
+    public void WriteCellValue(
+        decimal value,
+        string format)
+    {
+        WriteCellValueAt((lastWrittenColumnIndex ?? -1) + 1, value, format);
+    }
+
+    /// <summary>
+    /// Writes a <see cref="decimal"/> value to the specified cell.
+    /// </summary>
+    /// <param name="columnIndex">
+    /// The zero-based column index of the cell to write to.
+    /// </param>
+    /// <param name="value">
+    /// The <see cref="decimal"/> value to write to the cell.
+    /// </param>
+    /// <param name="format">
+    /// The number format to apply to the cell.
+    /// </param>
+    /// <remarks>
+    /// The specified format must be valid. Invalid formats may result in a repair prompt from the XLSX viewer.
+    /// </remarks>
+    public void WriteCellValueAt(
+        int columnIndex,
+        decimal value,
+        string format)
+    {
+        VerifyCanWriteCellValue(columnIndex);
+        lastWrittenColumnIndex = columnIndex;
+
+        var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
+
+        Buffer.Append(stream, "<c r=\"");
+        Buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
+        Buffer.Append(stream, internalRowIndex!.Value);
+        Buffer.Append(stream, "\" s=\"");
+        Buffer.Append(stream, zeroBasedIndex);
+        Buffer.Append(stream, "\" t=\"n\"><v>");
+        Buffer.Append(stream, value);
+        Buffer.Append(stream, "</v></c>");
+    }
+
+    /// <summary>
+    /// Writes a <see cref="decimal"/> value to the specified cell.
+    /// </summary>
+    /// <param name="columnIndex">
+    /// The zero-based column index of the cell to write to.
+    /// </param>
+    /// <param name="value">
+    /// The <see cref="decimal"/> value to write to the cell.
+    /// </param>
+    public void WriteCellValueAt(
+        int columnIndex,
+        decimal value)
+    {
+        VerifyCanWriteCellValue(columnIndex);
+        lastWrittenColumnIndex = columnIndex;
+
+        Buffer.Append(stream, "<c r=\"");
+        Buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
+        Buffer.Append(stream, internalRowIndex!.Value);
+        Buffer.Append(stream, "\" t=\"n\"><v>");
+        Buffer.Append(stream, value);
+        Buffer.Append(stream, "</v></c>");
+    }
+
+    /// <summary>
     /// Writes a <see cref="double"/> value to the next cell.
     /// </summary>
     /// <param name="value">
