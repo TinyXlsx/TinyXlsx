@@ -219,12 +219,18 @@ public class Worksheet
         VerifyCanWriteCellValue(columnIndex);
         lastWrittenColumnIndex = columnIndex;
 
-        var daysSinceBaseDate = (value - Constants.MinimumDate).TotalDays;
-
-        if (daysSinceBaseDate < 0)
+        if (value < Constants.MinimumDate)
         {
             throw new NotSupportedException("The XLSX format does not support dates before 1990-01-01. Consider writing the value as a number or string instead.");
         }
+
+        // Account for leap year bug.
+        if (value <= new DateTime(1900, 2, 28))
+        {
+            value = value.AddDays(-1);
+        }
+
+        var daysSinceEpoch = (value - Constants.XlsxEpoch).TotalDays;
 
         var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
 
@@ -234,7 +240,7 @@ public class Worksheet
         Buffer.Append(stream, "\" s=\"");
         Buffer.Append(stream, zeroBasedIndex);
         Buffer.Append(stream, "\" t=\"n\"><v>");
-        Buffer.Append(stream, daysSinceBaseDate);
+        Buffer.Append(stream, daysSinceEpoch);
         Buffer.Append(stream, "</v></c>");
     }
 

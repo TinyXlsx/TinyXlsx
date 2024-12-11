@@ -16,7 +16,7 @@ Supported:
 1. Writing to a `MemoryStream` for in-memory processing.
 1. Writing to a `FileStream` to save the generated Excel file directly to disk.
 1. Precise cell and row positioning.
-    1. By default, `BeginRow` automatically progresses to the next row, and `WriteCellValue` automatically progresses to the next column.
+    1. By default, `BeginRow` automatically progresses to the next row, and `WriteCellValue` automatically writes to the next column.
     1. An index can be specified using `BeginRowAt` and `WriteCellValueAt` if a row or column must be skipped.
 
 Not supported yet:
@@ -82,7 +82,7 @@ workbook.Close();
 ```
 
 ## Precise cell and row positioning
-By default, `BeginRow` automatically progresses to the next row, and `WriteCellValue` automatically progresses to the next column. An index can be specified using `BeginRowAt` and `WriteCellValueAt` if a row or column must be skipped. Going backwards is not supported due to the streaming nature of the library.
+By default, `BeginRow` automatically progresses to the next row, and `WriteCellValue` automatically writes to the next column. An index can be specified using `BeginRowAt` and `WriteCellValueAt` if a row or column must be skipped. Going backwards is not supported due to the streaming nature of the library.
 
 ```csharp
 using TinyXlsx;
@@ -114,7 +114,9 @@ var stream = workbook.Close();
 ```
 
 # Benchmarks
+
 100 records, 8 columns:
+
 | Method    | Mean            | Error         | StdDev       | Gen0        | Gen1        | Gen2       | Allocated      |
 |---------- |----------------:|--------------:|-------------:|------------:|------------:|-----------:|---------------:|
 | ClosedXML |      3,001.8 us |      17.30 us |     15.34 us |     78.1250 |           - |          - |     1360.37 KB |
@@ -123,6 +125,7 @@ var stream = workbook.Close();
 | TinyXlsx  |        645.8 us |       4.72 us |      4.41 us |      3.9063 |           - |          - |       73.60 KB |
 
 10,000 records, 8 columns:
+
 | Method    | Mean      | Error    | StdDev   | Gen0      | Gen1      | Gen2      | Allocated   |
 |---------- |----------:|---------:|---------:|----------:|----------:|----------:|------------:|
 | ClosedXML | 220.82 ms | 1.297 ms | 1.213 ms | 6000.0000 | 2000.0000 | 1000.0000 | 99992.92 KB |
@@ -131,6 +134,7 @@ var stream = workbook.Close();
 | TinyXlsx  |  57.05 ms | 0.438 ms | 0.410 ms |  222.2222 |  222.2222 |  222.2222 |   970.52 KB |
 
 1,000,000 records, 8 columns:
+
 | Method    | Mean     | Error    | StdDev   | Gen0        | Gen1        | Gen2       | Allocated   |
 |---------- |---------:|---------:|---------:|------------:|------------:|-----------:|------------:|
 | ClosedXML | 26.922 s | 0.0738 s | 0.0691 s | 541000.0000 |  80000.0000 | 10000.0000 | 10087.41 MB |

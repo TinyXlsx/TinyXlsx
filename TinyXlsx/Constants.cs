@@ -4,6 +4,7 @@ namespace TinyXlsx;
 
 internal static class Constants
 {
+    internal static readonly DateTime XlsxEpoch;
     internal static readonly int MaximumCharactersPerCell;
     internal static readonly int MaximumColumns;
     internal static readonly DateTime MinimumDate;
@@ -16,7 +17,8 @@ internal static class Constants
     {
         MaximumCharactersPerCell = 32_767;
         MaximumColumns = 16_384;
-        MinimumDate = new DateTime(1899, 12, 30);
+        XlsxEpoch = new DateTime(1899, 12, 30);
+        MinimumDate = new DateTime(1900, 1, 1);
         MaximumDoubleLength = double.MinValue.ToString(CultureInfo.InvariantCulture).Length;
         MaximumIntegerLength = int.MinValue.ToString(CultureInfo.InvariantCulture).Length;
         MaximumRows = 1_048_576;

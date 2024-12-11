@@ -4,20 +4,25 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    
-    <Description>A lightweight and efficient library designed for writing Excel files in the XLSX format.</Description>
+
     <PackageId>TinyXlsx</PackageId>
-    <Version>1.0.0</Version>
+    <PackageVersion>0.1.0-prerelease</PackageVersion>
     <Authors>TinyXlsx</Authors>
-    <PackageTags>excel,xlsx,library</PackageTags>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/TinyXlsx/TinyXlsx</RepositoryUrl>
+    <Description>A lightweight and efficient library designed for writing Excel files in the XLSX format.</Description>
+    <Copyright>Copyright (c) TinyXlsx 2024</Copyright>
+    <PackageProjectUrl>https://github.com/TinyXlsx/TinyXlsx</PackageProjectUrl>
     <PackageIcon>icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/TinyXlsx/TinyXlsx</RepositoryUrl>
+    <PackageTags>Excel, xlsx</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReleaseNotes>Initial release</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="icon.png" Pack="true" PackagePath="\" />
+    <None Include="..\README.md" Link="README.md" Pack="true" PackagePath="\" />
+    <None Include="..\icon.png" Link="icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>
