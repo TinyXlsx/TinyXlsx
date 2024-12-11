@@ -18,7 +18,7 @@ public class Workbook : IDisposable
     /// Initializes a new instance of the <see cref="Workbook"/> class writing to a file.
     /// </summary>
     /// <param name="filePath">
-    /// The relative or absolute path of the file. The XLSX format does not support file paths longer than 218 characters.
+    /// The relative or absolute path of the file. The XLSX format does not support file paths exceeding 218 characters.
     /// </param>
     /// <param name="compressionLevel">
     /// The level of compression to apply to the workbook.
@@ -103,7 +103,7 @@ public class Workbook : IDisposable
     /// <summary>
     /// Writes the final data to the <see cref="Stream"/>.
     /// If the <see cref="Workbook"/> is writing to a <see cref="FileStream"/>, the stream is disposed.
-    /// If the <see cref="Workbook"/> is writing to a <see cref="MemoryStream"/>, the position is set to 0.
+    /// If the <see cref="Workbook"/> is writing to a <see cref="MemoryStream"/>, its position is set to 0.
     /// </summary>
     /// <returns>
     /// The underlying <see cref="Stream"/> containing the workbook data.

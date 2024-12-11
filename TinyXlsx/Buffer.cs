@@ -31,13 +31,15 @@ public static class Buffer
         Stream stream,
         ReadOnlySpan<char> text)
     {
+        const int MaximumUtf8BytesPerCharacter = 4;
+
         while (text.Length > 0)
         {
             encoder.Convert(text, buffer.AsSpan(bytesWritten), false, out var charactersUsed, out var bytesUsed, out var isCompleted);
 
             bytesWritten += bytesUsed;
 
-            if (bytesWritten + 4 > buffer.Length) Commit(stream);
+            if (bytesWritten + MaximumUtf8BytesPerCharacter > buffer.Length) Commit(stream);
 
             if (isCompleted) return;
 

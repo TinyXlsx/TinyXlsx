@@ -16,7 +16,7 @@ Supported:
 1. Writing to a `MemoryStream` for in-memory processing.
 1. Writing to a `FileStream` to save the generated Excel file directly to disk.
 1. Precise cell and row positioning.
-    1. By default, `BeginRow` automatically progresses to the next row, and `WriteCellValue` automatically writes to the next column.
+    1. By default, `BeginRow` automatically progresses to the next row, and `WriteCellValue` automatically writes to the cell in the next column.
     1. An index can be specified using `BeginRowAt` and `WriteCellValueAt` if a row or column must be skipped.
 
 Not supported yet:
@@ -82,7 +82,7 @@ workbook.Close();
 ```
 
 ## Precise cell and row positioning
-By default, `BeginRow` automatically progresses to the next row, and `WriteCellValue` automatically writes to the next column. An index can be specified using `BeginRowAt` and `WriteCellValueAt` if a row or column must be skipped. Going backwards is not supported due to the streaming nature of the library.
+By default, `BeginRow` automatically progresses to the next row, and `WriteCellValue` automatically writes to the cell in the next column. An index can be specified using `BeginRowAt` and `WriteCellValueAt` if a row or column must be skipped. Going backwards is not supported due to the streaming nature of the library.
 
 ```csharp
 using TinyXlsx;
