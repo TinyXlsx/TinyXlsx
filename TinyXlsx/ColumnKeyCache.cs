@@ -1,5 +1,8 @@
 ﻿namespace TinyXlsx;
 
+/// <summary>
+/// Provides efficent column index to column key conversion.
+/// </summary>
 public static class ColumnKeyCache
 {
     private static readonly Dictionary<int, string> cache;
@@ -9,6 +12,11 @@ public static class ColumnKeyCache
         cache = [];
     }
 
+    /// <summary>
+    /// Gets the column key, e.g. "A", "AB", for the specified column index.
+    /// </summary>
+    /// <param name="columnIndex">The zero-based index of the column.</param>
+    /// <returns>The column key.</returns>
     public static string GetKey(int columnIndex)
     {
         if (cache.TryGetValue(columnIndex, out var key))

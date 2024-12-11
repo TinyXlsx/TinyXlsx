@@ -23,7 +23,7 @@ public class Workbook : IDisposable
         string filePath,
         CompressionLevel compressionLevel = CompressionLevel.Optimal)
     {
-        // No need to guard against filePath exceeding maximum length, as the viewer throws an error when opening the file.
+        // No need to guard against filePath exceeding maximum length, as the XLSX viewer throws an error when opening the file.
 
         worksheets = [];
         numberFormats = [];
@@ -51,41 +51,10 @@ public class Workbook : IDisposable
     }
 
     /// <summary>
-    /// Begins a new worksheet within the workbook, automatically ending any previously active worksheet.
+    /// Begins a new worksheet with the specified name within the workbook, automatically ending any previously active worksheet.
     /// </summary>
-    /// <param name="id"></param>
-    /// <param name="name"></param>
-    /// <param name="relationshipId"></param>
-    /// <returns></returns>
-    private Worksheet BeginSheet(
-        int id,
-        string name,
-        string relationshipId)
-    {
-        VerifyCanBeginSheet(id, name);
-
-        // Make sure to end the previous sheet before beginning a new one.
-        EndSheet();
-
-        var entry = archive.CreateEntry($"xl/worksheets/sheet{id}.xml", compressionLevel);
-        var entryStream = entry.Open();
-
-        var worksheet = new Worksheet(
-            this,
-            entryStream,
-            id,
-            name,
-            relationshipId);
-        worksheet.BeginSheet();
-        worksheets.Add(worksheet);
-        return worksheet;
-    }
-
-    /// <summary>
-    /// Begins a new worksheet within the workbook, automatically ending any previously active worksheet.
-    /// </summary>
-    /// <param name="name"></param>
-    /// <returns></returns>
+    /// <param name="name">The name of the worksheet.</param>
+    /// <returns>A <see cref="Worksheet"/> instance representing the new worksheet.</returns>
     public Worksheet BeginSheet(string name)
     {
         var id = worksheets.Count + 1;
@@ -98,9 +67,9 @@ public class Workbook : IDisposable
     }
 
     /// <summary>
-    /// Begins a new worksheet within the workbook, automatically ending any previously active worksheet.
+    /// Begins a new worksheet within the workbook with an automatically generated name, automatically ending any previously active worksheet.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A <see cref="Worksheet"/> instance representing the new worksheet.</returns>
     public Worksheet BeginSheet()
     {
         var id = worksheets.Count + 1;
@@ -113,6 +82,12 @@ public class Workbook : IDisposable
             relationshipId);
     }
 
+    /// <summary>
+    /// Writes the final data to the <see cref="Stream"/>.
+    /// If the <see cref="Workbook"/> is writing to a <see cref="FileStream"/>, the stream is disposed.
+    /// If the <see cref="Workbook"/> is writing to a <see cref="MemoryStream"/>, the position is set to 0.
+    /// </summary>
+    /// <returns>The underlying <see cref="Stream"/> containing the workbook data.</returns>
     public Stream Close()
     {
         EndSheet();
@@ -138,6 +113,12 @@ public class Workbook : IDisposable
         return stream;
     }
 
+    /// <summary>
+    /// Gets or creates a unique number format style for the specified format string.
+    /// </summary>
+    /// <param name="format">The format string to get or create.</param>
+    /// <returns>A tuple containing the zero-based index and custom format index for the style.</returns>
+    /// <exception cref="NotSupportedException">Thrown if the number of styles exceeds the maximum supported by the XLSX format.</exception>
     public (int ZeroBasedIndex, int CustomFormatIndex) GetOrCreateNumberFormat(string format)
     {
         var count = numberFormats.Count;
@@ -157,6 +138,19 @@ public class Workbook : IDisposable
         return indexes;
     }
 
+    /// <summary>
+    /// Disposes the <see cref="Workbook"/> and releases its resources.
+    /// </summary>
+    public void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Disposes the resources.
+    /// </summary>
+    /// <param name="disposing"></param>
     protected virtual void Dispose(bool disposing)
     {
         if (disposedValue) return;
@@ -168,12 +162,6 @@ public class Workbook : IDisposable
         }
 
         disposedValue = true;
-    }
-
-    public void Dispose()
-    {
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
     }
 
     private void AddContentTypesXml()
@@ -398,6 +386,30 @@ public class Workbook : IDisposable
 
         Buffer.Append(entryStream, "</Relationships>");
         Buffer.Commit(entryStream);
+    }
+
+    private Worksheet BeginSheet(
+        int id,
+        string name,
+        string relationshipId)
+    {
+        VerifyCanBeginSheet(id, name);
+
+        // Make sure to end the previous sheet before beginning a new one.
+        EndSheet();
+
+        var entry = archive.CreateEntry($"xl/worksheets/sheet{id}.xml", compressionLevel);
+        var entryStream = entry.Open();
+
+        var worksheet = new Worksheet(
+            this,
+            entryStream,
+            id,
+            name,
+            relationshipId);
+        worksheet.BeginSheet();
+        worksheets.Add(worksheet);
+        return worksheet;
     }
 
     private void EndSheet()
