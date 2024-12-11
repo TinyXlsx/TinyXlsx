@@ -8,9 +8,10 @@ namespace TinyXlsx;
 public static class Constants
 {
     /// <summary>
-    /// The epoch date used in the XLSX format. Any dates are saved as an offset based on this date.
+    /// The reference date to address the leap year bug which incorrectly marks 1900 as a leap year.
+    /// Used to correct all dates before 1900-03-01.
     /// </summary>
-    public static readonly DateTime XlsxEpoch;
+    public static readonly DateTime LeapYearBugCorrectionDate;
 
     /// <summary>
     /// The maximum number of characters allowed in a single cell.
@@ -50,15 +51,21 @@ public static class Constants
     /// </remarks>
     public static readonly int MaximumStyles;
 
+    /// <summary>
+    /// The epoch date used in the XLSX format. Any dates are saved as an offset based on this date.
+    /// </summary>
+    public static readonly DateTime XlsxEpoch;
+
     static Constants()
     {
+        LeapYearBugCorrectionDate = new DateTime(1900, 3, 1);
         MaximumCharactersPerCell = 32_767;
         MaximumColumns = 16_384;
-        XlsxEpoch = new DateTime(1899, 12, 30);
         MinimumDate = new DateTime(1900, 1, 1);
         MaximumDoubleLength = double.MinValue.ToString(CultureInfo.InvariantCulture).Length;
         MaximumIntegerLength = int.MinValue.ToString(CultureInfo.InvariantCulture).Length;
         MaximumRows = 1_048_576;
         MaximumStyles = 65_000;
+        XlsxEpoch = new DateTime(1899, 12, 30);
     }
 }

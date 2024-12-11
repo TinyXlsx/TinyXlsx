@@ -225,7 +225,7 @@ public class Worksheet
         }
 
         // Account for leap year bug.
-        if (value <= new DateTime(1900, 2, 28))
+        if (value < Constants.LeapYearBugCorrectionDate)
         {
             value = value.AddDays(-1);
         }
