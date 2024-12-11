@@ -1,6 +1,6 @@
 ﻿namespace TinyXlsx;
 
-internal static class ColumnKeyCache
+public static class ColumnKeyCache
 {
     private static readonly Dictionary<int, string> cache;
 

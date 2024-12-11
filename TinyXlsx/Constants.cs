@@ -2,16 +2,16 @@
 
 namespace TinyXlsx;
 
-internal static class Constants
+public static class Constants
 {
-    internal static readonly DateTime XlsxEpoch;
-    internal static readonly int MaximumCharactersPerCell;
-    internal static readonly int MaximumColumns;
-    internal static readonly DateTime MinimumDate;
-    internal static readonly int MaximumDoubleLength;
-    internal static readonly int MaximumIntegerLength;
-    internal static readonly int MaximumRows;
-    internal static readonly int MaximumStyles;
+    public static readonly DateTime XlsxEpoch;
+    public static readonly int MaximumCharactersPerCell;
+    public static readonly int MaximumColumns;
+    public static readonly DateTime MinimumDate;
+    public static readonly int MaximumDoubleLength;
+    public static readonly int MaximumIntegerLength;
+    public static readonly int MaximumRows;
+    public static readonly int MaximumStyles;
 
     static Constants()
     {

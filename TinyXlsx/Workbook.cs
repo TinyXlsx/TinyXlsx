@@ -17,12 +17,14 @@ public class Workbook : IDisposable
     /// <summary>
     /// Initializes a new instance of the <see cref="Workbook"/> class writing to a file.
     /// </summary>
-    /// <param name="filePath">The relative or absolute path of the file.</param>
+    /// <param name="filePath">The relative or absolute path of the file. The XLSX format does not support file paths longer than 218 characters.</param>
     /// <param name="compressionLevel">The level of compression to apply to the workbook.</param>
     public Workbook(
         string filePath,
         CompressionLevel compressionLevel = CompressionLevel.Optimal)
     {
+        // No need to guard against filePath exceeding maximum length, as the viewer throws an error when opening the file.
+
         worksheets = [];
         numberFormats = [];
         this.compressionLevel = compressionLevel;
@@ -82,13 +84,11 @@ public class Workbook : IDisposable
     /// <summary>
     /// Begins a new worksheet within the workbook, automatically ending any previously active worksheet.
     /// </summary>
-    /// <param name="id"></param>
     /// <param name="name"></param>
     /// <returns></returns>
-    public Worksheet BeginSheet(
-        int id,
-        string name)
+    public Worksheet BeginSheet(string name)
     {
+        var id = worksheets.Count + 1;
         var relationshipId = $"rId{worksheets.Count + 3}";
 
         return BeginSheet(
@@ -100,29 +100,17 @@ public class Workbook : IDisposable
     /// <summary>
     /// Begins a new worksheet within the workbook, automatically ending any previously active worksheet.
     /// </summary>
-    /// <param name="name"></param>
-    /// <returns></returns>
-    public Worksheet BeginSheet(string name)
-    {
-        var id = worksheets.Count + 1;
-
-        return BeginSheet(
-            id,
-            name);
-    }
-
-    /// <summary>
-    /// Begins a new worksheet within the workbook, automatically ending any previously active worksheet.
-    /// </summary>
     /// <returns></returns>
     public Worksheet BeginSheet()
     {
         var id = worksheets.Count + 1;
         var name = $"Sheet{id}";
+        var relationshipId = $"rId{worksheets.Count + 3}";
 
         return BeginSheet(
             id,
-            name);
+            name,
+            relationshipId);
     }
 
     public Stream Close()
