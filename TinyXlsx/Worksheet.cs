@@ -5,6 +5,7 @@
 /// </summary>
 public class Worksheet
 {
+    private readonly Buffer buffer;
     private readonly Stream stream;
     private readonly Workbook workbook;
     private int? lastWrittenRowIndex;
@@ -17,13 +18,15 @@ public class Worksheet
 
     public Worksheet(
         Workbook workbook,
+        Buffer buffer,
         Stream stream,
         int id,
         string name,
         string relationshipId)
     {
-        this.stream = stream;
         this.workbook = workbook;
+        this.buffer = buffer;
+        this.stream = stream;
         Id = id;
         Name = name;
         RelationshipId = relationshipId;
@@ -43,9 +46,9 @@ public class Worksheet
         internalRowIndex = rowIndex + 1;
         lastWrittenRowIndex = rowIndex;
 
-        Buffer.Append(stream, "<row r=\"");
-        Buffer.Append(stream, internalRowIndex.Value);
-        Buffer.Append(stream, "\">");
+        buffer.Append(stream, "<row r=\"");
+        buffer.Append(stream, internalRowIndex.Value);
+        buffer.Append(stream, "\">");
     }
 
     /// <summary>
@@ -83,12 +86,12 @@ public class Worksheet
         VerifyCanWriteCellValue(columnIndex);
         lastWrittenColumnIndex = columnIndex;
 
-        Buffer.Append(stream, "<c r=\"");
-        Buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
-        Buffer.Append(stream, internalRowIndex!.Value);
-        Buffer.Append(stream, "\" t=\"e\"><f>");
-        Buffer.Append(stream, formula);
-        Buffer.Append(stream, "</f></c>");
+        buffer.Append(stream, "<c r=\"");
+        buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
+        buffer.Append(stream, internalRowIndex!.Value);
+        buffer.Append(stream, "\" t=\"e\"><f>");
+        buffer.Append(stream, formula);
+        buffer.Append(stream, "</f></c>");
     }
 
     /// <summary>
@@ -118,12 +121,12 @@ public class Worksheet
         VerifyCanWriteCellValue(columnIndex);
         lastWrittenColumnIndex = columnIndex;
 
-        Buffer.Append(stream, "<c r=\"");
-        Buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
-        Buffer.Append(stream, internalRowIndex!.Value);
-        Buffer.Append(stream, "\" t=\"b\"><v>");
-        Buffer.Append(stream, value ? "1" : "0");
-        Buffer.Append(stream, "</v></c>");
+        buffer.Append(stream, "<c r=\"");
+        buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
+        buffer.Append(stream, internalRowIndex!.Value);
+        buffer.Append(stream, "\" t=\"b\"><v>");
+        buffer.Append(stream, value ? "1" : "0");
+        buffer.Append(stream, "</v></c>");
     }
 
     /// <summary>
@@ -179,14 +182,14 @@ public class Worksheet
 
         var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
 
-        Buffer.Append(stream, "<c r=\"");
-        Buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
-        Buffer.Append(stream, internalRowIndex!.Value);
-        Buffer.Append(stream, "\" s=\"");
-        Buffer.Append(stream, zeroBasedIndex);
-        Buffer.Append(stream, "\" t=\"n\"><v>");
-        Buffer.Append(stream, value);
-        Buffer.Append(stream, "</v></c>");
+        buffer.Append(stream, "<c r=\"");
+        buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
+        buffer.Append(stream, internalRowIndex!.Value);
+        buffer.Append(stream, "\" s=\"");
+        buffer.Append(stream, zeroBasedIndex);
+        buffer.Append(stream, "\" t=\"n\"><v>");
+        buffer.Append(stream, value);
+        buffer.Append(stream, "</v></c>");
     }
 
     /// <summary>
@@ -205,12 +208,12 @@ public class Worksheet
         VerifyCanWriteCellValue(columnIndex);
         lastWrittenColumnIndex = columnIndex;
 
-        Buffer.Append(stream, "<c r=\"");
-        Buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
-        Buffer.Append(stream, internalRowIndex!.Value);
-        Buffer.Append(stream, "\" t=\"n\"><v>");
-        Buffer.Append(stream, value);
-        Buffer.Append(stream, "</v></c>");
+        buffer.Append(stream, "<c r=\"");
+        buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
+        buffer.Append(stream, internalRowIndex!.Value);
+        buffer.Append(stream, "\" t=\"n\"><v>");
+        buffer.Append(stream, value);
+        buffer.Append(stream, "</v></c>");
     }
 
     /// <summary>
@@ -257,12 +260,12 @@ public class Worksheet
         VerifyCanWriteCellValue(columnIndex);
         lastWrittenColumnIndex = columnIndex;
 
-        Buffer.Append(stream, "<c r=\"");
-        Buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
-        Buffer.Append(stream, internalRowIndex!.Value);
-        Buffer.Append(stream, "\" t=\"n\"><v>");
-        Buffer.Append(stream, value);
-        Buffer.Append(stream, "</v></c>");
+        buffer.Append(stream, "<c r=\"");
+        buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
+        buffer.Append(stream, internalRowIndex!.Value);
+        buffer.Append(stream, "\" t=\"n\"><v>");
+        buffer.Append(stream, value);
+        buffer.Append(stream, "</v></c>");
     }
 
     /// <summary>
@@ -290,14 +293,14 @@ public class Worksheet
 
         var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
 
-        Buffer.Append(stream, "<c r=\"");
-        Buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
-        Buffer.Append(stream, internalRowIndex!.Value);
-        Buffer.Append(stream, "\" s=\"");
-        Buffer.Append(stream, zeroBasedIndex);
-        Buffer.Append(stream, "\" t=\"n\"><v>");
-        Buffer.Append(stream, value);
-        Buffer.Append(stream, "</v></c>");
+        buffer.Append(stream, "<c r=\"");
+        buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
+        buffer.Append(stream, internalRowIndex!.Value);
+        buffer.Append(stream, "\" s=\"");
+        buffer.Append(stream, zeroBasedIndex);
+        buffer.Append(stream, "\" t=\"n\"><v>");
+        buffer.Append(stream, value);
+        buffer.Append(stream, "</v></c>");
     }
 
     /// <summary>
@@ -333,12 +336,12 @@ public class Worksheet
         VerifyCanWriteCellValue(columnIndex);
         lastWrittenColumnIndex = columnIndex;
 
-        Buffer.Append(stream, "<c r=\"");
-        Buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
-        Buffer.Append(stream, internalRowIndex!.Value);
-        Buffer.Append(stream, "\" t=\"inlineStr\"><is><t>");
-        Buffer.Append(stream, value);
-        Buffer.Append(stream, "</t></is></c>");
+        buffer.Append(stream, "<c r=\"");
+        buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
+        buffer.Append(stream, internalRowIndex!.Value);
+        buffer.Append(stream, "\" t=\"inlineStr\"><is><t>");
+        buffer.Append(stream, value);
+        buffer.Append(stream, "</t></is></c>");
     }
 
     /// <summary>
@@ -431,14 +434,14 @@ public class Worksheet
 
         var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
 
-        Buffer.Append(stream, "<c r=\"");
-        Buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
-        Buffer.Append(stream, internalRowIndex!.Value);
-        Buffer.Append(stream, "\" s=\"");
-        Buffer.Append(stream, zeroBasedIndex);
-        Buffer.Append(stream, "\" t=\"n\"><v>");
-        Buffer.Append(stream, daysSinceEpoch);
-        Buffer.Append(stream, "</v></c>");
+        buffer.Append(stream, "<c r=\"");
+        buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
+        buffer.Append(stream, internalRowIndex!.Value);
+        buffer.Append(stream, "\" s=\"");
+        buffer.Append(stream, zeroBasedIndex);
+        buffer.Append(stream, "\" t=\"n\"><v>");
+        buffer.Append(stream, daysSinceEpoch);
+        buffer.Append(stream, "</v></c>");
     }
 
     internal void BeginSheet()
@@ -448,7 +451,7 @@ public class Worksheet
         if (stream.Position > 0) return;
 
         // Intentionally leaving <dimension /> empty as stream does not support seeking.
-        Buffer.Append(stream, """
+        buffer.Append(stream, """
             <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
             <worksheet
                 xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"
@@ -473,11 +476,11 @@ public class Worksheet
         if (!stream.CanWrite) return;
 
         EndRow();
-        Buffer.Append(stream, """
+        buffer.Append(stream, """
                 </sheetData>
                 <pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/></worksheet>
             """);
-        Buffer.Commit(stream);
+        buffer.Commit(stream);
         stream.Flush();
         stream.Close();
     }
@@ -489,7 +492,7 @@ public class Worksheet
 
         VerifyCanEndRow();
 
-        Buffer.Append(stream, "</row>");
+        buffer.Append(stream, "</row>");
         internalRowIndex = null;
         lastWrittenColumnIndex = null;
     }

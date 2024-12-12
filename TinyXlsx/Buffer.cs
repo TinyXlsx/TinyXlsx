@@ -6,16 +6,20 @@ namespace TinyXlsx;
 /// <summary>
 /// Provides efficent buffering and writing of UTF-8 encoded text.
 /// </summary>
-public static class Buffer
+public class Buffer
 {
-    private static readonly byte[] buffer;
+    private readonly byte[] buffer;
     private static readonly Encoder encoder;
-    private static int bytesWritten;
+    private int bytesWritten;
 
     static Buffer()
     {
-        buffer = new byte[1024 * 2];
         encoder = Encoding.UTF8.GetEncoder();
+    }
+
+    public Buffer()
+    {
+        buffer = new byte[1024 * 2];
     }
 
     /// <summary>
@@ -27,7 +31,7 @@ public static class Buffer
     /// <param name="text">
     /// The string of characters to append.
     /// </param>
-    public static void Append(
+    public void Append(
         Stream stream,
         ReadOnlySpan<char> text)
     {
@@ -56,7 +60,7 @@ public static class Buffer
     /// <param name="character">
     /// The character to append.
     /// </param>
-    public static void Append(
+    public void Append(
         Stream stream,
         char character)
     {
@@ -73,7 +77,7 @@ public static class Buffer
     /// <param name="value">
     /// The <see cref="decimal"/> value to append.
     /// </param>
-    public static void Append(
+    public void Append(
         Stream stream,
         decimal value)
     {
@@ -92,7 +96,7 @@ public static class Buffer
     /// <param name="value">
     /// The <see cref="double"/> value to append.
     /// </param>
-    public static void Append(
+    public void Append(
         Stream stream,
         double value)
     {
@@ -111,7 +115,7 @@ public static class Buffer
     /// <param name="value">
     /// The <see cref="int"/> value to append.
     /// </param>
-    public static void Append(
+    public void Append(
         Stream stream,
         int value)
     {
@@ -127,7 +131,7 @@ public static class Buffer
     /// <param name="stream">
     /// The target <see cref="Stream"/> to write the contents of the buffer to.
     /// </param>
-    public static void Commit(Stream stream)
+    public void Commit(Stream stream)
     {
         stream.Write(buffer, 0, bytesWritten);
         bytesWritten = 0;
