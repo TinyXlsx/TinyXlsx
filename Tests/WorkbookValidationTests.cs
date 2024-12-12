@@ -28,6 +28,8 @@ public class WorkbookValidationTests
             worksheet.WriteCellValue(123.456, "0.00E+00");
             worksheet.WriteCellValue(123.456, "$#,##0.00");
             worksheet.WriteCellValue(123.456, "#,##0.00 [$USD]");
+
+            worksheet.WriteCellFormula("=SUM(B1:C1)");
         }
         workbook.Close();
 

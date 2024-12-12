@@ -57,6 +57,41 @@ public class Worksheet
     }
 
     /// <summary>
+    /// Writes a formula to the next cell.
+    /// </summary>
+    /// <param name="formula">
+    /// The formula as a string value to write to the cell.
+    /// </param>
+    public void WriteCellFormula(string formula)
+    {
+        WriteCellFormulaAt((lastWrittenColumnIndex ?? -1) + 1, formula);
+    }
+
+    /// <summary>
+    /// Writes a <see cref="bool"/> value to the specified cell.
+    /// </summary>
+    /// <param name="columnIndex">
+    /// The zero-based column index of the cell to write to.
+    /// </param>
+    /// <param name="value">
+    /// The <see cref="bool"/> value to write to the cell.
+    /// </param>
+    public void WriteCellFormulaAt(
+        int columnIndex,
+        string formula)
+    {
+        VerifyCanWriteCellValue(columnIndex);
+        lastWrittenColumnIndex = columnIndex;
+
+        Buffer.Append(stream, "<c r=\"");
+        Buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
+        Buffer.Append(stream, internalRowIndex!.Value);
+        Buffer.Append(stream, "\" t=\"e\"><f>");
+        Buffer.Append(stream, formula);
+        Buffer.Append(stream, "</f></c>");
+    }
+
+    /// <summary>
     /// Writes a <see cref="bool"/> value to the next cell.
     /// </summary>
     /// <param name="value">
