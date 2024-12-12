@@ -5,7 +5,7 @@ using DocumentFormat.OpenXml;
 
 namespace Benchmarks;
 
-public partial class Benchmarks
+public partial class InMemory
 {
     [Benchmark]
     public void OpenXml()

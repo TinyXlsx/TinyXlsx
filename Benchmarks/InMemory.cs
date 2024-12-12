@@ -3,7 +3,7 @@
 namespace Benchmarks;
 
 [MemoryDiagnoser]
-public partial class Benchmarks
+public partial class InMemory
 {
     [Params(100, 10_000, 1_000_000)]
     public int Records { get; set; }

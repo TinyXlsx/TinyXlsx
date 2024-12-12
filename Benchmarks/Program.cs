@@ -1,9 +1,6 @@
 ﻿using BenchmarkDotNet.Running;
-using System.Reflection;
+using Benchmarks;
 
-var t = new Benchmarks.Benchmarks()
-{
-    Records = 100,
-};
+BenchmarkRunner.Run<Compression>();
 
-BenchmarkRunner.Run(Assembly.GetExecutingAssembly());
+BenchmarkRunner.Run<InMemory>();
