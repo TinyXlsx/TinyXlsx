@@ -12,7 +12,7 @@ public partial class Benchmarks
         using var memoryStream = new MemoryStream();
         var sheet = workbook.Worksheets.Add();
 
-        for (int i = 1; i < Records + 1; i++)
+        for (int i = 1; i <= Records; i++)
         {
             sheet.Cell(i, 1).Value = 123.456;
             sheet.Cell(i, 2).Value = DateTime.Now;

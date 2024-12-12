@@ -36,7 +36,7 @@ Not supported yet:
 
 ## Writing to a `MemoryStream`
 
-By default the `Workbook` writes to a `MemoryStream`.
+By default the `Workbook` writes to a `MemoryStream`. This method should be used in scenarios where a file does not need to be stored locally but is instead intended to be sent directly to a client via a website or similar service.
 
 ```csharp
 using TinyXlsx;
@@ -150,6 +150,10 @@ var stream = workbook.Close();
 ```
 
 # Benchmarks
+
+## Writing to a `MemoryStream`
+
+NA means the library does not support writing to a `MemoryStream`.
 
 100 records, 8 columns:
 
