@@ -14,11 +14,12 @@ public class WorkbookValidationTests
         using var workbook = new Workbook(filePath);
         var worksheet = workbook.BeginSheet();
 
-        for (var i = 0; i < 1; i++)
+        for (var i = 0; i < 10; i++)
         {
-            worksheet.BeginRowAt(i);
+            worksheet.BeginRow();
             worksheet.WriteCellValue(true);
-            worksheet.WriteCellValue(0.1m);
+            worksheet.WriteCellValue(123456);
+            worksheet.WriteCellValue(123.456m);
             worksheet.WriteCellValue(123.456);
             worksheet.WriteCellValue(DateTime.Now);
             worksheet.WriteCellValue(DateTime.Now, "yyyy/MM/dd");
