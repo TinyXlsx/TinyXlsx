@@ -4,22 +4,47 @@ using System.Text;
 namespace TinyXlsx;
 
 /// <summary>
-/// Provides efficent buffering and writing of UTF-8 encoded text.
+/// Provides efficent buffering and writing of UTF-8 encoded XLSX.
 /// </summary>
-public class Buffer
+public class XlsxBuilder
 {
     private readonly byte[] buffer;
     private static readonly Encoder encoder;
     private int bytesWritten;
 
-    static Buffer()
+    static XlsxBuilder()
     {
         encoder = Encoding.UTF8.GetEncoder();
     }
 
-    public Buffer()
+    public XlsxBuilder()
     {
-        buffer = new byte[1024 * 2];
+        buffer = new byte[1024 * 8];
+    }
+
+    /// <summary>
+    /// Appends a <see cref="bool"/> value to the internal buffer and writes to the stream if the buffer size will be exceeded.
+    /// </summary>
+    /// <param name="stream">
+    /// The target <see cref="Stream"/> to write to when the buffer is full.
+    /// </param>
+    /// <param name="value">
+    /// The <see cref="bool"/> value to append.
+    /// </param>
+    public void Append(
+        Stream stream,
+        bool value)
+    {
+        if (bytesWritten == buffer.Length) Commit(stream);
+
+        if (value)
+        {
+            buffer[bytesWritten++] = 0x31;
+        }
+        else
+        {
+            buffer[bytesWritten++] = 0x30;
+        }
     }
 
     /// <summary>
