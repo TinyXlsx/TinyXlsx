@@ -28,7 +28,7 @@ public class Workbook : IDisposable
     /// </param>
     public Workbook(
         string filePath,
-        CompressionLevel compressionLevel = CompressionLevel.Fastest)
+        CompressionLevel compressionLevel = CompressionLevel.Optimal)
     {
         // No need to guard against filePath exceeding maximum length, as the XLSX viewer throws an error when opening the file.
 
@@ -54,7 +54,7 @@ public class Workbook : IDisposable
     /// </param>
     public Workbook(
         int capacity = 1024 * 64,
-        CompressionLevel compressionLevel = CompressionLevel.Fastest)
+        CompressionLevel compressionLevel = CompressionLevel.Optimal)
     {
         worksheets = [];
         numberFormats = [];

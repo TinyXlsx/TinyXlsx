@@ -16,7 +16,7 @@ public static class ColumnKeyCache
     /// Gets the column key, e.g. "A", "AB", for the specified column index.
     /// </summary>
     /// <param name="columnIndex">
-    /// The zero-based index of the column.
+    /// The one-based index of the column.
     /// </param>
     /// <returns>
     /// The column key.
@@ -33,7 +33,7 @@ public static class ColumnKeyCache
         var i = 2;
         var remainingColumnIndex = columnIndex;
 
-        while (remainingColumnIndex >= 0)
+        while (remainingColumnIndex > 0)
         {
             keyBuffer[i--] = (char)('A' + (remainingColumnIndex % 26));
             remainingColumnIndex = (remainingColumnIndex / 26) - 1;
