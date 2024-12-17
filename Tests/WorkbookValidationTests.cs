@@ -14,7 +14,8 @@ public class WorkbookValidationTests
         using var workbook = new Workbook(filePath);
         var worksheet = workbook.BeginSheet();
 
-        for (var i = 0; i < 10; i++)
+        var i = 1;
+        for (; i <= 10; i++)
         {
             worksheet.BeginRow();
             worksheet.WriteCellValue(true);
@@ -30,7 +31,7 @@ public class WorkbookValidationTests
             worksheet.WriteCellValue(123.456, "$#,##0.00");
             worksheet.WriteCellValue(123.456, "#,##0.00 [$USD]");
 
-            worksheet.WriteCellFormula("=SUM(B1:C1)");
+            worksheet.WriteCellFormula($"=SUM(H{i}:L{i})");
         }
         workbook.Close();
 
