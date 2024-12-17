@@ -504,12 +504,9 @@ public class Worksheet
        DateTime value,
        string format)
     {
-        VerifyCanWriteCellValue(columnIndex);
-        lastWrittenColumnIndex = columnIndex;
-
         if (value < Constants.MinimumDate)
         {
-            throw new NotSupportedException("The XLSX format does not support dates before 1990-01-01. Consider writing the value as a number or string instead.");
+            throw new NotSupportedException("The XLSX format does not support dates before 1900-01-01. Consider writing the value as a number or string instead.");
         }
 
         // Account for leap year bug.
@@ -520,16 +517,7 @@ public class Worksheet
 
         var daysSinceEpoch = (value - Constants.XlsxEpoch).TotalDays;
 
-        var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
-
-        xlsxBuilder.Append(stream, "<c r=\"");
-        xlsxBuilder.AppendColumnKey(stream, columnIndex);
-        xlsxBuilder.Append(stream, lastWrittenRowIndex);
-        xlsxBuilder.Append(stream, "\" s=\"");
-        xlsxBuilder.Append(stream, zeroBasedIndex);
-        xlsxBuilder.Append(stream, "\" t=\"n\"><v>");
-        xlsxBuilder.Append(stream, daysSinceEpoch);
-        xlsxBuilder.Append(stream, "</v></c>");
+        WriteCellValueAt(columnIndex, daysSinceEpoch, format);
     }
 
     internal void BeginSheet()
@@ -582,12 +570,12 @@ public class Worksheet
 
         if (rowIndex > Constants.MaximumRows)
         {
-            throw new InvalidOperationException($"The XLSX format only supports {Constants.MaximumRows} rows.");
+            throw new InvalidOperationException($"The XLSX format supports a maximum of {Constants.MaximumRows} rows.");
         }
 
         if (rowIndex < 1)
         {
-            throw new InvalidOperationException("The XLSX format supports a minmium row index of 1.");
+            throw new InvalidOperationException("The XLSX format requires a minmium row index of 1.");
         }
     }
 
@@ -615,12 +603,12 @@ public class Worksheet
 
         if (columnIndex > Constants.MaximumColumns)
         {
-            throw new InvalidOperationException($"The XLSX format only supports {Constants.MaximumColumns} columns.");
+            throw new InvalidOperationException($"The XLSX format supports a maximum of {Constants.MaximumColumns} columns.");
         }
 
         if (columnIndex < 1)
         {
-            throw new InvalidOperationException("The XLSX format supports a minmium column index of 1.");
+            throw new InvalidOperationException("The XLSX format requires a minmium column index of 1.");
         }
     }
 }
