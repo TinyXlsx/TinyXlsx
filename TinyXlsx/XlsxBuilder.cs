@@ -150,14 +150,28 @@ public class XlsxBuilder
         bytesWritten += bytesUsed;
     }
 
+    /// <summary>
+    /// Appends the specified column index in column key form to the internal buffer and writes to the stream if the buffer size will be exceeded.
+    /// </summary>
+    /// <param name="stream">
+    /// The target <see cref="Stream"/> to write to when the buffer is full.
+    /// </param>
+    /// <param name="columnIndex">
+    /// The one-based index of the column to convert to a key and append.
+    /// </param>
     public void AppendColumnKey(
         Stream stream,
         int columnIndex)
     {
         if (bytesWritten + 3 > buffer.Length) Commit(stream);
 
-        ColumnKeyCache.WriteKey(columnIndex, buffer.AsSpan(bytesWritten), out var bytesUsed);
-        bytesWritten += bytesUsed;
+        if (columnIndex <= 26)
+        {
+            buffer[bytesWritten++] = (byte)(64 + columnIndex);
+            return;
+        }
+
+        Append(stream, ColumnKeyCache.GetKey(columnIndex));
     }
 
     /// <summary>

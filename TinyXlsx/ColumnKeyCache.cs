@@ -44,29 +44,4 @@ public static class ColumnKeyCache
 
         return keyAsString;
     }
-
-    /// <summary>
-    /// Writes the column key, e.g. "A", "AB", for the specified column index.
-    /// </summary>
-    /// <param name="columnIndex">
-    /// The one-based index of the column.
-    /// </param>
-    /// <param name="buffer">
-    /// The buffer to write to.
-    /// </param>
-    public static void WriteKey(
-        int columnIndex,
-        Span<byte> buffer,
-        out int bytesUsed)
-    {
-        if (columnIndex < 26)
-        {
-            buffer[0] = (byte)('A' + columnIndex);
-            bytesUsed = 1;
-            return;
-        }
-
-        bytesUsed = 0;
-        return;
-    }
 }
