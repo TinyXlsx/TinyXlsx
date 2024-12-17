@@ -200,24 +200,24 @@ public class Workbook : IDisposable
         using var entryStream = entry.Open();
 
         xlsxBuilder.Append(entryStream,
-            "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
-            + "<Types xmlns=\"http://schemas.openxmlformats.org/package/2006/content-types\">"
-            + "<Default Extension=\"rels\" ContentType=\"application/vnd.openxmlformats-package.relationships+xml\"/>"
-            + "<Default Extension=\"xml\" ContentType=\"application/xml\"/>"
-            + "<Override PartName=\"/_rels/.rels\" ContentType=\"application/vnd.openxmlformats-package.relationships+xml\"/>"
-            + "<Override PartName=\"/docProps/app.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.extended-properties+xml\"/>"
-            + "<Override PartName=\"/docProps/core.xml\" ContentType=\"application/vnd.openxmlformats-package.core-properties+xml\" />"
-            + "<Override PartName=\"/xl/sharedStrings.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml\"/>"
-            + "<Override PartName=\"/xl/styles.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml\"/>"
-            + "<Override PartName=\"/xl/workbook.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml\"/>");
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?>"u8
+            + "<Types xmlns=\"http://schemas.openxmlformats.org/package/2006/content-types\">"u8
+            + "<Default Extension=\"rels\" ContentType=\"application/vnd.openxmlformats-package.relationships+xml\"/>"u8
+            + "<Default Extension=\"xml\" ContentType=\"application/xml\"/>"u8
+            + "<Override PartName=\"/_rels/.rels\" ContentType=\"application/vnd.openxmlformats-package.relationships+xml\"/>"u8
+            + "<Override PartName=\"/docProps/app.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.extended-properties+xml\"/>"u8
+            + "<Override PartName=\"/docProps/core.xml\" ContentType=\"application/vnd.openxmlformats-package.core-properties+xml\" />"u8
+            + "<Override PartName=\"/xl/sharedStrings.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml\"/>"u8
+            + "<Override PartName=\"/xl/styles.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml\"/>"u8
+            + "<Override PartName=\"/xl/workbook.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml\"/>"u8);
 
         foreach (var worksheet in worksheets)
         {
-            xlsxBuilder.Append(entryStream, "<Override PartName=\"/xl/worksheets/sheet");
+            xlsxBuilder.Append(entryStream, "<Override PartName=\"/xl/worksheets/sheet"u8);
             xlsxBuilder.Append(entryStream, worksheet.Id);
-            xlsxBuilder.Append(entryStream, ".xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml\" />");
+            xlsxBuilder.Append(entryStream, ".xml\" ContentType=\"application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml\" />"u8);
         }
-        xlsxBuilder.Append(entryStream, "</Types>");
+        xlsxBuilder.Append(entryStream, "</Types>"u8);
 
         xlsxBuilder.Commit(entryStream);
     }
@@ -228,11 +228,11 @@ public class Workbook : IDisposable
         using var entryStream = entry.Open();
 
         xlsxBuilder.Append(entryStream,
-            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-            + "<Properties xmlns=\"http://schemas.openxmlformats.org/officeDocument/2006/extended-properties\">"
-            + "<Application>TinyXlsx 0.1.0</Application>"
-            + "<AppVersion>15.0000</AppVersion>"
-            + "</Properties>");
+            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"u8
+            + "<Properties xmlns=\"http://schemas.openxmlformats.org/officeDocument/2006/extended-properties\">"u8
+            + "<Application>TinyXlsx 0.1.0</Application>"u8
+            + "<AppVersion>15.0000</AppVersion>"u8
+            + "</Properties>"u8);
 
         xlsxBuilder.Commit(entryStream);
     }
@@ -243,17 +243,17 @@ public class Workbook : IDisposable
         using var entryStream = entry.Open();
 
         xlsxBuilder.Append(entryStream,
-            "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
-            + "<coreProperties "
-            + "xmlns:cp=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\""
-            + "xmlns:dc=\"http://purl.org/dc/elements/1.1/\""
-            + "xmlns:dcterms=\"http://purl.org/dc/terms/\""
-            + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-            + "xmlns=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\">"
-            + "<dcterms:created xsi:type=\"dcterms:W3CDTF\">");
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?>"u8
+            + "<coreProperties "u8
+            + "xmlns:cp=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\""u8
+            + "xmlns:dc=\"http://purl.org/dc/elements/1.1/\""u8
+            + "xmlns:dcterms=\"http://purl.org/dc/terms/\""u8
+            + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""u8
+            + "xmlns=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\">"u8
+            + "<dcterms:created xsi:type=\"dcterms:W3CDTF\">"u8);
 
         xlsxBuilder.Append(entryStream, DateTime.UtcNow.ToString("yyyy-MM-ddThh:mm:ssZ"));
-        xlsxBuilder.Append(entryStream, "</dcterms:created><dc:creator></dc:creator></coreProperties>");
+        xlsxBuilder.Append(entryStream, "</dcterms:created><dc:creator></dc:creator></coreProperties>"u8);
 
         xlsxBuilder.Commit(entryStream);
     }
@@ -264,12 +264,12 @@ public class Workbook : IDisposable
         using var entryStream = entry.Open();
 
         xlsxBuilder.Append(entryStream,
-            "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
-            + "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">"
-            + "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument\" Target=\"xl/workbook.xml\"/>"
-            + "<Relationship Id=\"rId2\" Type=\"http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties\" Target=\"docProps/core.xml\" />"
-            + "<Relationship Id=\"rId3\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties\" Target=\"docProps/app.xml\"/>"
-            + "</Relationships>");
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?>"u8
+            + "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">"u8
+            + "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument\" Target=\"xl/workbook.xml\"/>"u8
+            + "<Relationship Id=\"rId2\" Type=\"http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties\" Target=\"docProps/core.xml\" />"u8
+            + "<Relationship Id=\"rId3\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties\" Target=\"docProps/app.xml\"/>"u8
+            + "</Relationships>"u8);
 
         xlsxBuilder.Commit(entryStream);
     }
@@ -280,9 +280,9 @@ public class Workbook : IDisposable
         using var entryStream = entry.Open();
 
         xlsxBuilder.Append(entryStream,
-            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>"
-            + "<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\">"
-            + "</sst>");
+            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>"u8
+            + "<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\">"u8
+            + "</sst>"u8);
 
         xlsxBuilder.Commit(entryStream);
     }
@@ -293,48 +293,48 @@ public class Workbook : IDisposable
         using var entryStream = entry.Open();
 
         xlsxBuilder.Append(entryStream,
-            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-            + "<styleSheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\">"
-            + "<numFmts count=\"");
+            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"u8
+            + "<styleSheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\">"u8
+            + "<numFmts count=\""u8);
 
         xlsxBuilder.Append(entryStream, numberFormats.Count);
-        xlsxBuilder.Append(entryStream, "\">");
+        xlsxBuilder.Append(entryStream, "\">"u8);
         foreach (var item in numberFormats)
         {
-            xlsxBuilder.Append(entryStream, "<numFmt numFmtId=\"");
+            xlsxBuilder.Append(entryStream, "<numFmt numFmtId=\""u8);
             xlsxBuilder.Append(entryStream, item.Value.CustomFormatIndex);
-            xlsxBuilder.Append(entryStream, "\" formatCode=\"");
+            xlsxBuilder.Append(entryStream, "\" formatCode=\""u8);
             xlsxBuilder.Append(entryStream, item.Key);
-            xlsxBuilder.Append(entryStream, "\"/>");
+            xlsxBuilder.Append(entryStream, "\"/>"u8);
         }
 
         xlsxBuilder.Append(entryStream,
-            "</numFmts>"
-            + "<fonts count=\"1\">"
-            + "<font><sz val=\"11\"/><color indexed=\"8\"/><name val=\"Calibri\"/><family val=\"2\"/><scheme val=\"minor\"/></font>"
-            + "</fonts>"
-            + "<fills count=\"2\">"
-            + "<fill><patternFill patternType=\"none\"/></fill>"
-            + "<fill><patternFill patternType=\"darkGray\"/></fill>"
-            + "</fills>"
-            + "<borders count=\"1\">"
-            + "<border><left/><right/><top/><bottom/><diagonal/></border>"
-            + "</borders>"
-            + "<cellStyleXfs count=\"1\"><xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\"/></cellStyleXfs>"
-            + "<cellXfs count=\"");
+            "</numFmts>"u8
+            + "<fonts count=\"1\">"u8
+            + "<font><sz val=\"11\"/><color indexed=\"8\"/><name val=\"Calibri\"/><family val=\"2\"/><scheme val=\"minor\"/></font>"u8
+            + "</fonts>"u8
+            + "<fills count=\"2\">"u8
+            + "<fill><patternFill patternType=\"none\"/></fill>"u8
+            + "<fill><patternFill patternType=\"darkGray\"/></fill>"u8
+            + "</fills>"u8
+            + "<borders count=\"1\">"u8
+            + "<border><left/><right/><top/><bottom/><diagonal/></border>"u8
+            + "</borders>"u8
+            + "<cellStyleXfs count=\"1\"><xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\"/></cellStyleXfs>"u8
+            + "<cellXfs count=\""u8);
 
         xlsxBuilder.Append(entryStream, numberFormats.Count + 1);
-        xlsxBuilder.Append(entryStream, "\"><xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/>");
+        xlsxBuilder.Append(entryStream, "\"><xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/>"u8);
         foreach (var item in numberFormats)
         {
-            xlsxBuilder.Append(entryStream, "<xf numFmtId=\"");
+            xlsxBuilder.Append(entryStream, "<xf numFmtId=\""u8);
             xlsxBuilder.Append(entryStream, item.Value.CustomFormatIndex);
-            xlsxBuilder.Append(entryStream, "\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyNumberFormat=\"1\"/>");
+            xlsxBuilder.Append(entryStream, "\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyNumberFormat=\"1\"/>"u8);
         }
 
         xlsxBuilder.Append(entryStream,
-            "</cellXfs>"
-            + "</styleSheet>");
+            "</cellXfs>"u8
+            + "</styleSheet>"u8);
 
         xlsxBuilder.Commit(entryStream);
     }
@@ -345,24 +345,24 @@ public class Workbook : IDisposable
         using var entryStream = entry.Open();
 
         xlsxBuilder.Append(entryStream,
-            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-            + "<workbook xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\">"
-            + "<sheets>");
+            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"u8
+            + "<workbook xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\">"u8
+            + "<sheets>"u8);
 
         foreach (var worksheet in worksheets)
         {
-            xlsxBuilder.Append(entryStream, "<sheet name=\"");
+            xlsxBuilder.Append(entryStream, "<sheet name=\""u8);
             xlsxBuilder.Append(entryStream, worksheet.Name);
-            xlsxBuilder.Append(entryStream, "\" sheetId=\"");
+            xlsxBuilder.Append(entryStream, "\" sheetId=\""u8);
             xlsxBuilder.Append(entryStream, worksheet.Id);
-            xlsxBuilder.Append(entryStream, "\" r:id=\"");
+            xlsxBuilder.Append(entryStream, "\" r:id=\""u8);
             xlsxBuilder.Append(entryStream, worksheet.RelationshipId);
-            xlsxBuilder.Append(entryStream, "\"></sheet>");
+            xlsxBuilder.Append(entryStream, "\"></sheet>"u8);
         }
 
         xlsxBuilder.Append(entryStream,
-            "</sheets>"
-            + "</workbook>");
+            "</sheets>"u8
+            + "</workbook>"u8);
 
         xlsxBuilder.Commit(entryStream);
     }
@@ -373,21 +373,21 @@ public class Workbook : IDisposable
         using var entryStream = entry.Open();
 
         xlsxBuilder.Append(entryStream,
-            "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
-            + "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">"
-            + "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings\" Target=\"sharedStrings.xml\"/>"
-            + "<Relationship Id=\"rId2\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles\" Target=\"styles.xml\"/>");
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?>"u8
+            + "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">"u8
+            + "<Relationship Id=\"rId1\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings\" Target=\"sharedStrings.xml\"/>"u8
+            + "<Relationship Id=\"rId2\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles\" Target=\"styles.xml\"/>"u8);
 
         foreach (var worksheet in worksheets)
         {
-            xlsxBuilder.Append(entryStream, "<Relationship Id=\"");
+            xlsxBuilder.Append(entryStream, "<Relationship Id=\""u8);
             xlsxBuilder.Append(entryStream, worksheet.RelationshipId);
-            xlsxBuilder.Append(entryStream, "\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet\" Target=\"worksheets/sheet");
+            xlsxBuilder.Append(entryStream, "\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet\" Target=\"worksheets/sheet"u8);
             xlsxBuilder.Append(entryStream, worksheet.Id);
-            xlsxBuilder.Append(entryStream, ".xml\" />");
+            xlsxBuilder.Append(entryStream, ".xml\" />"u8);
         }
 
-        xlsxBuilder.Append(entryStream, "</Relationships>");
+        xlsxBuilder.Append(entryStream, "</Relationships>"u8);
         xlsxBuilder.Commit(entryStream);
     }
 

@@ -15,7 +15,7 @@ public class WorkbookValidationTests
         var worksheet = workbook.BeginSheet();
 
         var i = 1;
-        for (; i <= 10; i++)
+        for (; i <= 10_000; i++)
         {
             worksheet
                 .BeginRow()

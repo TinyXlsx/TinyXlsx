@@ -56,9 +56,9 @@ public class Worksheet
         EndRow();
         VerifyCanBeginRow(rowIndex);
 
-        xlsxBuilder.Append(stream, "<row r=\"");
+        xlsxBuilder.Append(stream, "<row r=\""u8);
         xlsxBuilder.Append(stream, rowIndex);
-        xlsxBuilder.Append(stream, "\">");
+        xlsxBuilder.Append(stream, "\">"u8);
 
         lastWrittenRowIndex = rowIndex;
         return this;
@@ -96,12 +96,12 @@ public class Worksheet
     {
         VerifyCanWriteCellValue(columnIndex);
 
-        xlsxBuilder.Append(stream, "<c r=\"");
+        xlsxBuilder.Append(stream, "<c r=\""u8);
         xlsxBuilder.AppendColumnKey(stream, columnIndex);
         xlsxBuilder.Append(stream, lastWrittenRowIndex);
-        xlsxBuilder.Append(stream, "\" t=\"e\"><f>");
+        xlsxBuilder.Append(stream, "\" t=\"e\"><f>"u8);
         xlsxBuilder.Append(stream, formula);
-        xlsxBuilder.Append(stream, "</f></c>");
+        xlsxBuilder.Append(stream, "</f></c>"u8);
 
         lastWrittenColumnIndex = columnIndex;
         return this;
@@ -139,12 +139,12 @@ public class Worksheet
     {
         VerifyCanWriteCellValue(columnIndex);
 
-        xlsxBuilder.Append(stream, "<c r=\"");
+        xlsxBuilder.Append(stream, "<c r=\""u8);
         xlsxBuilder.AppendColumnKey(stream, columnIndex);
         xlsxBuilder.Append(stream, lastWrittenRowIndex);
-        xlsxBuilder.Append(stream, "\" t=\"b\"><v>");
+        xlsxBuilder.Append(stream, "\" t=\"b\"><v>"u8);
         xlsxBuilder.Append(stream, value);
-        xlsxBuilder.Append(stream, "</v></c>");
+        xlsxBuilder.Append(stream, "</v></c>"u8);
 
         lastWrittenColumnIndex = columnIndex;
         return this;
@@ -213,14 +213,14 @@ public class Worksheet
 
         var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
 
-        xlsxBuilder.Append(stream, "<c r=\"");
+        xlsxBuilder.Append(stream, "<c r=\""u8);
         xlsxBuilder.AppendColumnKey(stream, columnIndex);
         xlsxBuilder.Append(stream, lastWrittenRowIndex);
-        xlsxBuilder.Append(stream, "\" s=\"");
+        xlsxBuilder.Append(stream, "\" s=\""u8);
         xlsxBuilder.Append(stream, zeroBasedIndex);
-        xlsxBuilder.Append(stream, "\" t=\"n\"><v>");
+        xlsxBuilder.Append(stream, "\" t=\"n\"><v>"u8);
         xlsxBuilder.Append(stream, value);
-        xlsxBuilder.Append(stream, "</v></c>");
+        xlsxBuilder.Append(stream, "</v></c>"u8);
 
         lastWrittenColumnIndex = columnIndex;
         return this;
@@ -244,12 +244,12 @@ public class Worksheet
     {
         VerifyCanWriteCellValue(columnIndex);
 
-        xlsxBuilder.Append(stream, "<c r=\"");
+        xlsxBuilder.Append(stream, "<c r=\""u8);
         xlsxBuilder.AppendColumnKey(stream, columnIndex);
         xlsxBuilder.Append(stream, lastWrittenRowIndex);
-        xlsxBuilder.Append(stream, "\" t=\"n\"><v>");
+        xlsxBuilder.Append(stream, "\" t=\"n\"><v>"u8);
         xlsxBuilder.Append(stream, value);
-        xlsxBuilder.Append(stream, "</v></c>");
+        xlsxBuilder.Append(stream, "</v></c>"u8);
 
         lastWrittenColumnIndex = columnIndex;
         return this;
@@ -309,12 +309,12 @@ public class Worksheet
     {
         VerifyCanWriteCellValue(columnIndex);
 
-        xlsxBuilder.Append(stream, "<c r=\"");
+        xlsxBuilder.Append(stream, "<c r=\""u8);
         xlsxBuilder.AppendColumnKey(stream, columnIndex);
         xlsxBuilder.Append(stream, lastWrittenRowIndex);
-        xlsxBuilder.Append(stream, "\" t=\"n\"><v>");
+        xlsxBuilder.Append(stream, "\" t=\"n\"><v>"u8);
         xlsxBuilder.Append(stream, value);
-        xlsxBuilder.Append(stream, "</v></c>");
+        xlsxBuilder.Append(stream, "</v></c>"u8);
 
         lastWrittenColumnIndex = columnIndex;
         return this;
@@ -347,14 +347,14 @@ public class Worksheet
 
         var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
 
-        xlsxBuilder.Append(stream, "<c r=\"");
+        xlsxBuilder.Append(stream, "<c r=\""u8);
         xlsxBuilder.AppendColumnKey(stream, columnIndex);
         xlsxBuilder.Append(stream, lastWrittenRowIndex);
-        xlsxBuilder.Append(stream, "\" s=\"");
+        xlsxBuilder.Append(stream, "\" s=\""u8);
         xlsxBuilder.Append(stream, zeroBasedIndex);
-        xlsxBuilder.Append(stream, "\" t=\"n\"><v>");
+        xlsxBuilder.Append(stream, "\" t=\"n\"><v>"u8);
         xlsxBuilder.Append(stream, value);
-        xlsxBuilder.Append(stream, "</v></c>");
+        xlsxBuilder.Append(stream, "</v></c>"u8);
 
         lastWrittenColumnIndex = columnIndex;
         return this;
@@ -423,14 +423,14 @@ public class Worksheet
 
         var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
 
-        xlsxBuilder.Append(stream, "<c r=\"");
+        xlsxBuilder.Append(stream, "<c r=\""u8);
         xlsxBuilder.AppendColumnKey(stream, columnIndex);
         xlsxBuilder.Append(stream, lastWrittenRowIndex);
-        xlsxBuilder.Append(stream, "\" s=\"");
+        xlsxBuilder.Append(stream, "\" s=\""u8);
         xlsxBuilder.Append(stream, zeroBasedIndex);
-        xlsxBuilder.Append(stream, "\" t=\"n\"><v>");
+        xlsxBuilder.Append(stream, "\" t=\"n\"><v>"u8);
         xlsxBuilder.Append(stream, value);
-        xlsxBuilder.Append(stream, "</v></c>");
+        xlsxBuilder.Append(stream, "</v></c>"u8);
 
         lastWrittenColumnIndex = columnIndex;
         return this;
@@ -454,12 +454,12 @@ public class Worksheet
     {
         VerifyCanWriteCellValue(columnIndex);
 
-        xlsxBuilder.Append(stream, "<c r=\"");
+        xlsxBuilder.Append(stream, "<c r=\""u8);
         xlsxBuilder.AppendColumnKey(stream, columnIndex);
         xlsxBuilder.Append(stream, lastWrittenRowIndex);
-        xlsxBuilder.Append(stream, "\" t=\"n\"><v>");
+        xlsxBuilder.Append(stream, "\" t=\"n\"><v>"u8);
         xlsxBuilder.Append(stream, value);
-        xlsxBuilder.Append(stream, "</v></c>");
+        xlsxBuilder.Append(stream, "</v></c>"u8);
 
         lastWrittenColumnIndex = columnIndex;
         return this;
@@ -505,12 +505,12 @@ public class Worksheet
             throw new NotSupportedException($"The XLSX format does not support more than {Constants.MaximumCharactersPerCell} characters in a cell.");
         }
 
-        xlsxBuilder.Append(stream, "<c r=\"");
+        xlsxBuilder.Append(stream, "<c r=\""u8);
         xlsxBuilder.AppendColumnKey(stream, columnIndex);
         xlsxBuilder.Append(stream, lastWrittenRowIndex);
-        xlsxBuilder.Append(stream, "\" t=\"inlineStr\"><is><t>");
+        xlsxBuilder.Append(stream, "\" t=\"inlineStr\"><is><t>"u8);
         xlsxBuilder.Append(stream, value);
-        xlsxBuilder.Append(stream, "</t></is></c>");
+        xlsxBuilder.Append(stream, "</t></is></c>"u8);
 
         return this;
     }
@@ -623,12 +623,12 @@ public class Worksheet
 
         // Intentionally leaving <dimension /> empty as stream does not support seeking.
         xlsxBuilder.Append(stream,
-            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-            + "<worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\">"
-            + "<sheetViews>"
-            + "<sheetView workbookViewId=\"0\"></sheetView>"
-            + "</sheetViews>"
-            + "<sheetData>");
+            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"u8
+            + "<worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\">"u8
+            + "<sheetViews>"u8
+            + "<sheetView workbookViewId=\"0\"></sheetView>"u8
+            + "</sheetViews>"u8
+            + "<sheetData>"u8);
     }
 
     internal void EndSheet()
@@ -638,8 +638,8 @@ public class Worksheet
 
         EndRow();
         xlsxBuilder.Append(stream,
-            "</sheetData>"
-            + "</worksheet>");
+            "</sheetData>"u8
+            + "</worksheet>"u8);
         xlsxBuilder.Commit(stream);
         stream.Flush();
         stream.Close();
@@ -652,7 +652,7 @@ public class Worksheet
 
         VerifyCanEndRow();
 
-        xlsxBuilder.Append(stream, "</row>");
+        xlsxBuilder.Append(stream, "</row>"u8);
         lastWrittenColumnIndex = 0;
     }
 
