@@ -28,7 +28,7 @@ public class Workbook : IDisposable
     /// </param>
     public Workbook(
         string filePath,
-        CompressionLevel compressionLevel = CompressionLevel.Optimal)
+        CompressionLevel compressionLevel = CompressionLevel.Fastest)
     {
         // No need to guard against filePath exceeding maximum length, as the XLSX viewer throws an error when opening the file.
 
@@ -54,7 +54,7 @@ public class Workbook : IDisposable
     /// </param>
     public Workbook(
         int capacity = 1024 * 64,
-        CompressionLevel compressionLevel = CompressionLevel.Optimal)
+        CompressionLevel compressionLevel = CompressionLevel.Fastest)
     {
         worksheets = [];
         numberFormats = [];
@@ -242,16 +242,16 @@ public class Workbook : IDisposable
         var entry = archive.CreateEntry("docProps/core.xml", compressionLevel);
         using var entryStream = entry.Open();
 
-        xlsxBuilder.Append(entryStream, """
-        <?xml version="1.0" encoding="utf-8"?>
-        <coreProperties
-            xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties"
-            xmlns:dc="http://purl.org/dc/elements/1.1/"
-            xmlns:dcterms="http://purl.org/dc/terms/"
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xmlns="http://schemas.openxmlformats.org/package/2006/metadata/core-properties">
-            <dcterms:created xsi:type="dcterms:W3CDTF">
-        """);
+        xlsxBuilder.Append(entryStream,
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+            + "<coreProperties "
+            + "xmlns:cp=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\""
+            + "xmlns:dc=\"http://purl.org/dc/elements/1.1/\""
+            + "xmlns:dcterms=\"http://purl.org/dc/terms/\""
+            + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+            + "xmlns=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\">"
+            + "<dcterms:created xsi:type=\"dcterms:W3CDTF\">");
+
         xlsxBuilder.Append(entryStream, DateTime.UtcNow.ToString("yyyy-MM-ddThh:mm:ssZ"));
         xlsxBuilder.Append(entryStream, "</dcterms:created><dc:creator></dc:creator></coreProperties>");
 

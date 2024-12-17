@@ -69,13 +69,13 @@ public class Worksheet
     }
 
     /// <summary>
-    /// Writes a <see cref="bool"/> value to the specified cell.
+    /// Writes a formula to the specified cell.
     /// </summary>
     /// <param name="columnIndex">
     /// The one-based column index of the cell to write to.
     /// </param>
-    /// <param name="value">
-    /// The <see cref="bool"/> value to write to the cell.
+    /// <param name="formula">
+    /// The formula as a string value to write to the cell.
     /// </param>
     public void WriteCellFormulaAt(
         int columnIndex,
