@@ -172,6 +172,11 @@ NA means the library does not support writing to a `MemoryStream`.
 | OpenXML   | 1,308.5 us |  7.80 us |  7.30 us |   54.6875 |   46.8750 |   23.4375 |   911.62 KB |
 | TinyXlsx  |   376.4 us |  2.63 us |  2.46 us |    4.8828 |    0.9766 |         - |    81.66 KB |
 
+| Method    | Records | Mean     | Error    | StdDev   | Gen0     | Gen1    | Allocated  |
+|---------- |-------- |---------:|---------:|---------:|---------:|--------:|-----------:|
+| LargeXlsx | 100     | 696.9 us | 12.37 us | 11.57 us | 142.5781 | 83.9844 | 2357.44 KB |
+| TinyXlsx  | 100     | 355.2 us |  2.00 us |  1.87 us |   4.8828 |  0.9766 |   81.66 KB |
+
 10,000 records, 12 columns:
 
 | Method    | Mean      | Error    | StdDev   | Gen0      | Gen1      | Gen2      | Allocated |
@@ -199,3 +204,9 @@ NA means the library does not support writing to a `MemoryStream`.
 | NPOI      | 14.156 s | 0.1672 s | 0.1564 s | 500000.0000 | 167000.0000 |  1000.0000 |   8098.2 MB |
 | OpenXML   | 22.693 s | 0.2360 s | 0.2208 s | 383000.0000 | 382000.0000 |  9000.0000 |  7518.95 MB |
 | TinyXlsx  |  2.663 s | 0.0150 s | 0.0133 s |   3000.0000 |   3000.0000 |  3000.0000 |   127.97 MB |
+
+
+| Method    | Records | Mean    | Error    | StdDev   | Gen0       | Gen1      | Gen2      | Allocated |
+|---------- |-------- |--------:|---------:|---------:|-----------:|----------:|----------:|----------:|
+| LargeXlsx | 1000000 | 5.602 s | 0.0162 s | 0.0151 s | 41000.0000 | 7000.0000 | 6000.0000 |  691.3 MB |
+| TinyXlsx  | 1000000 | 2.492 s | 0.0075 s | 0.0059 s |  3000.0000 | 3000.0000 | 3000.0000 | 127.97 MB |

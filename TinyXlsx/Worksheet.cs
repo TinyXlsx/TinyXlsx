@@ -259,12 +259,11 @@ public class Worksheet
         VerifyCanWriteCellValue(columnIndex);
         lastWrittenColumnIndex = columnIndex;
 
-        xlsxBuilder.Append(stream, "<c r=\"");
-        xlsxBuilder.AppendColumnKey(stream, columnIndex);
-        xlsxBuilder.Append(stream, lastWrittenRowIndex);
-        xlsxBuilder.Append(stream, "\" t=\"n\"><v>");
-        xlsxBuilder.Append(stream, value);
-        xlsxBuilder.Append(stream, "</v></c>");
+        xlsxBuilder.AppendCellValueAt(
+            stream,
+            columnIndex,
+            lastWrittenRowIndex,
+            value);
     }
 
     /// <summary>
@@ -292,14 +291,20 @@ public class Worksheet
 
         var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
 
-        xlsxBuilder.Append(stream, "<c r=\"");
-        xlsxBuilder.AppendColumnKey(stream, columnIndex);
-        xlsxBuilder.Append(stream, lastWrittenRowIndex);
-        xlsxBuilder.Append(stream, "\" s=\"");
-        xlsxBuilder.Append(stream, zeroBasedIndex);
-        xlsxBuilder.Append(stream, "\" t=\"n\"><v>");
-        xlsxBuilder.Append(stream, value);
-        xlsxBuilder.Append(stream, "</v></c>");
+        xlsxBuilder.AppendCellValueAt(
+            stream,
+            columnIndex,
+            zeroBasedIndex,
+            lastWrittenRowIndex,
+            value);
+        //xlsxBuilder.Append(stream, "<c r=\"");
+        //xlsxBuilder.AppendColumnKey(stream, columnIndex);
+        //xlsxBuilder.Append(stream, lastWrittenRowIndex);
+        //xlsxBuilder.Append(stream, "\" s=\"");
+        //xlsxBuilder.Append(stream, zeroBasedIndex);
+        //xlsxBuilder.Append(stream, "\" t=\"n\"><v>");
+        //xlsxBuilder.Append(stream, value);
+        //xlsxBuilder.Append(stream, "</v></c>");
     }
 
     /// <summary>
