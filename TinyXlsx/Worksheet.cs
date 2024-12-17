@@ -55,12 +55,12 @@ public class Worksheet
     {
         EndRow();
         VerifyCanBeginRow(rowIndex);
+        lastWrittenRowIndex = rowIndex;
 
         xlsxBuilder.Append(stream, "<row r=\""u8);
         xlsxBuilder.Append(stream, rowIndex);
         xlsxBuilder.Append(stream, "\">"u8);
 
-        lastWrittenRowIndex = rowIndex;
         return this;
     }
 
@@ -95,6 +95,7 @@ public class Worksheet
         string formula)
     {
         VerifyCanWriteCellValue(columnIndex);
+        lastWrittenColumnIndex = columnIndex;
 
         xlsxBuilder.Append(stream, "<c r=\""u8);
         xlsxBuilder.AppendColumnKey(stream, columnIndex);
@@ -103,7 +104,6 @@ public class Worksheet
         xlsxBuilder.Append(stream, formula);
         xlsxBuilder.Append(stream, "</f></c>"u8);
 
-        lastWrittenColumnIndex = columnIndex;
         return this;
     }
 
@@ -138,6 +138,7 @@ public class Worksheet
         bool value)
     {
         VerifyCanWriteCellValue(columnIndex);
+        lastWrittenColumnIndex = columnIndex;
 
         xlsxBuilder.Append(stream, "<c r=\""u8);
         xlsxBuilder.AppendColumnKey(stream, columnIndex);
@@ -146,7 +147,6 @@ public class Worksheet
         xlsxBuilder.Append(stream, value);
         xlsxBuilder.Append(stream, "</v></c>"u8);
 
-        lastWrittenColumnIndex = columnIndex;
         return this;
     }
 
@@ -210,6 +210,7 @@ public class Worksheet
         string format)
     {
         VerifyCanWriteCellValue(columnIndex);
+        lastWrittenColumnIndex = columnIndex;
 
         var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
 
@@ -222,7 +223,6 @@ public class Worksheet
         xlsxBuilder.Append(stream, value);
         xlsxBuilder.Append(stream, "</v></c>"u8);
 
-        lastWrittenColumnIndex = columnIndex;
         return this;
     }
 
@@ -243,6 +243,7 @@ public class Worksheet
         decimal value)
     {
         VerifyCanWriteCellValue(columnIndex);
+        lastWrittenColumnIndex = columnIndex;
 
         xlsxBuilder.Append(stream, "<c r=\""u8);
         xlsxBuilder.AppendColumnKey(stream, columnIndex);
@@ -251,7 +252,6 @@ public class Worksheet
         xlsxBuilder.Append(stream, value);
         xlsxBuilder.Append(stream, "</v></c>"u8);
 
-        lastWrittenColumnIndex = columnIndex;
         return this;
     }
 
@@ -308,6 +308,7 @@ public class Worksheet
         double value)
     {
         VerifyCanWriteCellValue(columnIndex);
+        lastWrittenColumnIndex = columnIndex;
 
         xlsxBuilder.Append(stream, "<c r=\""u8);
         xlsxBuilder.AppendColumnKey(stream, columnIndex);
@@ -316,7 +317,6 @@ public class Worksheet
         xlsxBuilder.Append(stream, value);
         xlsxBuilder.Append(stream, "</v></c>"u8);
 
-        lastWrittenColumnIndex = columnIndex;
         return this;
     }
 
@@ -344,6 +344,7 @@ public class Worksheet
         string format)
     {
         VerifyCanWriteCellValue(columnIndex);
+        lastWrittenColumnIndex = columnIndex;
 
         var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
 
@@ -356,7 +357,6 @@ public class Worksheet
         xlsxBuilder.Append(stream, value);
         xlsxBuilder.Append(stream, "</v></c>"u8);
 
-        lastWrittenColumnIndex = columnIndex;
         return this;
     }
 
@@ -420,6 +420,7 @@ public class Worksheet
         string format)
     {
         VerifyCanWriteCellValue(columnIndex);
+        lastWrittenColumnIndex = columnIndex;
 
         var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
 
@@ -432,7 +433,6 @@ public class Worksheet
         xlsxBuilder.Append(stream, value);
         xlsxBuilder.Append(stream, "</v></c>"u8);
 
-        lastWrittenColumnIndex = columnIndex;
         return this;
     }
 
@@ -453,6 +453,7 @@ public class Worksheet
         int value)
     {
         VerifyCanWriteCellValue(columnIndex);
+        lastWrittenColumnIndex = columnIndex;
 
         xlsxBuilder.Append(stream, "<c r=\""u8);
         xlsxBuilder.AppendColumnKey(stream, columnIndex);
@@ -461,7 +462,6 @@ public class Worksheet
         xlsxBuilder.Append(stream, value);
         xlsxBuilder.Append(stream, "</v></c>"u8);
 
-        lastWrittenColumnIndex = columnIndex;
         return this;
     }
 
