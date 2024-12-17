@@ -13,22 +13,25 @@ public partial class InMemory
 
         var worksheet = new Worksheet();
         var rows = new List<Row>();
-        for (int rowNumber = 1; rowNumber <= Records; rowNumber++)
+        for (int i = 1; i <= Records; i++)
         {
             var cells = new List<Cell>
             {
-                new (1, 123.456),
-                new (2, DateTime.Now),
-                new (3, "Text"),
+                new (1, false),
+                new (2, 123456),
+                new (3, 123.456m),
                 new (4, 123.456),
-                new (5, 123.456),
-                new (6, 123.456),
-                new (7, 123.456),
+                new (5, DateTime.Now),
+                new (6, DateTime.Now),
+                new (7, "Text"),
                 new (8, 123.456),
                 new (9, 123.456),
+                new (10, 123.456),
+                new (11, 123.456),
+                new (12, 123.456),
             };
 
-            rows.Add(new Row(rowNumber, cells));
+            rows.Add(new Row(i, cells));
         }
         worksheet.Rows = rows;
 

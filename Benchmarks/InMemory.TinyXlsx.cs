@@ -11,11 +11,15 @@ public partial class InMemory
         using var workbook = new Workbook();
         var worksheet = workbook.BeginSheet();
 
-        for (var i = 0; i < Records; i++)
+        for (var i = 1; i <= Records; i++)
         {
             worksheet.BeginRow();
+            worksheet.WriteCellValue(false);
+            worksheet.WriteCellValue(123456);
+            worksheet.WriteCellValue(123.456m);
             worksheet.WriteCellValue(123.456);
             worksheet.WriteCellValue(DateTime.Now);
+            worksheet.WriteCellValue(DateTime.Now, "yyyy/MM/dd");
             worksheet.WriteCellValue("Text");
             worksheet.WriteCellValue(123.456, "0.00");
             worksheet.WriteCellValue(123.456, "0.00%");

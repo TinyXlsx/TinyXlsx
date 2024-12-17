@@ -51,32 +51,52 @@ public partial class InMemory
                 {
                     NumberFormatId = 168,
                     ApplyNumberFormat = true,
+                },
+                new CellFormat
+                {
+                    NumberFormatId = 169,
+                    ApplyNumberFormat = true,
+                },
+                new CellFormat
+                {
+                    NumberFormatId = 170,
+                    ApplyNumberFormat = true,
                 }
             ),
             new NumberingFormats(
                 new NumberingFormat
                 {
                     NumberFormatId = 164,
-                    FormatCode = "0.00",
+                    FormatCode = "yyyy-MM-dd",
                 },
                 new NumberingFormat
                 {
                     NumberFormatId = 165,
-                    FormatCode = "0.00%",
+                    FormatCode = "yyyy/MM/dd",
                 },
                 new NumberingFormat
                 {
                     NumberFormatId = 166,
-                    FormatCode = "0.00E+00",
+                    FormatCode = "0.00",
                 },
                 new NumberingFormat
                 {
                     NumberFormatId = 167,
-                    FormatCode = "$#,##0.00",
+                    FormatCode = "0.00%",
                 },
                 new NumberingFormat
                 {
                     NumberFormatId = 168,
+                    FormatCode = "0.00E+00",
+                },
+                new NumberingFormat
+                {
+                    NumberFormatId = 169,
+                    FormatCode = "$#,##0.00",
+                },
+                new NumberingFormat
+                {
+                    NumberFormatId = 170,
                     FormatCode = "#,##0.00 [$USD]",
                 }
             )
@@ -89,6 +109,24 @@ public partial class InMemory
 
             dataRow.Append(new Cell
             {
+                DataType = CellValues.Boolean,
+                CellValue = new CellValue(false),
+            });
+
+            dataRow.Append(new Cell
+            {
+                DataType = CellValues.Number,
+                CellValue = new CellValue(123456),
+            });
+
+            dataRow.Append(new Cell
+            {
+                DataType = CellValues.Number,
+                CellValue = new CellValue(123.456m),
+            });
+
+            dataRow.Append(new Cell
+            {
                 DataType = CellValues.Number,
                 CellValue = new CellValue(123.456),
             });
@@ -97,26 +135,20 @@ public partial class InMemory
             {
                 DataType = CellValues.Date,
                 CellValue = new CellValue(DateTime.Now),
+                StyleIndex = 1,
+            });
+
+            dataRow.Append(new Cell
+            {
+                DataType = CellValues.Date,
+                CellValue = new CellValue(DateTime.Now),
+                StyleIndex = 2,
             });
 
             dataRow.Append(new Cell
             {
                 DataType = CellValues.InlineString,
                 CellValue = new CellValue("Text"),
-            });
-
-            dataRow.Append(new Cell
-            {
-                DataType = CellValues.Number,
-                CellValue = new CellValue(123.456),
-                StyleIndex = 1,
-            });
-
-            dataRow.Append(new Cell
-            {
-                DataType = CellValues.Number,
-                CellValue = new CellValue(123.456),
-                StyleIndex = 2,
             });
 
             dataRow.Append(new Cell
@@ -138,6 +170,20 @@ public partial class InMemory
                 DataType = CellValues.Number,
                 CellValue = new CellValue(123.456),
                 StyleIndex = 5,
+            });
+
+            dataRow.Append(new Cell
+            {
+                DataType = CellValues.Number,
+                CellValue = new CellValue(123.456),
+                StyleIndex = 6,
+            });
+
+            dataRow.Append(new Cell
+            {
+                DataType = CellValues.Number,
+                CellValue = new CellValue(123.456),
+                StyleIndex = 7,
             });
 
             sheetData!.Append(dataRow);

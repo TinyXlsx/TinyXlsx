@@ -15,14 +15,18 @@ public partial class InMemory
         var configuration = new OpenXmlConfiguration
         {
             DynamicColumns = new DynamicExcelColumn[] {
-                new DynamicExcelColumn("Column1"),
-                new DynamicExcelColumn("Column2") { Format="yyyy-MM-dd" },
-                new DynamicExcelColumn("Column3"),
-                new DynamicExcelColumn("Column4") { Format="0.00" },
-                new DynamicExcelColumn("Column5") { Format="0.00%" },
-                new DynamicExcelColumn("Column6") { Format="0.00E+00" },
-                new DynamicExcelColumn("Column7") { Format="$#,##0.00" },
-                new DynamicExcelColumn("Column8") { Format="#,##0.00 [$USD]" },
+                new("Column1"),
+                new("Column2"),
+                new("Column3"),
+                new("Column4"),
+                new("Column5") { Format="yyyy-MM-dd" },
+                new("Column6") { Format="yyyy/MM/dd" },
+                new("Column7"),
+                new("Column8") { Format="0.00" },
+                new("Column9") { Format="0.00%" },
+                new("Column10") { Format="0.00E+00" },
+                new("Column11") { Format="$#,##0.00" },
+                new("Column12") { Format="#,##0.00 [$USD]" },
             },
         };
 
@@ -31,14 +35,18 @@ public partial class InMemory
             .Select(item =>
                 new object[]
                 {
-                    new { Column1 = 123.456 },
-                    new { Column2 = DateTime.Now },
-                    new { Column3 = "Text" },
+                    new { Column1 = false },
+                    new { Column2 = 123456 },
+                    new { Column3 = 123.456m },
                     new { Column4 = 123.456 },
-                    new { Column5 = 123.456 },
-                    new { Column6 = 123.456 },
-                    new { Column7 = 123.456 },
+                    new { Column5 = DateTime.Now },
+                    new { Column6 = DateTime.Now },
+                    new { Column7 = "Text" },
                     new { Column8 = 123.456 },
+                    new { Column9 = 123.456 },
+                    new { Column10 = 123.456 },
+                    new { Column11 = 123.456 },
+                    new { Column12 = 123.456 },
                 });
 
         stream.SaveAs(value: values, configuration: configuration, excelType: ExcelType.XLSX);
