@@ -17,21 +17,21 @@ public class WorkbookValidationTests
         var i = 1;
         for (; i <= 10; i++)
         {
-            worksheet.BeginRow();
-            worksheet.WriteCellValue(true);
-            worksheet.WriteCellValue(123456);
-            worksheet.WriteCellValue(123.456m);
-            worksheet.WriteCellValue(123.456);
-            worksheet.WriteCellValue(DateTime.Now);
-            worksheet.WriteCellValue(DateTime.Now, "yyyy/MM/dd");
-            worksheet.WriteCellValue("Text");
-            worksheet.WriteCellValue(123.456, "0.00");
-            worksheet.WriteCellValue(123.456, "0.00%");
-            worksheet.WriteCellValue(123.456, "0.00E+00");
-            worksheet.WriteCellValue(123.456, "$#,##0.00");
-            worksheet.WriteCellValue(123.456, "#,##0.00 [$USD]");
-
-            worksheet.WriteCellFormula($"=SUM(H{i}:L{i})");
+            worksheet
+                .BeginRow()
+                .WriteCellValue(true)
+                .WriteCellValue(123456)
+                .WriteCellValue(123.456m)
+                .WriteCellValue(123.456)
+                .WriteCellValue(DateTime.Now)
+                .WriteCellValue(DateTime.Now, "yyyy/MM/dd")
+                .WriteCellValue("Text")
+                .WriteCellValue(123.456, "0.00")
+                .WriteCellValue(123.456, "0.00%")
+                .WriteCellValue(123.456, "0.00E+00")
+                .WriteCellValue(123.456, "$#,##0.00")
+                .WriteCellValue(123.456, "#,##0.00 [$USD]")
+                .WriteCellFormula($"=SUM(H{i}:L{i})");
         }
         workbook.Close();
 
