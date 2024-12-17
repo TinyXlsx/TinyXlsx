@@ -108,8 +108,8 @@ public class XlsxBuilder
     {
         if (bytesWritten + Constants.MaximumDecimalLength > buffer.Length) Commit(stream);
 
-        value.TryFormat(buffer.AsSpan(bytesWritten), out var written, provider: CultureInfo.InvariantCulture);
-        bytesWritten += written;
+        value.TryFormat(buffer.AsSpan(bytesWritten), out var bytesUsed, provider: CultureInfo.InvariantCulture);
+        bytesWritten += bytesUsed;
     }
 
     /// <summary>
@@ -127,8 +127,8 @@ public class XlsxBuilder
     {
         if (bytesWritten + Constants.MaximumDoubleLength > buffer.Length) Commit(stream);
 
-        value.TryFormat(buffer.AsSpan(bytesWritten), out var written, provider: CultureInfo.InvariantCulture);
-        bytesWritten += written;
+        value.TryFormat(buffer.AsSpan(bytesWritten), out var bytesUsed, provider: CultureInfo.InvariantCulture);
+        bytesWritten += bytesUsed;
     }
 
     /// <summary>
@@ -146,8 +146,18 @@ public class XlsxBuilder
     {
         if (bytesWritten + Constants.MaximumIntegerLength > buffer.Length) Commit(stream);
 
-        value.TryFormat(buffer.AsSpan(bytesWritten), out var written, provider: CultureInfo.InvariantCulture);
-        bytesWritten += written;
+        value.TryFormat(buffer.AsSpan(bytesWritten), out var bytesUsed, provider: CultureInfo.InvariantCulture);
+        bytesWritten += bytesUsed;
+    }
+
+    public void AppendColumnKey(
+        Stream stream,
+        int columnIndex)
+    {
+        if (bytesWritten + 3 > buffer.Length) Commit(stream);
+
+        ColumnKeyCache.WriteKey(columnIndex, buffer.AsSpan(bytesWritten), out var bytesUsed);
+        bytesWritten += bytesUsed;
     }
 
     /// <summary>

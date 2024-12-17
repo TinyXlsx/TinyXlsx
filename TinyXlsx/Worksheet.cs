@@ -84,7 +84,7 @@ public class Worksheet
         VerifyCanWriteCellValue(columnIndex);
 
         xlsxBuilder.Append(stream, "<c r=\"");
-        xlsxBuilder.Append(stream, ColumnKeyCache.GetKey(columnIndex));
+        xlsxBuilder.AppendColumnKey(stream, columnIndex);
         xlsxBuilder.Append(stream, lastWrittenRowIndex);
         xlsxBuilder.Append(stream, "\" t=\"e\"><f>");
         xlsxBuilder.Append(stream, formula);
@@ -121,7 +121,7 @@ public class Worksheet
         lastWrittenColumnIndex = columnIndex;
 
         xlsxBuilder.Append(stream, "<c r=\"");
-        xlsxBuilder.Append(stream, ColumnKeyCache.GetKey(columnIndex));
+        xlsxBuilder.AppendColumnKey(stream, columnIndex);
         xlsxBuilder.Append(stream, lastWrittenRowIndex);
         xlsxBuilder.Append(stream, "\" t=\"b\"><v>");
         xlsxBuilder.Append(stream, value);
@@ -182,7 +182,7 @@ public class Worksheet
         var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
 
         xlsxBuilder.Append(stream, "<c r=\"");
-        xlsxBuilder.Append(stream, ColumnKeyCache.GetKey(columnIndex));
+        xlsxBuilder.AppendColumnKey(stream, columnIndex);
         xlsxBuilder.Append(stream, lastWrittenRowIndex);
         xlsxBuilder.Append(stream, "\" s=\"");
         xlsxBuilder.Append(stream, zeroBasedIndex);
@@ -208,7 +208,7 @@ public class Worksheet
         lastWrittenColumnIndex = columnIndex;
 
         xlsxBuilder.Append(stream, "<c r=\"");
-        xlsxBuilder.Append(stream, ColumnKeyCache.GetKey(columnIndex));
+        xlsxBuilder.AppendColumnKey(stream, columnIndex);
         xlsxBuilder.Append(stream, lastWrittenRowIndex);
         xlsxBuilder.Append(stream, "\" t=\"n\"><v>");
         xlsxBuilder.Append(stream, value);
@@ -260,7 +260,7 @@ public class Worksheet
         lastWrittenColumnIndex = columnIndex;
 
         xlsxBuilder.Append(stream, "<c r=\"");
-        xlsxBuilder.Append(stream, ColumnKeyCache.GetKey(columnIndex));
+        xlsxBuilder.AppendColumnKey(stream, columnIndex);
         xlsxBuilder.Append(stream, lastWrittenRowIndex);
         xlsxBuilder.Append(stream, "\" t=\"n\"><v>");
         xlsxBuilder.Append(stream, value);
@@ -293,7 +293,7 @@ public class Worksheet
         var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
 
         xlsxBuilder.Append(stream, "<c r=\"");
-        xlsxBuilder.Append(stream, ColumnKeyCache.GetKey(columnIndex));
+        xlsxBuilder.AppendColumnKey(stream, columnIndex);
         xlsxBuilder.Append(stream, lastWrittenRowIndex);
         xlsxBuilder.Append(stream, "\" s=\"");
         xlsxBuilder.Append(stream, zeroBasedIndex);
@@ -355,7 +355,7 @@ public class Worksheet
         var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
 
         xlsxBuilder.Append(stream, "<c r=\"");
-        xlsxBuilder.Append(stream, ColumnKeyCache.GetKey(columnIndex));
+        xlsxBuilder.AppendColumnKey(stream, columnIndex);
         xlsxBuilder.Append(stream, lastWrittenRowIndex);
         xlsxBuilder.Append(stream, "\" s=\"");
         xlsxBuilder.Append(stream, zeroBasedIndex);
@@ -382,7 +382,7 @@ public class Worksheet
         VerifyCanWriteCellValue(columnIndex);
 
         xlsxBuilder.Append(stream, "<c r=\"");
-        xlsxBuilder.Append(stream, ColumnKeyCache.GetKey(columnIndex));
+        xlsxBuilder.AppendColumnKey(stream, columnIndex);
         xlsxBuilder.Append(stream, lastWrittenRowIndex);
         xlsxBuilder.Append(stream, "\" t=\"n\"><v>");
         xlsxBuilder.Append(stream, value);
@@ -425,7 +425,7 @@ public class Worksheet
         lastWrittenColumnIndex = columnIndex;
 
         xlsxBuilder.Append(stream, "<c r=\"");
-        xlsxBuilder.Append(stream, ColumnKeyCache.GetKey(columnIndex));
+        xlsxBuilder.AppendColumnKey(stream, columnIndex);
         xlsxBuilder.Append(stream, lastWrittenRowIndex);
         xlsxBuilder.Append(stream, "\" t=\"inlineStr\"><is><t>");
         xlsxBuilder.Append(stream, value);
@@ -523,7 +523,7 @@ public class Worksheet
         var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
 
         xlsxBuilder.Append(stream, "<c r=\"");
-        xlsxBuilder.Append(stream, ColumnKeyCache.GetKey(columnIndex));
+        xlsxBuilder.AppendColumnKey(stream, columnIndex);
         xlsxBuilder.Append(stream, lastWrittenRowIndex);
         xlsxBuilder.Append(stream, "\" s=\"");
         xlsxBuilder.Append(stream, zeroBasedIndex);

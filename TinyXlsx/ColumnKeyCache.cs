@@ -38,10 +38,35 @@ public static class ColumnKeyCache
             keyBuffer[i--] = (char)('A' + (remainingColumnIndex % 26));
             remainingColumnIndex = (remainingColumnIndex / 26) - 1;
         }
-        
+
         var keyAsString = new string(keyBuffer[(i + 1)..3]);
         cache[columnIndex] = keyAsString;
 
         return keyAsString;
+    }
+
+    /// <summary>
+    /// Writes the column key, e.g. "A", "AB", for the specified column index.
+    /// </summary>
+    /// <param name="columnIndex">
+    /// The one-based index of the column.
+    /// </param>
+    /// <param name="buffer">
+    /// The buffer to write to.
+    /// </param>
+    public static void WriteKey(
+        int columnIndex,
+        Span<byte> buffer,
+        out int bytesUsed)
+    {
+        if (columnIndex < 26)
+        {
+            buffer[0] = (byte)('A' + columnIndex);
+            bytesUsed = 1;
+            return;
+        }
+
+        bytesUsed = 0;
+        return;
     }
 }
