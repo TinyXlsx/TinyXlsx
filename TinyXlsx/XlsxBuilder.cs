@@ -47,6 +47,15 @@ public class XlsxBuilder
         }
     }
 
+    /// <summary>
+    /// Appends a <see cref="ReadOnlySpan{T}"/> of <see cref="byte"/> to the internal buffer and writes to the stream if the buffer size will be exceeded.
+    /// </summary>
+    /// <param name="stream">
+    /// The target <see cref="Stream"/> to write to when the buffer is full.
+    /// </param>
+    /// <param name="bytes">
+    /// The <see cref="ReadOnlySpan{T}"/> of <see cref="byte"/> to append.
+    /// </param>
     public void Append(
         Stream stream,
         ReadOnlySpan<byte> bytes)
