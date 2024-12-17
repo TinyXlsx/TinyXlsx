@@ -120,12 +120,11 @@ public class Worksheet
         VerifyCanWriteCellValue(columnIndex);
         lastWrittenColumnIndex = columnIndex;
 
-        xlsxBuilder.Append(stream, "<c r=\"");
-        xlsxBuilder.AppendColumnKey(stream, columnIndex);
-        xlsxBuilder.Append(stream, lastWrittenRowIndex);
-        xlsxBuilder.Append(stream, "\" t=\"b\"><v>");
-        xlsxBuilder.Append(stream, value);
-        xlsxBuilder.Append(stream, "</v></c>");
+        xlsxBuilder.AppendCellValueAt(
+            stream,
+            columnIndex,
+            lastWrittenRowIndex,
+            value);
     }
 
     /// <summary>

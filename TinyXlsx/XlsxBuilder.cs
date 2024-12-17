@@ -78,23 +78,6 @@ public class XlsxBuilder
     }
 
     /// <summary>
-    /// Appends a single character to the internal buffer.
-    /// </summary>
-    /// <param name="stream">
-    /// The target <see cref="Stream"/> to write to when the buffer is full.
-    /// </param>
-    /// <param name="character">
-    /// The character to append.
-    /// </param>
-    public void Append(
-        Stream stream,
-        char character)
-    {
-        var singleChar = (Span<char>)[character];
-        Append(stream, singleChar);
-    }
-
-    /// <summary>
     /// Appends a <see cref="decimal"/> value to the internal buffer and writes to the stream if the buffer size will be exceeded.
     /// </summary>
     /// <param name="stream">
@@ -149,6 +132,65 @@ public class XlsxBuilder
 
         value.TryFormat(buffer.AsSpan(bytesWritten), out var bytesUsed, provider: CultureInfo.InvariantCulture);
         bytesWritten += bytesUsed;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void AppendCellValueAt(
+        Stream stream,
+        int columnIndex,
+        int rowIndex,
+        bool value)
+    {
+        if (bytesWritten + 50 > buffer.Length) Commit(stream);
+
+        buffer[bytesWritten++] = 0x3C;
+        buffer[bytesWritten++] = 0x63;
+        buffer[bytesWritten++] = 0x20;
+        buffer[bytesWritten++] = 0x72;
+        buffer[bytesWritten++] = 0x3D;
+        buffer[bytesWritten++] = 0x22;
+
+        if (columnIndex <= 26)
+        {
+            buffer[bytesWritten++] = (byte)(64 + columnIndex);
+        }
+        else
+        {
+            Append(stream, ColumnKeyCache.GetKey(columnIndex));
+        }
+
+        rowIndex.TryFormat(buffer.AsSpan(bytesWritten), out var bytesUsed, provider: CultureInfo.InvariantCulture);
+        bytesWritten += bytesUsed;
+
+        buffer[bytesWritten++] = 0x22;
+        buffer[bytesWritten++] = 0x20;
+        buffer[bytesWritten++] = 0x74;
+        buffer[bytesWritten++] = 0x3D;
+        buffer[bytesWritten++] = 0x22;
+        buffer[bytesWritten++] = 0x62;
+        buffer[bytesWritten++] = 0x22;
+        buffer[bytesWritten++] = 0x3E;
+        buffer[bytesWritten++] = 0x3C;
+        buffer[bytesWritten++] = 0x76;
+        buffer[bytesWritten++] = 0x3E;
+
+        if (value)
+        {
+            buffer[bytesWritten++] = 0x31;
+        }
+        else
+        {
+            buffer[bytesWritten++] = 0x30;
+        }
+
+        buffer[bytesWritten++] = 0x3C;
+        buffer[bytesWritten++] = 0x2F;
+        buffer[bytesWritten++] = 0x76;
+        buffer[bytesWritten++] = 0x3E;
+        buffer[bytesWritten++] = 0x3C;
+        buffer[bytesWritten++] = 0x2F;
+        buffer[bytesWritten++] = 0x63;
+        buffer[bytesWritten++] = 0x3E;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
