@@ -7,7 +7,7 @@ public class Worksheet
 {
     private readonly XlsxBuilder xlsxBuilder;
     private readonly Stream stream;
-    private readonly Workbook workbook;
+    private readonly Stylesheet stylesheet;
     private int lastWrittenRowIndex;
     private int lastWrittenColumnIndex;
 
@@ -18,14 +18,14 @@ public class Worksheet
     /// <summary>
     /// Initializes a new instance of the <see cref="Worksheet"/> class.
     /// </summary>
-    /// <param name="workbook">
-    /// The <see cref="Workbook"/> to which this <see cref="Worksheet"/> belongs.
-    /// </param>
     /// <param name="xlsxBuilder">
     /// The <see cref="XlsxBuilder"/> to which to append to.
     /// </param>
     /// <param name="stream">
     /// The <see cref="Stream"/> to which to write to.
+    /// </param>
+    /// <param name="stylesheet">
+    /// The <see cref="Stylesheet"/> holding the necessary number formats.
     /// </param>
     /// <param name="id">
     /// The unique identifier of the <see cref="Worksheet"/>.
@@ -37,14 +37,14 @@ public class Worksheet
     /// The unique relationship identifier of the <see cref="Worksheet"/>.
     /// </param>
     public Worksheet(
-        Workbook workbook,
         XlsxBuilder xlsxBuilder,
         Stream stream,
+        Stylesheet stylesheet,
         int id,
         string name,
         string relationshipId)
     {
-        this.workbook = workbook;
+        this.stylesheet = stylesheet;
         this.xlsxBuilder = xlsxBuilder;
         this.stream = stream;
         Id = id;
@@ -235,7 +235,7 @@ public class Worksheet
         VerifyCanWriteCellValue(columnIndex);
         lastWrittenColumnIndex = columnIndex;
 
-        var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
+        var (zeroBasedIndex, _) = stylesheet.GetOrCreateNumberFormat(format);
 
         if (value == null) return this;
 
@@ -379,7 +379,7 @@ public class Worksheet
 
         if (value == null) return this;
 
-        var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
+        var (zeroBasedIndex, _) = stylesheet.GetOrCreateNumberFormat(format);
 
         xlsxBuilder.Append(stream, "<c r=\""u8);
         xlsxBuilder.AppendColumnKey(stream, columnIndex);
@@ -457,7 +457,7 @@ public class Worksheet
 
         if (value == null) return this;
 
-        var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
+        var (zeroBasedIndex, _) = stylesheet.GetOrCreateNumberFormat(format);
 
         xlsxBuilder.Append(stream, "<c r=\""u8);
         xlsxBuilder.AppendColumnKey(stream, columnIndex);
@@ -511,7 +511,7 @@ public class Worksheet
     /// <returns>
     /// The <see cref="Worksheet"/> instance to allow method chaining.
     /// </returns>
-    public Worksheet WriteCellValue(string value)
+    public Worksheet WriteCellValue(string? value)
     {
         return WriteCellValueAt(lastWrittenColumnIndex + 1, value);
     }
@@ -653,7 +653,7 @@ public class Worksheet
         }
 
         var daysSinceEpoch = (value.Value - Constants.XlsxEpoch).TotalDays;
-        var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
+        var (zeroBasedIndex, _) = stylesheet.GetOrCreateNumberFormat(format);
 
         xlsxBuilder.Append(stream, "<c r=\""u8);
         xlsxBuilder.AppendColumnKey(stream, columnIndex);

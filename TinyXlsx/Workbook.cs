@@ -11,7 +11,7 @@ public class Workbook : IDisposable
     private readonly Stream stream;
     private readonly ZipArchive archive;
     private readonly List<Worksheet> worksheets;
-    private readonly Dictionary<string, (int ZeroBasedIndex, int CustomFormatIndex)> numberFormats;
+    private readonly Stylesheet stylesheet;
     private readonly CompressionLevel compressionLevel;
     private bool disposedValue;
 
@@ -33,7 +33,7 @@ public class Workbook : IDisposable
         // No need to guard against filePath exceeding maximum length, as the XLSX viewer throws an error when opening the file.
 
         worksheets = [];
-        numberFormats = [];
+        stylesheet = new Stylesheet();
         this.compressionLevel = compressionLevel;
 
         stream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None);
@@ -57,7 +57,7 @@ public class Workbook : IDisposable
         CompressionLevel compressionLevel = CompressionLevel.Fastest)
     {
         worksheets = [];
-        numberFormats = [];
+        stylesheet = new Stylesheet();
         this.compressionLevel = compressionLevel;
 
         stream = new MemoryStream(capacity);
@@ -134,37 +134,6 @@ public class Workbook : IDisposable
         }
 
         return stream;
-    }
-
-    /// <summary>
-    /// Gets or creates a unique number format style for the specified format string.
-    /// </summary>
-    /// <param name="format">
-    /// The format string to get or create.
-    /// </param>
-    /// <returns>
-    /// A tuple containing the zero-based index and custom format index for the style.
-    /// </returns>
-    /// <exception cref="NotSupportedException">
-    /// Thrown if the number of styles exceeds the maximum supported by the XLSX format.
-    /// </exception>
-    public (int ZeroBasedIndex, int CustomFormatIndex) GetOrCreateNumberFormat(string format)
-    {
-        var count = numberFormats.Count;
-
-        if (count >= Constants.MaximumStyles)
-        {
-            throw new NotSupportedException("The XLSX format does not support more than 65,490 styles.");
-        }
-
-        if (numberFormats.TryGetValue(format, out var indexes))
-        {
-            return indexes;
-        }
-
-        indexes = (count + 1, count + 164);
-        numberFormats.Add(format, indexes);
-        return indexes;
     }
 
     /// <summary>
@@ -297,9 +266,9 @@ public class Workbook : IDisposable
             + "<styleSheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\">"u8
             + "<numFmts count=\""u8);
 
-        xlsxBuilder.Append(entryStream, numberFormats.Count);
+        xlsxBuilder.Append(entryStream, stylesheet.Formats.Count);
         xlsxBuilder.Append(entryStream, "\">"u8);
-        foreach (var item in numberFormats)
+        foreach (var item in stylesheet.Formats)
         {
             xlsxBuilder.Append(entryStream, "<numFmt numFmtId=\""u8);
             xlsxBuilder.Append(entryStream, item.Value.CustomFormatIndex);
@@ -323,9 +292,9 @@ public class Workbook : IDisposable
             + "<cellStyleXfs count=\"1\"><xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\"/></cellStyleXfs>"u8
             + "<cellXfs count=\""u8);
 
-        xlsxBuilder.Append(entryStream, numberFormats.Count + 1);
+        xlsxBuilder.Append(entryStream, stylesheet.Formats.Count + 1);
         xlsxBuilder.Append(entryStream, "\"><xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/>"u8);
-        foreach (var item in numberFormats)
+        foreach (var item in stylesheet.Formats)
         {
             xlsxBuilder.Append(entryStream, "<xf numFmtId=\""u8);
             xlsxBuilder.Append(entryStream, item.Value.CustomFormatIndex);
@@ -405,9 +374,9 @@ public class Workbook : IDisposable
         var entryStream = entry.Open();
 
         var worksheet = new Worksheet(
-            this,
             xlsxBuilder,
             entryStream,
+            this.stylesheet,
             id,
             name,
             relationshipId);

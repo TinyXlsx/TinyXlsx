@@ -35,8 +35,9 @@ public static class ColumnKeyCache
 
         while (remainingColumnIndex > 0)
         {
-            keyBuffer[i--] = (char)('A' + (remainingColumnIndex % 26));
-            remainingColumnIndex = (remainingColumnIndex / 26) - 1;
+            var (quotient, remainder) = Math.DivRem(remainingColumnIndex - 1, 26);
+            remainingColumnIndex = quotient;
+            keyBuffer[i--] = (char)('A' + remainder);
         }
 
         var keyAsString = new string(keyBuffer[(i + 1)..3]);

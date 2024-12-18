@@ -5,7 +5,7 @@ using TinyXlsx;
 namespace Tests;
 
 [TestClass]
-public class WorkbookValidationTests
+public class WorkbookTests
 {
     [TestMethod]
     public void GeneratedXlsxFileShouldHaveNoValidationErrors()
