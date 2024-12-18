@@ -15,6 +15,27 @@ public class Worksheet
     internal string Name { get; }
     internal string RelationshipId { get; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Worksheet"/> class.
+    /// </summary>
+    /// <param name="workbook">
+    /// The <see cref="Workbook"/> to which this <see cref="Worksheet"/> belongs.
+    /// </param>
+    /// <param name="xlsxBuilder">
+    /// The <see cref="XlsxBuilder"/> to which to append to.
+    /// </param>
+    /// <param name="stream">
+    /// The <see cref="Stream"/> to which to write to.
+    /// </param>
+    /// <param name="id">
+    /// The unique identifier of the <see cref="Worksheet"/>.
+    /// </param>
+    /// <param name="name">
+    /// The unique name of the <see cref="Worksheet"/>.
+    /// </param>
+    /// <param name="relationshipId">
+    /// The unique relationship identifier of the <see cref="Worksheet"/>.
+    /// </param>
     public Worksheet(
         Workbook workbook,
         XlsxBuilder xlsxBuilder,

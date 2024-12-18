@@ -17,6 +17,9 @@ public class XlsxBuilder
         encoder = Encoding.UTF8.GetEncoder();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XlsxBuilder"/> class.
+    /// </summary>
     public XlsxBuilder()
     {
         buffer = new byte[1024 * 8];
