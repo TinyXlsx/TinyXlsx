@@ -679,6 +679,11 @@ public class Worksheet
 
     private void VerifyCanBeginRow(int rowIndex)
     {
+        if (rowIndex < 1)
+        {
+            throw new InvalidOperationException("The XLSX format requires a minmium row index of 1.");
+        }
+
         if (rowIndex <= lastWrittenRowIndex)
         {
             throw new InvalidOperationException($"A row with an index equal to or higher than {rowIndex} was already written to.");
@@ -687,11 +692,6 @@ public class Worksheet
         if (rowIndex > Constants.MaximumRows)
         {
             throw new InvalidOperationException($"The XLSX format supports a maximum of {Constants.MaximumRows} rows.");
-        }
-
-        if (rowIndex < 1)
-        {
-            throw new InvalidOperationException("The XLSX format requires a minmium row index of 1.");
         }
     }
 
@@ -707,6 +707,11 @@ public class Worksheet
 
     private void VerifyCanWriteCellValue(int columnIndex)
     {
+        if (columnIndex < 1)
+        {
+            throw new InvalidOperationException("The XLSX format requires a minmium column index of 1.");
+        }
+
         if (lastWrittenRowIndex == 0)
         {
             throw new InvalidOperationException($"A cell value can only be written after creating a row with {nameof(BeginRow)}.");
@@ -720,11 +725,6 @@ public class Worksheet
         if (columnIndex > Constants.MaximumColumns)
         {
             throw new InvalidOperationException($"The XLSX format supports a maximum of {Constants.MaximumColumns} columns.");
-        }
-
-        if (columnIndex < 1)
-        {
-            throw new InvalidOperationException("The XLSX format requires a minmium column index of 1.");
         }
     }
 }
