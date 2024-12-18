@@ -137,7 +137,7 @@ public class Worksheet
     /// <returns>
     /// The <see cref="Worksheet"/> instance to allow method chaining.
     /// </returns>
-    public Worksheet WriteCellValue(bool value)
+    public Worksheet WriteCellValue(bool? value)
     {
         return WriteCellValueAt(lastWrittenColumnIndex + 1, value);
     }
@@ -156,16 +156,18 @@ public class Worksheet
     /// </returns>
     public Worksheet WriteCellValueAt(
         int columnIndex,
-        bool value)
+        bool? value)
     {
         VerifyCanWriteCellValue(columnIndex);
         lastWrittenColumnIndex = columnIndex;
+
+        if (value == null) return this;
 
         xlsxBuilder.Append(stream, "<c r=\""u8);
         xlsxBuilder.AppendColumnKey(stream, columnIndex);
         xlsxBuilder.Append(stream, lastWrittenRowIndex);
         xlsxBuilder.Append(stream, "\" t=\"b\"><v>"u8);
-        xlsxBuilder.Append(stream, value);
+        xlsxBuilder.Append(stream, value.Value);
         xlsxBuilder.Append(stream, "</v></c>"u8);
 
         return this;
@@ -180,7 +182,7 @@ public class Worksheet
     /// <returns>
     /// The <see cref="Worksheet"/> instance to allow method chaining.
     /// </returns>
-    public Worksheet WriteCellValue(decimal value)
+    public Worksheet WriteCellValue(decimal? value)
     {
         return WriteCellValueAt(lastWrittenColumnIndex + 1, value);
     }
@@ -201,7 +203,7 @@ public class Worksheet
     /// The specified format must be valid. Invalid formats may result in a repair prompt from the XLSX viewer.
     /// </remarks>
     public Worksheet WriteCellValue(
-        decimal value,
+        decimal? value,
         string format)
     {
         return WriteCellValueAt(lastWrittenColumnIndex + 1, value, format);
@@ -227,7 +229,7 @@ public class Worksheet
     /// </remarks>
     public Worksheet WriteCellValueAt(
         int columnIndex,
-        decimal value,
+        decimal? value,
         string format)
     {
         VerifyCanWriteCellValue(columnIndex);
@@ -235,13 +237,15 @@ public class Worksheet
 
         var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
 
+        if (value == null) return this;
+
         xlsxBuilder.Append(stream, "<c r=\""u8);
         xlsxBuilder.AppendColumnKey(stream, columnIndex);
         xlsxBuilder.Append(stream, lastWrittenRowIndex);
         xlsxBuilder.Append(stream, "\" s=\""u8);
         xlsxBuilder.Append(stream, zeroBasedIndex);
         xlsxBuilder.Append(stream, "\" t=\"n\"><v>"u8);
-        xlsxBuilder.Append(stream, value);
+        xlsxBuilder.Append(stream, value.Value);
         xlsxBuilder.Append(stream, "</v></c>"u8);
 
         return this;
@@ -261,16 +265,18 @@ public class Worksheet
     /// </returns>
     public Worksheet WriteCellValueAt(
         int columnIndex,
-        decimal value)
+        decimal? value)
     {
         VerifyCanWriteCellValue(columnIndex);
         lastWrittenColumnIndex = columnIndex;
+
+        if (value == null) return this;
 
         xlsxBuilder.Append(stream, "<c r=\""u8);
         xlsxBuilder.AppendColumnKey(stream, columnIndex);
         xlsxBuilder.Append(stream, lastWrittenRowIndex);
         xlsxBuilder.Append(stream, "\" t=\"n\"><v>"u8);
-        xlsxBuilder.Append(stream, value);
+        xlsxBuilder.Append(stream, value.Value);
         xlsxBuilder.Append(stream, "</v></c>"u8);
 
         return this;
@@ -285,7 +291,7 @@ public class Worksheet
     /// <returns>
     /// The <see cref="Worksheet"/> instance to allow method chaining.
     /// </returns>
-    public Worksheet WriteCellValue(double value)
+    public Worksheet WriteCellValue(double? value)
     {
         return WriteCellValueAt(lastWrittenColumnIndex + 1, value);
     }
@@ -306,9 +312,11 @@ public class Worksheet
     /// The specified format must be valid. Invalid formats may result in a repair prompt from the XLSX viewer.
     /// </remarks>
     public Worksheet WriteCellValue(
-        double value,
+        double? value,
         string format)
     {
+        if (value == null) return this;
+
         return WriteCellValueAt(lastWrittenColumnIndex + 1, value, format);
     }
 
@@ -326,16 +334,18 @@ public class Worksheet
     /// </returns>
     public Worksheet WriteCellValueAt(
         int columnIndex,
-        double value)
+        double? value)
     {
         VerifyCanWriteCellValue(columnIndex);
         lastWrittenColumnIndex = columnIndex;
+
+        if (value == null) return this;
 
         xlsxBuilder.Append(stream, "<c r=\""u8);
         xlsxBuilder.AppendColumnKey(stream, columnIndex);
         xlsxBuilder.Append(stream, lastWrittenRowIndex);
         xlsxBuilder.Append(stream, "\" t=\"n\"><v>"u8);
-        xlsxBuilder.Append(stream, value);
+        xlsxBuilder.Append(stream, value.Value);
         xlsxBuilder.Append(stream, "</v></c>"u8);
 
         return this;
@@ -361,11 +371,13 @@ public class Worksheet
     /// </remarks>
     public Worksheet WriteCellValueAt(
         int columnIndex,
-        double value,
+        double? value,
         string format)
     {
         VerifyCanWriteCellValue(columnIndex);
         lastWrittenColumnIndex = columnIndex;
+
+        if (value == null) return this;
 
         var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
 
@@ -375,7 +387,7 @@ public class Worksheet
         xlsxBuilder.Append(stream, "\" s=\""u8);
         xlsxBuilder.Append(stream, zeroBasedIndex);
         xlsxBuilder.Append(stream, "\" t=\"n\"><v>"u8);
-        xlsxBuilder.Append(stream, value);
+        xlsxBuilder.Append(stream, value.Value);
         xlsxBuilder.Append(stream, "</v></c>"u8);
 
         return this;
@@ -390,7 +402,7 @@ public class Worksheet
     /// <returns>
     /// The <see cref="Worksheet"/> instance to allow method chaining.
     /// </returns>
-    public Worksheet WriteCellValue(int value)
+    public Worksheet WriteCellValue(int? value)
     {
         return WriteCellValueAt(lastWrittenColumnIndex + 1, value);
     }
@@ -411,7 +423,7 @@ public class Worksheet
     /// The specified format must be valid. Invalid formats may result in a repair prompt from the XLSX viewer.
     /// </remarks>
     public Worksheet WriteCellValue(
-        int value,
+        int? value,
         string format)
     {
         return WriteCellValueAt(lastWrittenColumnIndex + 1, value, format);
@@ -437,11 +449,13 @@ public class Worksheet
     /// </remarks>
     public Worksheet WriteCellValueAt(
         int columnIndex,
-        int value,
+        int? value,
         string format)
     {
         VerifyCanWriteCellValue(columnIndex);
         lastWrittenColumnIndex = columnIndex;
+
+        if (value == null) return this;
 
         var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
 
@@ -451,7 +465,7 @@ public class Worksheet
         xlsxBuilder.Append(stream, "\" s=\""u8);
         xlsxBuilder.Append(stream, zeroBasedIndex);
         xlsxBuilder.Append(stream, "\" t=\"n\"><v>"u8);
-        xlsxBuilder.Append(stream, value);
+        xlsxBuilder.Append(stream, value.Value);
         xlsxBuilder.Append(stream, "</v></c>"u8);
 
         return this;
@@ -471,16 +485,18 @@ public class Worksheet
     /// </returns>
     public Worksheet WriteCellValueAt(
         int columnIndex,
-        int value)
+        int? value)
     {
         VerifyCanWriteCellValue(columnIndex);
         lastWrittenColumnIndex = columnIndex;
+
+        if (value == null) return this;
 
         xlsxBuilder.Append(stream, "<c r=\""u8);
         xlsxBuilder.AppendColumnKey(stream, columnIndex);
         xlsxBuilder.Append(stream, lastWrittenRowIndex);
         xlsxBuilder.Append(stream, "\" t=\"n\"><v>"u8);
-        xlsxBuilder.Append(stream, value);
+        xlsxBuilder.Append(stream, value.Value);
         xlsxBuilder.Append(stream, "</v></c>"u8);
 
         return this;
@@ -514,7 +530,7 @@ public class Worksheet
     /// </returns>
     public Worksheet WriteCellValueAt(
        int columnIndex,
-       string value)
+       string? value)
     {
         VerifyCanWriteCellValue(columnIndex);
         lastWrittenColumnIndex = columnIndex;
@@ -545,7 +561,7 @@ public class Worksheet
     /// <returns>
     /// The <see cref="Worksheet"/> instance to allow method chaining.
     /// </returns>
-    public Worksheet WriteCellValue(DateTime value)
+    public Worksheet WriteCellValue(DateTime? value)
     {
         return WriteCellValueAt(lastWrittenColumnIndex + 1, value);
     }
@@ -566,7 +582,7 @@ public class Worksheet
     /// The specified format must be valid. Invalid formats may result in a repair prompt from the XLSX viewer.
     /// </remarks>
     public Worksheet WriteCellValue(
-        DateTime value,
+        DateTime? value,
         string format)
     {
         return WriteCellValueAt(lastWrittenColumnIndex + 1, value, format);
@@ -586,7 +602,7 @@ public class Worksheet
     /// </returns>
     public Worksheet WriteCellValueAt(
        int columnIndex,
-       DateTime value)
+       DateTime? value)
     {
         return WriteCellValueAt(
             columnIndex,
@@ -617,9 +633,14 @@ public class Worksheet
     /// </remarks>
     public Worksheet WriteCellValueAt(
        int columnIndex,
-       DateTime value,
+       DateTime? value,
        string format)
     {
+        VerifyCanWriteCellValue(columnIndex);
+        lastWrittenColumnIndex = columnIndex;
+
+        if (value == null) return this;
+
         if (value < Constants.MinimumDate)
         {
             throw new NotSupportedException("The XLSX format does not support dates before 1900-01-01. Consider writing the value as a number or string instead.");
@@ -628,12 +649,22 @@ public class Worksheet
         // Account for leap year bug.
         if (value < Constants.LeapYearBugCorrectionDate)
         {
-            value = value.AddDays(-1);
+            value = value.Value.AddDays(-1);
         }
 
-        var daysSinceEpoch = (value - Constants.XlsxEpoch).TotalDays;
+        var daysSinceEpoch = (value.Value - Constants.XlsxEpoch).TotalDays;
+        var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
 
-        return WriteCellValueAt(columnIndex, daysSinceEpoch, format);
+        xlsxBuilder.Append(stream, "<c r=\""u8);
+        xlsxBuilder.AppendColumnKey(stream, columnIndex);
+        xlsxBuilder.Append(stream, lastWrittenRowIndex);
+        xlsxBuilder.Append(stream, "\" s=\""u8);
+        xlsxBuilder.Append(stream, zeroBasedIndex);
+        xlsxBuilder.Append(stream, "\" t=\"n\"><v>"u8);
+        xlsxBuilder.Append(stream, daysSinceEpoch);
+        xlsxBuilder.Append(stream, "</v></c>"u8);
+
+        return this;
     }
 
     internal void BeginSheet()
