@@ -90,8 +90,11 @@ public class XlsxBuilder
 
             if (lessThanIndex >= 0 && (lessThanIndex < ampersandIndex || ampersandIndex == -1))
             {
-                encoder.Convert(text[..lessThanIndex], buffer.AsSpan(bytesWritten), false, out var _, out var bytesUsed, out var isCompleted);
+                encoder.Convert(text[..lessThanIndex], buffer.AsSpan(bytesWritten), false, out _, out var bytesUsed, out _);
                 bytesWritten += bytesUsed;
+
+                if (bytesWritten + 4 > buffer.Length) Commit(stream);
+
                 buffer[bytesWritten++] = (byte)'&';
                 buffer[bytesWritten++] = (byte)'l';
                 buffer[bytesWritten++] = (byte)'t';
@@ -100,8 +103,11 @@ public class XlsxBuilder
             }
             else if (ampersandIndex >= 0 && (ampersandIndex < lessThanIndex || lessThanIndex == -1))
             {
-                encoder.Convert(text[..ampersandIndex], buffer.AsSpan(bytesWritten), false, out var _, out var bytesUsed, out var isCompleted);
+                encoder.Convert(text[..ampersandIndex], buffer.AsSpan(bytesWritten), false, out _, out var bytesUsed, out _);
                 bytesWritten += bytesUsed;
+
+                if (bytesWritten + 5 > buffer.Length) Commit(stream);
+
                 buffer[bytesWritten++] = (byte)'&';
                 buffer[bytesWritten++] = (byte)'a';
                 buffer[bytesWritten++] = (byte)'m';
@@ -111,7 +117,7 @@ public class XlsxBuilder
             }
             else
             {
-                encoder.Convert(text, buffer.AsSpan(bytesWritten), false, out var charactersUsed, out var bytesUsed, out var isCompleted);
+                encoder.Convert(text, buffer.AsSpan(bytesWritten), false, out var charactersUsed, out var bytesUsed, out _);
                 text = text[charactersUsed..];
                 bytesWritten += bytesUsed;
             }
