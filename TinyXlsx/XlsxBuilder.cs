@@ -85,30 +85,37 @@ public class XlsxBuilder
         {
             if (bytesWritten + MaximumUtf8BytesPerCharacter > buffer.Length) Commit(stream);
 
-            encoder.Convert(text, buffer.AsSpan(bytesWritten), false, out var charactersUsed, out var bytesUsed, out var isCompleted);
-            bytesWritten += bytesUsed;
+            var lessThanIndex = text.IndexOf('<');
+            var ampersandIndex = text.IndexOf('&');
 
-            if (isCompleted) return;
-
-            text = text[charactersUsed..];
+            if (lessThanIndex >= 0 && (lessThanIndex < ampersandIndex || ampersandIndex == -1))
+            {
+                encoder.Convert(text[..lessThanIndex], buffer.AsSpan(bytesWritten), false, out var _, out var bytesUsed, out var isCompleted);
+                bytesWritten += bytesUsed;
+                buffer[bytesWritten++] = (byte)'&';
+                buffer[bytesWritten++] = (byte)'l';
+                buffer[bytesWritten++] = (byte)'t';
+                buffer[bytesWritten++] = (byte)';';
+                text = text[(lessThanIndex + 1)..];
+            }
+            else if (ampersandIndex >= 0 && (ampersandIndex < lessThanIndex || lessThanIndex == -1))
+            {
+                encoder.Convert(text[..ampersandIndex], buffer.AsSpan(bytesWritten), false, out var _, out var bytesUsed, out var isCompleted);
+                bytesWritten += bytesUsed;
+                buffer[bytesWritten++] = (byte)'&';
+                buffer[bytesWritten++] = (byte)'a';
+                buffer[bytesWritten++] = (byte)'m';
+                buffer[bytesWritten++] = (byte)'p';
+                buffer[bytesWritten++] = (byte)';';
+                text = text[(ampersandIndex + 1)..];
+            }
+            else
+            {
+                encoder.Convert(text, buffer.AsSpan(bytesWritten), false, out var charactersUsed, out var bytesUsed, out var isCompleted);
+                text = text[charactersUsed..];
+                bytesWritten += bytesUsed;
+            }
         }
-    }
-
-    /// <summary>
-    /// Appends a single character to the internal buffer.
-    /// </summary>
-    /// <param name="stream">
-    /// The target <see cref="Stream"/> to write to when the buffer is full.
-    /// </param>
-    /// <param name="character">
-    /// The character to append.
-    /// </param>
-    public void Append(
-        Stream stream,
-        char character)
-    {
-        var singleChar = (Span<char>)[character];
-        Append(stream, singleChar);
     }
 
     /// <summary>
