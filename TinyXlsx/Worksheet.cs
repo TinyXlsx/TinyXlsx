@@ -5,114 +5,357 @@
 /// </summary>
 public class Worksheet
 {
+    private readonly XlsxBuilder xlsxBuilder;
     private readonly Stream stream;
-    private readonly Workbook workbook;
-    private int? lastWrittenRowIndex;
-    private int? lastWrittenColumnIndex;
-    private int? internalRowIndex;
+    private readonly Stylesheet stylesheet;
+    private int lastWrittenRowIndex;
+    private int lastWrittenColumnIndex;
 
     internal int Id { get; }
     internal string Name { get; }
     internal string RelationshipId { get; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Worksheet"/> class.
+    /// </summary>
+    /// <param name="xlsxBuilder">
+    /// The <see cref="XlsxBuilder"/> to which to append to.
+    /// </param>
+    /// <param name="stream">
+    /// The <see cref="Stream"/> to which to write to.
+    /// </param>
+    /// <param name="stylesheet">
+    /// The <see cref="Stylesheet"/> holding the necessary number formats.
+    /// </param>
+    /// <param name="id">
+    /// The unique identifier of the <see cref="Worksheet"/>.
+    /// </param>
+    /// <param name="name">
+    /// The unique name of the <see cref="Worksheet"/>.
+    /// </param>
+    /// <param name="relationshipId">
+    /// The unique relationship identifier of the <see cref="Worksheet"/>.
+    /// </param>
     public Worksheet(
-        Workbook workbook,
+        XlsxBuilder xlsxBuilder,
         Stream stream,
+        Stylesheet stylesheet,
         int id,
         string name,
         string relationshipId)
     {
+        this.stylesheet = stylesheet;
+        this.xlsxBuilder = xlsxBuilder;
         this.stream = stream;
-        this.workbook = workbook;
         Id = id;
         Name = name;
         RelationshipId = relationshipId;
     }
 
     /// <summary>
+    /// Begins a new row within the worksheet, automatically ending any previous row.
+    /// </summary>
+    /// <returns>
+    /// The <see cref="Worksheet"/> instance to allow method chaining.
+    /// </returns>
+    public Worksheet BeginRow()
+    {
+        return BeginRowAt(lastWrittenRowIndex + 1);
+    }
+
+    /// <summary>
     /// Begins a new row within the worksheet at the specified index, automatically ending any previous row.
     /// </summary>
     /// <param name="rowIndex">
-    /// The zero-based index to start the row at.
+    /// The one-based index to start the row at.
     /// </param>
-    public void BeginRowAt(int rowIndex)
+    /// <returns>
+    /// The <see cref="Worksheet"/> instance to allow method chaining.
+    /// </returns>
+    public Worksheet BeginRowAt(int rowIndex)
     {
         EndRow();
         VerifyCanBeginRow(rowIndex);
-
-        internalRowIndex = rowIndex + 1;
         lastWrittenRowIndex = rowIndex;
 
-        Buffer.Append(stream, "<row r=\"");
-        Buffer.Append(stream, internalRowIndex.Value);
-        Buffer.Append(stream, "\">");
+        xlsxBuilder.Append(stream, "<row r=\""u8);
+        xlsxBuilder.Append(stream, rowIndex);
+        xlsxBuilder.Append(stream, "\">"u8);
+
+        return this;
     }
 
     /// <summary>
-    /// Begins a new row within the worksheet, automatically ending any previous row.
+    /// Writes a formula to the next cell.
     /// </summary>
-    public void BeginRow()
-    {
-        BeginRowAt((lastWrittenRowIndex ?? -1) + 1);
-    }
-
-    /// <summary>
-    /// Writes a <see cref="double"/> value to the next cell.
-    /// </summary>
-    /// <param name="value">
-    /// The <see cref="double"/> value to write to the cell.
+    /// <param name="formula">
+    /// The formula as a string value to write to the cell.
     /// </param>
-    public void WriteCellValue(double value)
+    /// <returns>
+    /// The <see cref="Worksheet"/> instance to allow method chaining.
+    /// </returns>
+    public Worksheet WriteCellFormula(string formula)
     {
-        WriteCellValueAt((lastWrittenColumnIndex ?? -1) + 1, value);
+        return WriteCellFormulaAt(lastWrittenColumnIndex + 1, formula);
     }
 
     /// <summary>
-    /// Writes a <see cref="double"/> value to the next cell.
-    /// </summary>
-    /// <param name="value">
-    /// The <see cref="double"/> value to write to the cell.
-    /// </param>
-    /// <param name="format"></param>
-    /// <remarks>
-    /// The specified format must be valid. Invalid formats may result in a repair prompt from the XLSX viewer.
-    /// </remarks>
-    public void WriteCellValue(
-        double value,
-        string format)
-    {
-        WriteCellValueAt((lastWrittenColumnIndex ?? -1) + 1, value, format);
-    }
-
-    /// <summary>
-    /// Writes a <see cref="double"/> value to the specified cell.
+    /// Writes a formula to the specified cell.
     /// </summary>
     /// <param name="columnIndex">
-    /// The zero-based column index of the cell to write to.
+    /// The one-based column index of the cell to write to.
     /// </param>
-    /// <param name="value">
-    /// The <see cref="double"/> value to write to the cell.
+    /// <param name="formula">
+    /// The formula as a string value to write to the cell.
     /// </param>
-    public void WriteCellValueAt(
+    /// <returns>
+    /// The <see cref="Worksheet"/> instance to allow method chaining.
+    /// </returns>
+    public Worksheet WriteCellFormulaAt(
         int columnIndex,
-        double value)
+        string formula)
     {
         VerifyCanWriteCellValue(columnIndex);
         lastWrittenColumnIndex = columnIndex;
 
-        Buffer.Append(stream, "<c r=\"");
-        Buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
-        Buffer.Append(stream, internalRowIndex!.Value);
-        Buffer.Append(stream, "\" t=\"n\"><v>");
-        Buffer.Append(stream, value);
-        Buffer.Append(stream, "</v></c>");
+        xlsxBuilder.Append(stream, "<c r=\""u8);
+        xlsxBuilder.AppendColumnKey(stream, columnIndex);
+        xlsxBuilder.Append(stream, lastWrittenRowIndex);
+        xlsxBuilder.Append(stream, "\" t=\"e\"><f>"u8);
+        xlsxBuilder.Append(stream, formula);
+        xlsxBuilder.Append(stream, "</f></c>"u8);
+
+        return this;
+    }
+
+    /// <summary>
+    /// Writes a <see cref="bool"/> value to the next cell.
+    /// </summary>
+    /// <param name="value">
+    /// The <see cref="bool"/> value to write to the cell.
+    /// </param>
+    /// <returns>
+    /// The <see cref="Worksheet"/> instance to allow method chaining.
+    /// </returns>
+    public Worksheet WriteCellValue(bool? value)
+    {
+        return WriteCellValueAt(lastWrittenColumnIndex + 1, value);
+    }
+
+    /// <summary>
+    /// Writes a <see cref="bool"/> value to the specified cell.
+    /// </summary>
+    /// <param name="columnIndex">
+    /// The one-based column index of the cell to write to.
+    /// </param>
+    /// <param name="value">
+    /// The <see cref="bool"/> value to write to the cell.
+    /// </param>
+    /// <returns>
+    /// The <see cref="Worksheet"/> instance to allow method chaining.
+    /// </returns>
+    public Worksheet WriteCellValueAt(
+        int columnIndex,
+        bool? value)
+    {
+        VerifyCanWriteCellValue(columnIndex);
+        lastWrittenColumnIndex = columnIndex;
+
+        if (value == null) return this;
+
+        xlsxBuilder.Append(stream, "<c r=\""u8);
+        xlsxBuilder.AppendColumnKey(stream, columnIndex);
+        xlsxBuilder.Append(stream, lastWrittenRowIndex);
+        xlsxBuilder.Append(stream, "\" t=\"b\"><v>"u8);
+        xlsxBuilder.Append(stream, value.Value);
+        xlsxBuilder.Append(stream, "</v></c>"u8);
+
+        return this;
+    }
+
+    /// <summary>
+    /// Writes a <see cref="decimal"/> value to the next cell.
+    /// </summary>
+    /// <param name="value">
+    /// The <see cref="decimal"/> value to write to the cell.
+    /// </param>
+    /// <returns>
+    /// The <see cref="Worksheet"/> instance to allow method chaining.
+    /// </returns>
+    public Worksheet WriteCellValue(decimal? value)
+    {
+        return WriteCellValueAt(lastWrittenColumnIndex + 1, value);
+    }
+
+    /// <summary>
+    /// Writes a <see cref="decimal"/> value to the next cell.
+    /// </summary>
+    /// <param name="value">
+    /// The <see cref="decimal"/> value to write to the cell.
+    /// </param>
+    /// <param name="format">
+    /// The number format to apply to the cell.
+    /// </param>
+    /// <returns>
+    /// The <see cref="Worksheet"/> instance to allow method chaining.
+    /// </returns>
+    /// <remarks>
+    /// The specified format must be valid. Invalid formats may result in a repair prompt from the XLSX viewer.
+    /// </remarks>
+    public Worksheet WriteCellValue(
+        decimal? value,
+        string format)
+    {
+        return WriteCellValueAt(lastWrittenColumnIndex + 1, value, format);
+    }
+
+    /// <summary>
+    /// Writes a <see cref="decimal"/> value to the specified cell.
+    /// </summary>
+    /// <param name="columnIndex">
+    /// The one-based column index of the cell to write to.
+    /// </param>
+    /// <param name="value">
+    /// The <see cref="decimal"/> value to write to the cell.
+    /// </param>
+    /// <param name="format">
+    /// The number format to apply to the cell.
+    /// </param>
+    /// <returns>
+    /// The <see cref="Worksheet"/> instance to allow method chaining.
+    /// </returns>
+    /// <remarks>
+    /// The specified format must be valid. Invalid formats may result in a repair prompt from the XLSX viewer.
+    /// </remarks>
+    public Worksheet WriteCellValueAt(
+        int columnIndex,
+        decimal? value,
+        string format)
+    {
+        VerifyCanWriteCellValue(columnIndex);
+        lastWrittenColumnIndex = columnIndex;
+
+        var (zeroBasedIndex, _) = stylesheet.GetOrCreateNumberFormat(format);
+
+        if (value == null) return this;
+
+        xlsxBuilder.Append(stream, "<c r=\""u8);
+        xlsxBuilder.AppendColumnKey(stream, columnIndex);
+        xlsxBuilder.Append(stream, lastWrittenRowIndex);
+        xlsxBuilder.Append(stream, "\" s=\""u8);
+        xlsxBuilder.Append(stream, zeroBasedIndex);
+        xlsxBuilder.Append(stream, "\" t=\"n\"><v>"u8);
+        xlsxBuilder.Append(stream, value.Value);
+        xlsxBuilder.Append(stream, "</v></c>"u8);
+
+        return this;
+    }
+
+    /// <summary>
+    /// Writes a <see cref="decimal"/> value to the specified cell.
+    /// </summary>
+    /// <param name="columnIndex">
+    /// The one-based column index of the cell to write to.
+    /// </param>
+    /// <param name="value">
+    /// The <see cref="decimal"/> value to write to the cell.
+    /// </param>
+    /// <returns>
+    /// The <see cref="Worksheet"/> instance to allow method chaining.
+    /// </returns>
+    public Worksheet WriteCellValueAt(
+        int columnIndex,
+        decimal? value)
+    {
+        VerifyCanWriteCellValue(columnIndex);
+        lastWrittenColumnIndex = columnIndex;
+
+        if (value == null) return this;
+
+        xlsxBuilder.Append(stream, "<c r=\""u8);
+        xlsxBuilder.AppendColumnKey(stream, columnIndex);
+        xlsxBuilder.Append(stream, lastWrittenRowIndex);
+        xlsxBuilder.Append(stream, "\" t=\"n\"><v>"u8);
+        xlsxBuilder.Append(stream, value.Value);
+        xlsxBuilder.Append(stream, "</v></c>"u8);
+
+        return this;
+    }
+
+    /// <summary>
+    /// Writes a <see cref="double"/> value to the next cell.
+    /// </summary>
+    /// <param name="value">
+    /// The <see cref="double"/> value to write to the cell.
+    /// </param>
+    /// <returns>
+    /// The <see cref="Worksheet"/> instance to allow method chaining.
+    /// </returns>
+    public Worksheet WriteCellValue(double? value)
+    {
+        return WriteCellValueAt(lastWrittenColumnIndex + 1, value);
+    }
+
+    /// <summary>
+    /// Writes a <see cref="double"/> value to the next cell.
+    /// </summary>
+    /// <param name="value">
+    /// The <see cref="double"/> value to write to the cell.
+    /// </param>
+    /// <param name="format">
+    /// The number format to apply to the cell.
+    /// </param>
+    /// <returns>
+    /// The <see cref="Worksheet"/> instance to allow method chaining.
+    /// </returns>
+    /// <remarks>
+    /// The specified format must be valid. Invalid formats may result in a repair prompt from the XLSX viewer.
+    /// </remarks>
+    public Worksheet WriteCellValue(
+        double? value,
+        string format)
+    {
+        if (value == null) return this;
+
+        return WriteCellValueAt(lastWrittenColumnIndex + 1, value, format);
     }
 
     /// <summary>
     /// Writes a <see cref="double"/> value to the specified cell.
     /// </summary>
     /// <param name="columnIndex">
-    /// The zero-based column index of the cell to write to.
+    /// The one-based column index of the cell to write to.
+    /// </param>
+    /// <param name="value">
+    /// The <see cref="double"/> value to write to the cell.
+    /// </param>
+    /// <returns>
+    /// The <see cref="Worksheet"/> instance to allow method chaining.
+    /// </returns>
+    public Worksheet WriteCellValueAt(
+        int columnIndex,
+        double? value)
+    {
+        VerifyCanWriteCellValue(columnIndex);
+        lastWrittenColumnIndex = columnIndex;
+
+        if (value == null) return this;
+
+        xlsxBuilder.Append(stream, "<c r=\""u8);
+        xlsxBuilder.AppendColumnKey(stream, columnIndex);
+        xlsxBuilder.Append(stream, lastWrittenRowIndex);
+        xlsxBuilder.Append(stream, "\" t=\"n\"><v>"u8);
+        xlsxBuilder.Append(stream, value.Value);
+        xlsxBuilder.Append(stream, "</v></c>"u8);
+
+        return this;
+    }
+
+    /// <summary>
+    /// Writes a <see cref="double"/> value to the specified cell.
+    /// </summary>
+    /// <param name="columnIndex">
+    /// The one-based column index of the cell to write to.
     /// </param>
     /// <param name="value">
     /// The <see cref="double"/> value to write to the cell.
@@ -120,27 +363,143 @@ public class Worksheet
     /// <param name="format">
     /// The number format to apply to the cell.
     /// </param>
+    /// <returns>
+    /// The <see cref="Worksheet"/> instance to allow method chaining.
+    /// </returns>
     /// <remarks>
     /// The specified format must be valid. Invalid formats may result in a repair prompt from the XLSX viewer.
     /// </remarks>
-    public void WriteCellValueAt(
+    public Worksheet WriteCellValueAt(
         int columnIndex,
-        double value,
+        double? value,
         string format)
     {
         VerifyCanWriteCellValue(columnIndex);
         lastWrittenColumnIndex = columnIndex;
 
-        var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
+        if (value == null) return this;
 
-        Buffer.Append(stream, "<c r=\"");
-        Buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
-        Buffer.Append(stream, internalRowIndex!.Value);
-        Buffer.Append(stream, "\" s=\"");
-        Buffer.Append(stream, zeroBasedIndex);
-        Buffer.Append(stream, "\" t=\"n\"><v>");
-        Buffer.Append(stream, value);
-        Buffer.Append(stream, "</v></c>");
+        var (zeroBasedIndex, _) = stylesheet.GetOrCreateNumberFormat(format);
+
+        xlsxBuilder.Append(stream, "<c r=\""u8);
+        xlsxBuilder.AppendColumnKey(stream, columnIndex);
+        xlsxBuilder.Append(stream, lastWrittenRowIndex);
+        xlsxBuilder.Append(stream, "\" s=\""u8);
+        xlsxBuilder.Append(stream, zeroBasedIndex);
+        xlsxBuilder.Append(stream, "\" t=\"n\"><v>"u8);
+        xlsxBuilder.Append(stream, value.Value);
+        xlsxBuilder.Append(stream, "</v></c>"u8);
+
+        return this;
+    }
+
+    /// <summary>
+    /// Writes a <see cref="int"/> value to the next cell.
+    /// </summary>
+    /// <param name="value">
+    /// The <see cref="int"/> value to write to the cell.
+    /// </param>
+    /// <returns>
+    /// The <see cref="Worksheet"/> instance to allow method chaining.
+    /// </returns>
+    public Worksheet WriteCellValue(int? value)
+    {
+        return WriteCellValueAt(lastWrittenColumnIndex + 1, value);
+    }
+
+    /// <summary>
+    /// Writes a <see cref="int"/> value to the next cell.
+    /// </summary>
+    /// <param name="value">
+    /// The <see cref="int"/> value to write to the cell.
+    /// </param>
+    /// <param name="format">
+    /// The number format to apply to the cell.
+    /// </param>
+    /// <returns>
+    /// The <see cref="Worksheet"/> instance to allow method chaining.
+    /// </returns>
+    /// <remarks>
+    /// The specified format must be valid. Invalid formats may result in a repair prompt from the XLSX viewer.
+    /// </remarks>
+    public Worksheet WriteCellValue(
+        int? value,
+        string format)
+    {
+        return WriteCellValueAt(lastWrittenColumnIndex + 1, value, format);
+    }
+
+    /// <summary>
+    /// Writes a <see cref="int"/> value to the specified cell.
+    /// </summary>
+    /// <param name="columnIndex">
+    /// The one-based column index of the cell to write to.
+    /// </param>
+    /// <param name="value">
+    /// The <see cref="int"/> value to write to the cell.
+    /// </param>
+    /// <param name="format">
+    /// The number format to apply to the cell.
+    /// </param>
+    /// <returns>
+    /// The <see cref="Worksheet"/> instance to allow method chaining.
+    /// </returns>
+    /// <remarks>
+    /// The specified format must be valid. Invalid formats may result in a repair prompt from the XLSX viewer.
+    /// </remarks>
+    public Worksheet WriteCellValueAt(
+        int columnIndex,
+        int? value,
+        string format)
+    {
+        VerifyCanWriteCellValue(columnIndex);
+        lastWrittenColumnIndex = columnIndex;
+
+        if (value == null) return this;
+
+        var (zeroBasedIndex, _) = stylesheet.GetOrCreateNumberFormat(format);
+
+        xlsxBuilder.Append(stream, "<c r=\""u8);
+        xlsxBuilder.AppendColumnKey(stream, columnIndex);
+        xlsxBuilder.Append(stream, lastWrittenRowIndex);
+        xlsxBuilder.Append(stream, "\" s=\""u8);
+        xlsxBuilder.Append(stream, zeroBasedIndex);
+        xlsxBuilder.Append(stream, "\" t=\"n\"><v>"u8);
+        xlsxBuilder.Append(stream, value.Value);
+        xlsxBuilder.Append(stream, "</v></c>"u8);
+
+        return this;
+    }
+
+    /// <summary>
+    /// Writes a <see cref="int"/> value to the specified cell.
+    /// </summary>
+    /// <param name="columnIndex">
+    /// The one-based column index of the cell to write to.
+    /// </param>
+    /// <param name="value">
+    /// The <see cref="int"/> value to write to the cell.
+    /// </param>
+    /// <returns>
+    /// The <see cref="Worksheet"/> instance to allow method chaining.
+    /// </returns>
+    public Worksheet WriteCellValueAt(
+        int columnIndex,
+        int? value)
+    {
+        VerifyCanWriteCellValue(columnIndex);
+        lastWrittenColumnIndex = columnIndex;
+
+        if (value == null) return this;
+
+        xlsxBuilder.Append(stream, "<c r=\""u8);
+        xlsxBuilder.AppendColumnKey(stream, columnIndex);
+        xlsxBuilder.Append(stream, lastWrittenRowIndex);
+        xlsxBuilder.Append(stream, "\" t=\"n\"><v>"u8);
+        xlsxBuilder.Append(stream, value.Value);
+        xlsxBuilder.Append(stream, "</v></c>"u8);
+
+        return this;
     }
 
     /// <summary>
@@ -149,39 +508,48 @@ public class Worksheet
     /// <param name="value">
     /// The <see cref="string"/> value to write to the cell.
     /// </param>
-    public void WriteCellValue(string value)
+    /// <returns>
+    /// The <see cref="Worksheet"/> instance to allow method chaining.
+    /// </returns>
+    public Worksheet WriteCellValue(string? value)
     {
-        WriteCellValueAt((lastWrittenColumnIndex ?? -1) + 1, value);
+        return WriteCellValueAt(lastWrittenColumnIndex + 1, value);
     }
 
     /// <summary>
     /// Writes a <see cref="string"/> value to the specified cell.
     /// </summary>
     /// <param name="columnIndex">
-    /// The zero-based column index of the cell to write to.
+    /// The one-based column index of the cell to write to.
     /// </param>
     /// <param name="value">
     /// The <see cref="string"/> value to write to the cell.
     /// </param>
-    public void WriteCellValueAt(
+    /// <returns>
+    /// The <see cref="Worksheet"/> instance to allow method chaining.
+    /// </returns>
+    public Worksheet WriteCellValueAt(
        int columnIndex,
-       string value)
+       string? value)
     {
-        if (string.IsNullOrEmpty(value)) return;
+        VerifyCanWriteCellValue(columnIndex);
+        lastWrittenColumnIndex = columnIndex;
+
+        if (string.IsNullOrEmpty(value)) return this;
+
         if (value.Length > Constants.MaximumCharactersPerCell)
         {
             throw new NotSupportedException($"The XLSX format does not support more than {Constants.MaximumCharactersPerCell} characters in a cell.");
         }
 
-        VerifyCanWriteCellValue(columnIndex);
-        lastWrittenColumnIndex = columnIndex;
+        xlsxBuilder.Append(stream, "<c r=\""u8);
+        xlsxBuilder.AppendColumnKey(stream, columnIndex);
+        xlsxBuilder.Append(stream, lastWrittenRowIndex);
+        xlsxBuilder.Append(stream, "\" t=\"inlineStr\"><is><t>"u8);
+        xlsxBuilder.Append(stream, value);
+        xlsxBuilder.Append(stream, "</t></is></c>"u8);
 
-        Buffer.Append(stream, "<c r=\"");
-        Buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
-        Buffer.Append(stream, internalRowIndex!.Value);
-        Buffer.Append(stream, "\" t=\"inlineStr\"><is><t>");
-        Buffer.Append(stream, value);
-        Buffer.Append(stream, "</t></is></c>");
+        return this;
     }
 
     /// <summary>
@@ -190,9 +558,12 @@ public class Worksheet
     /// <param name="value">
     /// The <see cref="DateTime"/> value to write to the cell.
     /// </param>
-    public void WriteCellValue(DateTime value)
+    /// <returns>
+    /// The <see cref="Worksheet"/> instance to allow method chaining.
+    /// </returns>
+    public Worksheet WriteCellValue(DateTime? value)
     {
-        WriteCellValueAt((lastWrittenColumnIndex ?? -1) + 1, value);
+        return WriteCellValueAt(lastWrittenColumnIndex + 1, value);
     }
 
     /// <summary>
@@ -204,30 +575,36 @@ public class Worksheet
     /// <param name="format">
     /// The date format to apply to the cell.
     /// </param>
+    /// <returns>
+    /// The <see cref="Worksheet"/> instance to allow method chaining.
+    /// </returns>
     /// <remarks>
     /// The specified format must be valid. Invalid formats may result in a repair prompt from the XLSX viewer.
     /// </remarks>
-    public void WriteCellValue(
-        DateTime value,
+    public Worksheet WriteCellValue(
+        DateTime? value,
         string format)
     {
-        WriteCellValueAt((lastWrittenColumnIndex ?? -1) + 1, value, format);
+        return WriteCellValueAt(lastWrittenColumnIndex + 1, value, format);
     }
 
     /// <summary>
     /// Writes a <see cref="DateTime"/> value to the specified cell with a default format of yyyy-MM-dd.
     /// </summary>
     /// <param name="columnIndex">
-    /// The zero-based column index of the cell to write to.
+    /// The one-based column index of the cell to write to.
     /// </param>
     /// <param name="value">
     /// The <see cref="DateTime"/> value to write to the cell.
     /// </param>
-    public void WriteCellValueAt(
+    /// <returns>
+    /// The <see cref="Worksheet"/> instance to allow method chaining.
+    /// </returns>
+    public Worksheet WriteCellValueAt(
        int columnIndex,
-       DateTime value)
+       DateTime? value)
     {
-        WriteCellValueAt(
+        return WriteCellValueAt(
             columnIndex,
             value,
             "yyyy-MM-dd");
@@ -237,7 +614,7 @@ public class Worksheet
     /// Writes a <see cref="DateTime"/> value to the specified cell.
     /// </summary>
     /// <param name="columnIndex">
-    /// The zero-based column index of the cell to write to.
+    /// The one-based column index of the cell to write to.
     /// </param>
     /// <param name="value">
     /// The <see cref="DateTime"/> value to write to the cell.
@@ -245,43 +622,49 @@ public class Worksheet
     /// <param name="format">
     /// The date format to apply to the cell.
     /// </param>
+    /// <returns>
+    /// The <see cref="Worksheet"/> instance to allow method chaining.
+    /// </returns>
     /// <exception cref="NotSupportedException">
     /// Thrown if the specified date is before 1990-01-01, which is unsupported by the XLSX format.
     /// </exception>
     /// <remarks>
     /// The specified format must be valid. Invalid formats may result in a repair prompt from the XLSX viewer.
     /// </remarks>
-    public void WriteCellValueAt(
+    public Worksheet WriteCellValueAt(
        int columnIndex,
-       DateTime value,
+       DateTime? value,
        string format)
     {
         VerifyCanWriteCellValue(columnIndex);
         lastWrittenColumnIndex = columnIndex;
 
+        if (value == null) return this;
+
         if (value < Constants.MinimumDate)
         {
-            throw new NotSupportedException("The XLSX format does not support dates before 1990-01-01. Consider writing the value as a number or string instead.");
+            throw new NotSupportedException("The XLSX format does not support dates before 1900-01-01. Consider writing the value as a number or string instead.");
         }
 
         // Account for leap year bug.
         if (value < Constants.LeapYearBugCorrectionDate)
         {
-            value = value.AddDays(-1);
+            value = value.Value.AddDays(-1);
         }
 
-        var daysSinceEpoch = (value - Constants.XlsxEpoch).TotalDays;
+        var daysSinceEpoch = (value.Value - Constants.XlsxEpoch).TotalDays;
+        var (zeroBasedIndex, _) = stylesheet.GetOrCreateNumberFormat(format);
 
-        var (zeroBasedIndex, _) = workbook.GetOrCreateNumberFormat(format);
+        xlsxBuilder.Append(stream, "<c r=\""u8);
+        xlsxBuilder.AppendColumnKey(stream, columnIndex);
+        xlsxBuilder.Append(stream, lastWrittenRowIndex);
+        xlsxBuilder.Append(stream, "\" s=\""u8);
+        xlsxBuilder.Append(stream, zeroBasedIndex);
+        xlsxBuilder.Append(stream, "\" t=\"n\"><v>"u8);
+        xlsxBuilder.Append(stream, daysSinceEpoch);
+        xlsxBuilder.Append(stream, "</v></c>"u8);
 
-        Buffer.Append(stream, "<c r=\"");
-        Buffer.Append(stream, ColumnKeyCache.GetKey(columnIndex));
-        Buffer.Append(stream, internalRowIndex!.Value);
-        Buffer.Append(stream, "\" s=\"");
-        Buffer.Append(stream, zeroBasedIndex);
-        Buffer.Append(stream, "\" t=\"n\"><v>");
-        Buffer.Append(stream, daysSinceEpoch);
-        Buffer.Append(stream, "</v></c>");
+        return this;
     }
 
     internal void BeginSheet()
@@ -291,23 +674,13 @@ public class Worksheet
         if (stream.Position > 0) return;
 
         // Intentionally leaving <dimension /> empty as stream does not support seeking.
-        Buffer.Append(stream, """
-            <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-            <worksheet
-                xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"
-                xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
-                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                mc:Ignorable="x14ac xr xr2 xr3"
-                xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac"
-                xmlns:xr="http://schemas.microsoft.com/office/spreadsheetml/2014/revision"
-                xmlns:xr2="http://schemas.microsoft.com/office/spreadsheetml/2015/revision2"
-                xmlns:xr3="http://schemas.microsoft.com/office/spreadsheetml/2016/revision3">
-                <sheetViews>
-                    <sheetView tabSelected="1" showRuler="1" showOutlineSymbols="1" defaultGridColor="1" colorId="64" zoomScale="100" workbookViewId="0"></sheetView>
-                </sheetViews>
-                <sheetFormatPr defaultColWidth="8.43" defaultRowHeight="15"/>
-                <sheetData>
-            """);
+        xlsxBuilder.Append(stream,
+            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"u8
+            + "<worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\">"u8
+            + "<sheetViews>"u8
+            + "<sheetView workbookViewId=\"0\"></sheetView>"u8
+            + "</sheetViews>"u8
+            + "<sheetData>"u8);
     }
 
     internal void EndSheet()
@@ -316,11 +689,10 @@ public class Worksheet
         if (!stream.CanWrite) return;
 
         EndRow();
-        Buffer.Append(stream, """
-                </sheetData>
-                <pageMargins left="0.7" right="0.7" top="0.75" bottom="0.75" header="0.3" footer="0.3"/></worksheet>
-            """);
-        Buffer.Commit(stream);
+        xlsxBuilder.Append(stream,
+            "</sheetData>"u8
+            + "</worksheet>"u8);
+        xlsxBuilder.Commit(stream);
         stream.Flush();
         stream.Close();
     }
@@ -328,20 +700,19 @@ public class Worksheet
     private void EndRow()
     {
         // It's possible that there is no row to end, if BeginRow hasn't been called yet.
-        if (lastWrittenRowIndex == null) return;
+        if (lastWrittenRowIndex == 0) return;
 
         VerifyCanEndRow();
 
-        Buffer.Append(stream, "</row>");
-        internalRowIndex = null;
-        lastWrittenColumnIndex = null;
+        xlsxBuilder.Append(stream, "</row>"u8);
+        lastWrittenColumnIndex = 0;
     }
 
     private void VerifyCanBeginRow(int rowIndex)
     {
-        if (internalRowIndex != null)
+        if (rowIndex < 1)
         {
-            throw new InvalidOperationException($"A new row cannot be started until the previous row was closed with {nameof(EndRow)}.");
+            throw new InvalidOperationException("The XLSX format requires a minmium row index of 1.");
         }
 
         if (rowIndex <= lastWrittenRowIndex)
@@ -351,12 +722,7 @@ public class Worksheet
 
         if (rowIndex > Constants.MaximumRows)
         {
-            throw new InvalidOperationException($"The XLSX format only supports {Constants.MaximumRows} rows.");
-        }
-
-        if (rowIndex < 0)
-        {
-            throw new InvalidOperationException($"The XLSX format does not support a negative row index.");
+            throw new InvalidOperationException($"The XLSX format supports a maximum of {Constants.MaximumRows} rows.");
         }
     }
 
@@ -364,7 +730,7 @@ public class Worksheet
     {
         // No need to guard against empty rows, i.e. <row></row>, as the XLSX format allows it.
 
-        if (internalRowIndex == null)
+        if (lastWrittenRowIndex == 0)
         {
             throw new InvalidOperationException($"A row cannot be closed before it was opened with {nameof(BeginRow)}.");
         }
@@ -372,7 +738,12 @@ public class Worksheet
 
     private void VerifyCanWriteCellValue(int columnIndex)
     {
-        if (internalRowIndex == null)
+        if (columnIndex < 1)
+        {
+            throw new InvalidOperationException("The XLSX format requires a minmium column index of 1.");
+        }
+
+        if (lastWrittenRowIndex == 0)
         {
             throw new InvalidOperationException($"A cell value can only be written after creating a row with {nameof(BeginRow)}.");
         }
@@ -384,12 +755,7 @@ public class Worksheet
 
         if (columnIndex > Constants.MaximumColumns)
         {
-            throw new InvalidOperationException($"The XLSX format only supports {Constants.MaximumColumns} columns.");
-        }
-
-        if (columnIndex < 0)
-        {
-            throw new InvalidOperationException($"The XLSX format does not support a negative column index.");
+            throw new InvalidOperationException($"The XLSX format supports a maximum of {Constants.MaximumColumns} columns.");
         }
     }
 }

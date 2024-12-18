@@ -1,4 +1,6 @@
 ﻿using BenchmarkDotNet.Running;
-using System.Reflection;
+using Benchmarks;
 
-BenchmarkRunner.Run(Assembly.GetExecutingAssembly());
+//BenchmarkRunner.Run<Compression>();
+
+BenchmarkRunner.Run<InMemory>();

@@ -3,7 +3,7 @@ using TinyXlsx;
 namespace Tests;
 
 [TestClass]
-public class WorksheetConstraintTests
+public class WorksheetTests
 {
     [TestMethod]
     public void BeginRowAtWithLowerIndexThrowsException()
@@ -43,9 +43,9 @@ public class WorksheetConstraintTests
         var worksheet = workbook.BeginSheet();
 
         worksheet.BeginRow();
-        worksheet.WriteCellValueAt(0, 123.456);
+        worksheet.WriteCellValueAt(1, 123.456);
 
-        Assert.ThrowsException<InvalidOperationException>(() => worksheet.WriteCellValueAt(0, 123.456));
+        Assert.ThrowsException<InvalidOperationException>(() => worksheet.WriteCellValueAt(1, 123.456));
     }
 
     [TestMethod]
@@ -132,5 +132,87 @@ public class WorksheetConstraintTests
         }
 
         Assert.ThrowsException<NotSupportedException>(() => worksheet.WriteCellValue(123.456, "0.00"));
+    }
+
+    [DynamicData(nameof(GetWriteCellValueWithNullSkipsColumnData), DynamicDataSourceType.Method)]
+    [TestMethod]
+    public void WriteCellValueWithNullSkipsColumn(
+        object value,
+        string expected)
+    {
+        var memoryStream = new MemoryStream();
+        var xlsxBuilder = new XlsxBuilder();
+        var stylesheet = new Stylesheet();
+        var worksheet = new Worksheet(
+            xlsxBuilder,
+            memoryStream,
+            stylesheet,
+            1,
+            "Sheet1",
+            "rId3");
+
+        worksheet.BeginRow();
+        switch (value)
+        {
+            case bool boolValue:
+                worksheet.WriteCellValue((bool?)null);
+                worksheet.WriteCellValue(boolValue);
+                break;
+            case DateTime dateTimeValue:
+                worksheet.WriteCellValue((DateTime?)null);
+                worksheet.WriteCellValue(dateTimeValue);
+                break;
+            case decimal decimalValue:
+                worksheet.WriteCellValue((decimal?)null);
+                worksheet.WriteCellValue(decimalValue);
+                break;
+            case double doubleValue:
+                worksheet.WriteCellValue((double?)null);
+                worksheet.WriteCellValue(doubleValue);
+                break;
+            case string stringValue:
+                worksheet.WriteCellValue((string?)null);
+                worksheet.WriteCellValue(stringValue);
+                break;
+        }
+        xlsxBuilder.Commit(memoryStream);
+
+        memoryStream.Position = 0;
+        using var reader = new StreamReader(memoryStream);
+        var result = reader.ReadToEnd();
+        Assert.AreEqual(expected, result);
+    }
+
+    private static IEnumerable<object[]> GetWriteCellValueWithNullSkipsColumnData()
+    {
+        yield return new object[]
+        {
+            true,
+            "<row r=\"1\"><c r=\"B1\" t=\"b\"><v>1</v></c>",
+        };
+
+        yield return new object[]
+        {
+            new DateTime(2024, 1, 1),
+            "<row r=\"1\"><c r=\"B1\" s=\"1\" t=\"n\"><v>45292</v></c>",
+        };
+
+        yield return new object[]
+        {
+            123.456m,
+            "<row r=\"1\"><c r=\"B1\" t=\"n\"><v>123.456</v></c>",
+        };
+
+        yield return new object[]
+        {
+            123.456,
+            "<row r=\"1\"><c r=\"B1\" t=\"n\"><v>123.456</v></c>",
+        };
+
+        yield return new object[]
+        {
+            "text",
+            "<row r=\"1\"><c r=\"B1\" t=\"inlineStr\"><is><t>text</t></is></c>",
+        };
     }
 }
