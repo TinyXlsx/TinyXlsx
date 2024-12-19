@@ -16,9 +16,9 @@ TinyXlsx is a lightweight and efficient library designed for writing Excel files
 The library is built for .NET 8.0, ensuring compatibility with the latest versions of the framework. It supports two primary modes of writing data:
 
 1. Writing to a `MemoryStream` for in-memory processing.
-1. Writing to a `FileStream` to save the generated Excel file directly to disk.
+1. Writing to a `FileStream` to save the generated XLSX file directly to disk.
 
-TinyXlsx focuses on simplicity, providing only the necessary functionality to perform basic Excel file operations with minimal resource usage. Future versions may include more advanced features like reading and manipulating existing Excel files.
+TinyXlsx focuses on simplicity, providing only the necessary functionality to perform basic XLSX file operations with minimal resource usage. Future versions may include more advanced features like reading and manipulating existing XLSX files.
 
 ## Benchmarks
 
