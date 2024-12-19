@@ -13,7 +13,7 @@ public class ColumnKeyCacheTests
     [DataRow(702, "ZZ")]
     [DataRow(16_384, "XFD")]
     [TestMethod]
-    public void Test(int columnIndex, string  expected)
+    public void GetKeyReturnsCorrectKey(int columnIndex, string  expected)
     {
         var actual = ColumnKeyCache.GetKey(columnIndex);
 
