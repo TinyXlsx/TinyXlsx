@@ -50,7 +50,7 @@ public class WorkbookTests
     }
 
     [TestMethod]
-    public void XmlFilesShouldPassXmlReader()
+    public void InternalFilesShouldPassXmlReader()
     {
         var filePath = "test.xlsx";
         using var workbook = new Workbook(filePath);
@@ -82,8 +82,6 @@ public class WorkbookTests
         foreach (var entry in zipArchive.Entries)
         {
             using var entryStream = entry.Open();
-
-            if (!entry.FullName.EndsWith(".xml", StringComparison.OrdinalIgnoreCase)) continue;
 
             using var xmlReader = XmlReader.Create(entryStream);
             while (xmlReader.Read())
