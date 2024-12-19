@@ -163,10 +163,13 @@ using TinyXlsx;
 using var workbook = new Workbook();
 var worksheet = workbook.BeginSheet();
 
-worksheet.BeginRowAt(10);
-worksheet.WriteCellValueAt(5, 123.456);
+worksheet.BeginRowAt(10); // Begins row 10.
+
+worksheet.WriteCellValueAt(5, 123.456); // Writes in the fifth cell on row 10.
+
 worksheet.BeginRow(); // Begins row 11.
-worksheet.WriteCellValue(DateTime.Now); // Writes in first cell on row 11.
+
+worksheet.WriteCellValue(DateTime.Now); // Writes in the first cell on row 11.
 
 var stream = workbook.Close();
 ```
@@ -184,17 +187,19 @@ var worksheet = workbook.BeginSheet();
 var i = 1;
 for (; i <= 10; i++)
 {
-    worksheet.BeginRow();
-    worksheet.WriteCellValue(0.1m);
-    worksheet.WriteCellValue(0.2m);
-    worksheet.WriteCellValue(0.3m);
-    worksheet.WriteCellFormula($"=SUM(A{i}:C{i})");
+    worksheet
+        .BeginRow()
+        .WriteCellValue(0.1m)
+        .WriteCellValue(0.2m)
+        .WriteCellValue(0.3m)
+        .WriteCellFormula($"=SUM(A{i}:C{i})");
 }
 i++;
-worksheet.BeginRow();
-worksheet.WriteCellFormula($"=SUM(A1:A{i})");
-worksheet.WriteCellFormula($"=SUM(B1:B{i})");
-worksheet.WriteCellFormula($"=SUM(C1:C{i})");
+worksheet
+    .BeginRow()
+    .WriteCellFormula($"=SUM(A1:A{i})")
+    .WriteCellFormula($"=SUM(B1:B{i})")
+    .WriteCellFormula($"=SUM(C1:C{i})");
 
 var stream = workbook.Close();
 ```
