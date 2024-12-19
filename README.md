@@ -2,6 +2,17 @@
 
 TinyXlsx is a lightweight and efficient library designed for writing Excel files in the XLSX format. It focuses on optimal performance by avoiding unnecessary overhead at all costs.
 
+1. [About](#about)
+1. [Benchmarks](#benchmarks)
+1. [Requirements](#requirements)
+1. [Features](#features)
+1. [Optimization](#optimization)
+
+## About
+
+[![NuGet Version](https://img.shields.io/nuget/v/TinyXlsx?style=for-the-badge)](https://www.nuget.org/packages/TinyXlsx)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/TinyXlsx?style=for-the-badge)](https://www.nuget.org/packages/TinyXlsx)
+
 The library is built for .NET 8.0, ensuring compatibility with the latest versions of the framework. It supports two primary modes of writing data:
 
 1. Writing to a `MemoryStream` for in-memory processing.
@@ -9,152 +20,9 @@ The library is built for .NET 8.0, ensuring compatibility with the latest versio
 
 TinyXlsx focuses on simplicity, providing only the necessary functionality to perform basic Excel file operations with minimal resource usage. Future versions may include more advanced features like reading and manipulating existing Excel files.
 
-# Requirements
+## Benchmarks
 
-- .NET 8.0
-
-# Features
-
-Supported:
-1. Writing to a `MemoryStream` for in-memory processing.
-1. Writing to a `FileStream` to save the generated Excel file directly to disk.
-1. Precise cell and row positioning.
-    1. By default, `BeginRow` automatically progresses to the next row, and `WriteCellValue` automatically writes to the cell in the next column.
-    1. An index can be specified using `BeginRowAt` and `WriteCellValueAt` if a row or column must be skipped.
-1. Writing formulas.
-
-Not supported yet:
-1. Reading an existing document.
-1. Editing an existing document.
-1. Images.
-1. Charts.
-1. Cell merging.
-1. Rich text.
-1. Conditional formatting.
-1. Comments.
-1. Hyperlinks.
-
-## Writing to a `MemoryStream`
-
-By default the `Workbook` writes to a `MemoryStream`. This method should be used in scenarios where a file does not need to be stored locally but is instead intended to be sent directly to a client via a website or similar service.
-
-```csharp
-using TinyXlsx;
-
-using var workbook = new Workbook();
-var worksheet = workbook.BeginSheet();
-
-for (var i = 1; i <= 100; i++)
-{
-    worksheet.BeginRow();
-    worksheet.WriteCellValue(true);
-    worksheet.WriteCellValue(123456);
-    worksheet.WriteCellValue(123.456m);
-    worksheet.WriteCellValue(123.456);
-    worksheet.WriteCellValue(DateTime.Now);
-    worksheet.WriteCellValue(DateTime.Now, "yyyy/MM/dd");
-    worksheet.WriteCellValue("Text");
-    worksheet.WriteCellValue(123.456, "0.00");
-    worksheet.WriteCellValue(123.456, "0.00%");
-    worksheet.WriteCellValue(123.456, "0.00E+00");
-    worksheet.WriteCellValue(123.456, "$#,##0.00");
-    worksheet.WriteCellValue(123.456, "#,##0.00 [$USD]");
-}
-var stream = workbook.Close();
-```
-
-## Writing to a `FileStream`
-
-By supplying a `string` parameter to the `Workbook` constructor, the `Workbook` writes to a file.
-
-```csharp
-using TinyXlsx;
-
-using var workbook = new Workbook("fileName.xlsx");
-var worksheet = workbook.BeginSheet();
-
-for (var i = 1; i <= 100; i++)
-{
-    worksheet.BeginRow();
-    worksheet.WriteCellValue(true);
-    worksheet.WriteCellValue(123456);
-    worksheet.WriteCellValue(123.456m);
-    worksheet.WriteCellValue(123.456);
-    worksheet.WriteCellValue(DateTime.Now);
-    worksheet.WriteCellValue(DateTime.Now, "yyyy/MM/dd");
-    worksheet.WriteCellValue("Text");
-    worksheet.WriteCellValue(123.456, "0.00");
-    worksheet.WriteCellValue(123.456, "0.00%");
-    worksheet.WriteCellValue(123.456, "0.00E+00");
-    worksheet.WriteCellValue(123.456, "$#,##0.00");
-    worksheet.WriteCellValue(123.456, "#,##0.00 [$USD]");
-}
-workbook.Close();
-```
-
-## Precise cell and row positioning
-
-By default, `BeginRow` automatically progresses to the next row, and `WriteCellValue` automatically writes to the cell in the next column. A one-based index can be specified using `BeginRowAt` and `WriteCellValueAt`, if for example a row or column must be skipped. Going backwards is not supported due to the streaming nature of the library.
-
-```csharp
-using TinyXlsx;
-
-using var workbook = new Workbook();
-var worksheet = workbook.BeginSheet();
-
-worksheet.BeginRowAt(10);
-worksheet.WriteCellValueAt(5, 123.456);
-worksheet.BeginRow(); // Begins row 11.
-worksheet.WriteCellValue(DateTime.Now); // Writes in first cell on row 11.
-
-var stream = workbook.Close();
-```
-
-## Writing formulas
-
-```csharp
-using TinyXlsx;
-
-using var workbook = new Workbook();
-var worksheet = workbook.BeginSheet();
-
-var i = 1;
-for (; i <= 10; i++)
-{
-    worksheet.BeginRow();
-    worksheet.WriteCellValue(0.1m);
-    worksheet.WriteCellValue(0.2m);
-    worksheet.WriteCellValue(0.3m);
-    worksheet.WriteCellFormula($"=SUM(A{i}:C{i})");
-}
-i++;
-worksheet.BeginRow();
-worksheet.WriteCellFormula($"=SUM(A1:A{i})");
-worksheet.WriteCellFormula($"=SUM(B1:B{i})");
-worksheet.WriteCellFormula($"=SUM(C1:C{i})");
-
-var stream = workbook.Close();
-```
-
-# Optimization
-
-For in-memory scenarios the default capacity is set to 64 KB. However, if the document size is known to be much larger in advance, it is recommended to set an initial capacity which more closely aligns with this size. An initial capacity can be given to the `Workbook` constructor. The default `MemoryStream` will automatically resize as data is written, but setting a capacity upfront reduces the overhead caused by repeated internal buffer expansions.
-
-```csharp
-using TinyXlsx;
-
-var initialCapacity = 1024 * 1024; // 1 MB.
-using var workbook = new Workbook(initialCapacity);
-var worksheet = workbook.BeginSheet();
-
-// Add data here...
-
-var stream = workbook.Close();
-```
-
-# Benchmarks
-
-## Writing to a `MemoryStream`
+### Writing to a `MemoryStream`
 
 NA means the library does not support writing to a `MemoryStream`.
 
@@ -199,3 +67,171 @@ NA means the library does not support writing to a `MemoryStream`.
 | NPOI      | 14.156 s | 0.1672 s | 0.1564 s | 500000.0000 | 167000.0000 |  1000.0000 |   8098.2 MB |
 | OpenXML   | 22.693 s | 0.2360 s | 0.2208 s | 383000.0000 | 382000.0000 |  9000.0000 |  7518.95 MB |
 | TinyXlsx  |  2.290 s | 0.0103 s | 0.0086 s |   3000.0000 |   3000.0000 |  3000.0000 |   127.97 MB |
+
+## Requirements
+
+- .NET 8.0
+
+## Features
+
+Supported:
+1. Writing to a `MemoryStream` for in-memory processing.
+1. Writing to a `FileStream` to save the generated Excel file directly to disk.
+1. Precise cell and row positioning.
+    1. By default, `BeginRow` automatically progresses to the next row, and `WriteCellValue` automatically writes to the cell in the next column.
+    1. An index can be specified using `BeginRowAt` and `WriteCellValueAt` if a row or column must be skipped.
+1. Writing formulas.
+1. Method chaining.
+
+Not supported yet:
+1. Reading an existing document.
+1. Editing an existing document.
+1. Images.
+1. Charts.
+1. Cell merging.
+1. Rich text.
+1. Conditional formatting.
+1. Comments.
+1. Hyperlinks.
+
+### Writing to a `MemoryStream`
+
+By default the `Workbook` writes to a `MemoryStream`. This method should be used in scenarios where a file does not need to be stored locally but is instead intended to be sent directly to a client via a website or similar service.
+
+```csharp
+using TinyXlsx;
+
+using var workbook = new Workbook();
+var worksheet = workbook.BeginSheet();
+
+for (var i = 1; i <= 100; i++)
+{
+    worksheet.BeginRow();
+    worksheet.WriteCellValue(true);
+    worksheet.WriteCellValue(123456);
+    worksheet.WriteCellValue(123.456m);
+    worksheet.WriteCellValue(123.456);
+    worksheet.WriteCellValue(DateTime.Now);
+    worksheet.WriteCellValue(DateTime.Now, "yyyy/MM/dd");
+    worksheet.WriteCellValue("Text");
+    worksheet.WriteCellValue(123.456, "0.00");
+    worksheet.WriteCellValue(123.456, "0.00%");
+    worksheet.WriteCellValue(123.456, "0.00E+00");
+    worksheet.WriteCellValue(123.456, "$#,##0.00");
+    worksheet.WriteCellValue(123.456, "#,##0.00 [$USD]");
+}
+var stream = workbook.Close();
+```
+
+### Writing to a `FileStream`
+
+By supplying a `string` parameter to the `Workbook` constructor, the `Workbook` writes to a file.
+
+```csharp
+using TinyXlsx;
+
+using var workbook = new Workbook("fileName.xlsx");
+var worksheet = workbook.BeginSheet();
+
+for (var i = 1; i <= 100; i++)
+{
+    worksheet.BeginRow();
+    worksheet.WriteCellValue(true);
+    worksheet.WriteCellValue(123456);
+    worksheet.WriteCellValue(123.456m);
+    worksheet.WriteCellValue(123.456);
+    worksheet.WriteCellValue(DateTime.Now);
+    worksheet.WriteCellValue(DateTime.Now, "yyyy/MM/dd");
+    worksheet.WriteCellValue("Text");
+    worksheet.WriteCellValue(123.456, "0.00");
+    worksheet.WriteCellValue(123.456, "0.00%");
+    worksheet.WriteCellValue(123.456, "0.00E+00");
+    worksheet.WriteCellValue(123.456, "$#,##0.00");
+    worksheet.WriteCellValue(123.456, "#,##0.00 [$USD]");
+}
+workbook.Close();
+```
+
+### Precise cell and row positioning
+
+By default, `BeginRow` automatically progresses to the next row, and `WriteCellValue` automatically writes to the cell in the next column. A one-based index can be specified using `BeginRowAt` and `WriteCellValueAt`, if for example a row or column must be skipped. Going backwards is not supported due to the streaming nature of the library.
+
+```csharp
+using TinyXlsx;
+
+using var workbook = new Workbook();
+var worksheet = workbook.BeginSheet();
+
+worksheet.BeginRowAt(10);
+worksheet.WriteCellValueAt(5, 123.456);
+worksheet.BeginRow(); // Begins row 11.
+worksheet.WriteCellValue(DateTime.Now); // Writes in first cell on row 11.
+
+var stream = workbook.Close();
+```
+
+### Writing formulas
+
+TinyXlsx supports writing formulas with `WriteCellFormula`. The library does not validate or calculate any formula, it is written as-is into the cell.
+
+```csharp
+using TinyXlsx;
+
+using var workbook = new Workbook();
+var worksheet = workbook.BeginSheet();
+
+var i = 1;
+for (; i <= 10; i++)
+{
+    worksheet.BeginRow();
+    worksheet.WriteCellValue(0.1m);
+    worksheet.WriteCellValue(0.2m);
+    worksheet.WriteCellValue(0.3m);
+    worksheet.WriteCellFormula($"=SUM(A{i}:C{i})");
+}
+i++;
+worksheet.BeginRow();
+worksheet.WriteCellFormula($"=SUM(A1:A{i})");
+worksheet.WriteCellFormula($"=SUM(B1:B{i})");
+worksheet.WriteCellFormula($"=SUM(C1:C{i})");
+
+var stream = workbook.Close();
+```
+
+### Method chaining
+
+Any method on the `Worksheet` class can be chained for a more readable syntax.
+
+```csharp
+using TinyXlsx;
+
+using var workbook = new Workbook();
+var worksheet = workbook.BeginSheet();
+
+for (var i = 1; i <= 10; i++)
+{
+    worksheet
+        .BeginRow()
+        .WriteCellValue(true);
+        .WriteCellValue(123456);
+        .WriteCellValue(123.456m);
+}
+
+var stream = workbook.Close();
+```
+
+## Optimization
+
+For in-memory scenarios the default capacity is set to 64 KB. However, if the document size is known to be much larger in advance, it is recommended to set an initial capacity which more closely aligns with this size. An initial capacity can be given to the `Workbook` constructor. The default `MemoryStream` will automatically resize as data is written, but setting a capacity upfront reduces the overhead caused by repeated internal buffer expansions.
+
+```csharp
+using TinyXlsx;
+
+var initialCapacity = 1024 * 1024 * 64; // 64 MB.
+using var workbook = new Workbook(initialCapacity);
+var worksheet = workbook.BeginSheet();
+
+// Add data here...
+
+var stream = workbook.Close();
+```
