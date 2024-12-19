@@ -81,7 +81,6 @@ Supported:
     1. By default, `BeginRow` automatically progresses to the next row, and `WriteCellValue` automatically writes to the cell in the next column.
     1. An index can be specified using `BeginRowAt` and `WriteCellValueAt` if a row or column must be skipped.
 1. Writing formulas.
-1. Method chaining.
 
 Not supported yet:
 1. Reading an existing document.
@@ -106,19 +105,20 @@ var worksheet = workbook.BeginSheet();
 
 for (var i = 1; i <= 100; i++)
 {
-    worksheet.BeginRow();
-    worksheet.WriteCellValue(true);
-    worksheet.WriteCellValue(123456);
-    worksheet.WriteCellValue(123.456m);
-    worksheet.WriteCellValue(123.456);
-    worksheet.WriteCellValue(DateTime.Now);
-    worksheet.WriteCellValue(DateTime.Now, "yyyy/MM/dd");
-    worksheet.WriteCellValue("Text");
-    worksheet.WriteCellValue(123.456, "0.00");
-    worksheet.WriteCellValue(123.456, "0.00%");
-    worksheet.WriteCellValue(123.456, "0.00E+00");
-    worksheet.WriteCellValue(123.456, "$#,##0.00");
-    worksheet.WriteCellValue(123.456, "#,##0.00 [$USD]");
+    worksheet
+        .BeginRow()
+        .WriteCellValue(true)
+        .WriteCellValue(123456)
+        .WriteCellValue(123.456m)
+        .WriteCellValue(123.456)
+        .WriteCellValue(DateTime.Now)
+        .WriteCellValue(DateTime.Now, "yyyy/MM/dd")
+        .WriteCellValue("Text")
+        .WriteCellValue(123.456, "0.00")
+        .WriteCellValue(123.456, "0.00%")
+        .WriteCellValue(123.456, "0.00E+00")
+        .WriteCellValue(123.456, "$#,##0.00")
+        .WriteCellValue(123.456, "#,##0.00 [$USD]");
 }
 var stream = workbook.Close();
 ```
@@ -135,19 +135,20 @@ var worksheet = workbook.BeginSheet();
 
 for (var i = 1; i <= 100; i++)
 {
-    worksheet.BeginRow();
-    worksheet.WriteCellValue(true);
-    worksheet.WriteCellValue(123456);
-    worksheet.WriteCellValue(123.456m);
-    worksheet.WriteCellValue(123.456);
-    worksheet.WriteCellValue(DateTime.Now);
-    worksheet.WriteCellValue(DateTime.Now, "yyyy/MM/dd");
-    worksheet.WriteCellValue("Text");
-    worksheet.WriteCellValue(123.456, "0.00");
-    worksheet.WriteCellValue(123.456, "0.00%");
-    worksheet.WriteCellValue(123.456, "0.00E+00");
-    worksheet.WriteCellValue(123.456, "$#,##0.00");
-    worksheet.WriteCellValue(123.456, "#,##0.00 [$USD]");
+    worksheet
+        .BeginRow()
+        .WriteCellValue(true)
+        .WriteCellValue(123456)
+        .WriteCellValue(123.456m)
+        .WriteCellValue(123.456)
+        .WriteCellValue(DateTime.Now)
+        .WriteCellValue(DateTime.Now, "yyyy/MM/dd")
+        .WriteCellValue("Text")
+        .WriteCellValue(123.456, "0.00")
+        .WriteCellValue(123.456, "0.00%")
+        .WriteCellValue(123.456, "0.00E+00")
+        .WriteCellValue(123.456, "$#,##0.00")
+        .WriteCellValue(123.456, "#,##0.00 [$USD]");
 }
 workbook.Close();
 ```
@@ -194,28 +195,6 @@ worksheet.BeginRow();
 worksheet.WriteCellFormula($"=SUM(A1:A{i})");
 worksheet.WriteCellFormula($"=SUM(B1:B{i})");
 worksheet.WriteCellFormula($"=SUM(C1:C{i})");
-
-var stream = workbook.Close();
-```
-
-### Method chaining
-
-Any method on the `Worksheet` class can be chained for a more readable syntax.
-
-```csharp
-using TinyXlsx;
-
-using var workbook = new Workbook();
-var worksheet = workbook.BeginSheet();
-
-for (var i = 1; i <= 10; i++)
-{
-    worksheet
-        .BeginRow()
-        .WriteCellValue(true);
-        .WriteCellValue(123456);
-        .WriteCellValue(123.456m);
-}
 
 var stream = workbook.Close();
 ```
