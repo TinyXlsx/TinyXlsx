@@ -213,12 +213,12 @@ public class Workbook : IDisposable
 
         xlsxBuilder.Append(entryStream,
             "<?xml version=\"1.0\" encoding=\"utf-8\"?>"u8
-            + "<coreProperties "u8
-            + "xmlns:cp=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\""u8
-            + "xmlns:dc=\"http://purl.org/dc/elements/1.1/\""u8
-            + "xmlns:dcterms=\"http://purl.org/dc/terms/\""u8
-            + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""u8
-            + "xmlns=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\">"u8
+            + "<coreProperties"u8
+            + " xmlns:cp=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\""u8
+            + " xmlns:dc=\"http://purl.org/dc/elements/1.1/\""u8
+            + " xmlns:dcterms=\"http://purl.org/dc/terms/\""u8
+            + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""u8
+            + " xmlns=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\">"u8
             + "<dcterms:created xsi:type=\"dcterms:W3CDTF\">"u8);
 
         xlsxBuilder.Append(entryStream, DateTime.UtcNow.ToString("yyyy-MM-ddThh:mm:ssZ"));
