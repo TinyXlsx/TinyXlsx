@@ -176,7 +176,7 @@ var stream = workbook.Close();
 
 ### Writing formulas
 
-TinyXlsx supports writing formulas with `WriteCellFormula`. The library does not validate or calculate any formula, it is written as-is into the cell.
+Formulas can be added using `WriteCellFormula`. The library does not validate or calculate any formula, it is written as-is into the cell.
 
 ```csharp
 using TinyXlsx;
