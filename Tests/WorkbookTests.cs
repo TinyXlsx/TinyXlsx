@@ -33,6 +33,7 @@ public class WorkbookTests
                 .WriteCellValue(123.456, "0.00E+00")
                 .WriteCellValue(123.456, "$#,##0.00")
                 .WriteCellValue(123.456, "#,##0.00 [$USD]")
+                .WriteCellValue(123.456, "#,##0.00 '\"&<>USD'\"&<>")
                 .WriteCellFormula($"=SUM(H{i}:L{i})");
         }
         workbook.Close();

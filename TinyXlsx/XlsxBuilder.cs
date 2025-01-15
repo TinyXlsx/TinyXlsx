@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Buffers;
+using System.Globalization;
 using System.Text;
 
 namespace TinyXlsx;
@@ -88,35 +89,67 @@ public class XlsxBuilder
         {
             if (bytesWritten + MaximumUtf8BytesPerCharacter > buffer.Length) Commit(stream);
 
-            var lessThanIndex = text.IndexOf('<');
-            var ampersandIndex = text.IndexOf('&');
+            var xmlEscapeCharacters = SearchValues.Create("'\"&<>");
+            var xmlEscapeCharacterIndex = text.IndexOfAny(xmlEscapeCharacters);
 
-            if (lessThanIndex >= 0 && (lessThanIndex < ampersandIndex || ampersandIndex == -1))
+            if (xmlEscapeCharacterIndex >= 0)
             {
-                encoder.Convert(text[..lessThanIndex], buffer.AsSpan(bytesWritten), false, out _, out var bytesUsed, out _);
+                encoder.Convert(text[..xmlEscapeCharacterIndex], buffer.AsSpan(bytesWritten), false, out _, out var bytesUsed, out _);
                 bytesWritten += bytesUsed;
 
-                if (bytesWritten + 4 > buffer.Length) Commit(stream);
+                var xmlEscapeCharacter = text[xmlEscapeCharacterIndex];
 
-                buffer[bytesWritten++] = (byte)'&';
-                buffer[bytesWritten++] = (byte)'l';
-                buffer[bytesWritten++] = (byte)'t';
-                buffer[bytesWritten++] = (byte)';';
-                text = text[(lessThanIndex + 1)..];
-            }
-            else if (ampersandIndex >= 0 && (ampersandIndex < lessThanIndex || lessThanIndex == -1))
-            {
-                encoder.Convert(text[..ampersandIndex], buffer.AsSpan(bytesWritten), false, out _, out var bytesUsed, out _);
-                bytesWritten += bytesUsed;
+                switch (xmlEscapeCharacter)
+                {
+                    case '&':
+                        if (bytesWritten + 5 > buffer.Length) Commit(stream);
 
-                if (bytesWritten + 5 > buffer.Length) Commit(stream);
+                        buffer[bytesWritten++] = (byte)'&';
+                        buffer[bytesWritten++] = (byte)'a';
+                        buffer[bytesWritten++] = (byte)'m';
+                        buffer[bytesWritten++] = (byte)'p';
+                        buffer[bytesWritten++] = (byte)';';
+                        break;
+                    case '<':
+                        if (bytesWritten + 4 > buffer.Length) Commit(stream);
 
-                buffer[bytesWritten++] = (byte)'&';
-                buffer[bytesWritten++] = (byte)'a';
-                buffer[bytesWritten++] = (byte)'m';
-                buffer[bytesWritten++] = (byte)'p';
-                buffer[bytesWritten++] = (byte)';';
-                text = text[(ampersandIndex + 1)..];
+                        buffer[bytesWritten++] = (byte)'&';
+                        buffer[bytesWritten++] = (byte)'l';
+                        buffer[bytesWritten++] = (byte)'t';
+                        buffer[bytesWritten++] = (byte)';'; ;
+                        break;
+                    case '>':
+                        if (bytesWritten + 4 > buffer.Length) Commit(stream);
+
+                        buffer[bytesWritten++] = (byte)'&';
+                        buffer[bytesWritten++] = (byte)'g';
+                        buffer[bytesWritten++] = (byte)'t';
+                        buffer[bytesWritten++] = (byte)';'; ;
+                        break;
+                    case '\'':
+                        if (bytesWritten + 6 > buffer.Length) Commit(stream);
+
+                        buffer[bytesWritten++] = (byte)'&';
+                        buffer[bytesWritten++] = (byte)'a';
+                        buffer[bytesWritten++] = (byte)'p';
+                        buffer[bytesWritten++] = (byte)'o';
+                        buffer[bytesWritten++] = (byte)'s';
+                        buffer[bytesWritten++] = (byte)';';
+                        break;
+                    case '"':
+                        if (bytesWritten + 6 > buffer.Length) Commit(stream);
+
+                        buffer[bytesWritten++] = (byte)'&';
+                        buffer[bytesWritten++] = (byte)'q';
+                        buffer[bytesWritten++] = (byte)'u';
+                        buffer[bytesWritten++] = (byte)'o';
+                        buffer[bytesWritten++] = (byte)'t';
+                        buffer[bytesWritten++] = (byte)';';
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+                text = text[(xmlEscapeCharacterIndex + 1)..];
             }
             else
             {
@@ -124,6 +157,7 @@ public class XlsxBuilder
                 text = text[charactersUsed..];
                 bytesWritten += bytesUsed;
             }
+
         }
     }
 
